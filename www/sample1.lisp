@@ -80,8 +80,23 @@
   (write-char #\NewLine *apache-stream*)
 )
 
+(defun template-from-query (query-string)
+  (cond
+    ((> (position #\? query-string) 0)
+      (subseq
+        query-string
+        (+ 1 (position #\? query-string))
+      )
+    )
+    (t nil)
+  )
+)
+
 (defun process-apache-command (command)
   (let
+    ;((template-name
+    ;  (template-from-query (position #\? (cdr (assoc "url" command :test #'string=)))))
+    ;))
     ((html
       (if (equal (cdr (assoc "url" command :test #'string=)) "/lisp/system-info")
         (debug-table command)
@@ -130,6 +145,7 @@
     </head><body>
       <h1>mod_lisp 2.0</h1>
       <p>This is a constant html string sent by CMUCL + mod_lisp 2.0 + Apache2 + OS X</p>
+      <p>~a</p>
       <a href=\"/lisp/system-info\">Debug Information</a>
     </body></html>"
 )
