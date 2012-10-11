@@ -21,4 +21,18 @@ First download the right version of setuptools for your version of Python, then 
 ## Test
 
 	python
-	import nltk
+	>>> import nltk
+
+## Download NLTK data
+
+	python
+	>>> nltk.download()
+
+## Load custom corpus
+(As seen[http://nltk.googlecode.com/svn/trunk/doc/book/ch02.html](http://nltk.googlecode.com/svn/trunk/doc/book/ch02.html))
+
+	python
+	>>> from nltk.corpus import PlaintextCorpusReader
+	>>> corpus_root = '/usr/share/dict'
+	>>> wordlists = PlaintextCorpusReader(corpus_root, '.*')
+	>>> wordlists.fileids()
