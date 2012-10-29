@@ -1,2 +1,2 @@
-(load "sample1.lisp")
+(load "index.lisp")
 (start-apache-listener)

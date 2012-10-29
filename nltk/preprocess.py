@@ -63,8 +63,10 @@ def remove_static_cruft(text_line):
 	useless_texts = [
 		"DISCLAIMER This electronic message transmission contains information that may be confidential or privileged.",
 		"The information is intended to be for the use of the individual or entity named above.",
-		"If you are not the intended recipient, be aware that any disclosure, copying, distribution, or use of the contents of this information is prohibited.",
-		"If you have received this electronic transmission in error, please notify the sender and delete the material from any computer.",
+		"If you are not the intended recipient, be aware that any disclosure,",
+		"copying, distribution, or use of the contents of this information is prohibited.",
+		"If you have received this electronic transmission in error,",
+		"please notify the sender and delete the material from any computer.",
 		"Para ayuda técnico por favor comunicase con el Schaeffler Group IT Service Desk:",
 		"Thank you for using the Schaeffler Group IT Service Desk.",
 		"Gracias por usar el Schaeffler Group IT Service Desk.",

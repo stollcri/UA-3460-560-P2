@@ -80,27 +80,19 @@
   (write-char #\NewLine *apache-stream*)
 )
 
-(defun template-from-query (query-string)
-  (cond
-    ((> (position #\? query-string) 0)
-      (subseq
-        query-string
-        (+ 1 (position #\? query-string))
-      )
-    )
-    (t nil)
-  )
-)
-
 (defun process-apache-command (command)
   (let
     ;((template-name
-    ;  (template-from-query (position #\? (cdr (assoc "url" command :test #'string=)))))
+      ;(subseq (cdr (assoc "url" command :test #'string=)))) 6)
+      ;(template-from-query (subseq (cdr (assoc "url" command :test #'string=)))) 6)
     ;))
     ((html
       (if (equal (cdr (assoc "url" command :test #'string=)) "/lisp/system-info")
         (debug-table command)
-        (fixed-html)
+        (if (equal (subseq (cdr (assoc "url" command :test #'string=)) 6) "test") ; /listp/
+          (fixed-html)
+          (debug-table command)
+        )
       )
     ))
     (write-header-line "Status" "200 OK")
@@ -131,8 +123,12 @@
       (format s "<tr bgcolor=\"#F0F0c0\"><td>~a</td><td>~a</td></tr>" key value)
     )
     (write-string
-      "</table>
-      </body></html>"
+      "</table>"
+      s
+    )
+    (format s "<p>~a</p>" command)
+    (write-string
+      "</body></html>"
       s
     )
   )
