@@ -82,17 +82,15 @@
 
 (defun process-apache-command (command)
   (let
-    ;((template-name
-      ;(subseq (cdr (assoc "url" command :test #'string=)))) 6)
-      ;(template-from-query (subseq (cdr (assoc "url" command :test #'string=)))) 6)
-    ;))
     ((html
       (if (equal (cdr (assoc "url" command :test #'string=)) "/lisp/system-info")
-        (debug-table command)
-        (if (equal (subseq (cdr (assoc "url" command :test #'string=)) 6) "test") ; /listp/
-          (fixed-html)
-          (debug-table command)
-        )
+        ; get system infor right away, in case of problems with latter logic
+        (html-debug-table command)
+        ; pass url string, everything after "/lisp"
+        ; "/lisp" is required for mod_lisp to activate,
+        ; so this should pass "/" and the page name
+        ; (e.g. /lisp/test => /test)
+        (get-html-content (subseq (cdr (assoc "url" command :test #'string=)) 5))
       )
     ))
     (write-header-line "Status" "200 OK")
@@ -106,14 +104,70 @@
   )
 )
 
-(defun debug-table (command)
+(defun get-html-content (page-name)
+  (if (position #\? page-name)
+    ; we have a query string to parse
+    (html-dynamic
+      (subseq
+        page-name
+        0
+        (position #\? page-name)
+      )
+      (subseq
+        page-name
+        (position #\? page-name)
+      )
+    )
+    ; no query string pass page name (with leading "/")
+    (html-fixed page-name)
+  )
+)
+
+(defun html-head ()
+  "<!doctype html>
+    <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\" dir=\"ltr\">
+    <head><meta charset=\"utf-8\" /><title>Clisp Sample WebApp</title>
+    </head><body>"
+)
+
+(defun html-tail ()
+  "</body></html>"
+)
+
+(defun html-fixed (page-name)
   (with-output-to-string (s)
+    (write-string (html-head) s)
     (write-string
-      "<!doctype html>
-       <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\" dir=\"ltr\">
-       <head><meta charset=\"utf-8\" /><title>Clisp Sample WebApp</title>
-       </head><body>
-        <table bgcolor=\"#c0c0c0\">
+      "<h1>mod_lisp 2.0</h1>
+        <p>This is a constant html string sent by CMUCL + mod_lisp 2.0 + Apache2 + OS X</p>
+        <a href=\"/lisp/system-info\">System Information</a>"
+      s
+    )
+    (format s "<p>Page name: ~a</p>" page-name)
+    (write-string (html-tail) s)
+  )
+)
+
+(defun html-dynamic (page-name query-string)
+  (with-output-to-string (s)
+    (write-string (html-head) s)
+    (write-string
+      "<h1>mod_lisp 2.0</h1>
+        <p>This is a constant html string sent by CMUCL + mod_lisp 2.0 + Apache2 + OS X</p>
+        <a href=\"/lisp/system-info\">System Information</a>"
+      s
+    )
+    (format s "<p>Page name: ~a</p>" page-name)
+    (format s "<p>Query string: ~a</p>" query-string)
+    (write-string (html-tail) s)
+  )
+)
+
+(defun html-debug-table (command)
+  (with-output-to-string (s)
+    (write-string (html-head) s)
+    (write-string
+      "<table bgcolor=\"#c0c0c0\">
         <tr bgcolor=\"yellow\"><th colspan=2>CMUCL + mod_lisp 2.0 + Apache2 + OS X</th></tr>
         <tr bgcolor=\"yellow\"><th>Key</th><th>Value</th></tr>"
       s
@@ -122,28 +176,9 @@
     (loop for (key . value) in command do
       (format s "<tr bgcolor=\"#F0F0c0\"><td>~a</td><td>~a</td></tr>" key value)
     )
-    (write-string
-      "</table>"
-      s
-    )
-    (format s "<p>~a</p>" command)
-    (write-string
-      "</body></html>"
-      s
-    )
+    (write-string "</table>" s)
+    (write-string (html-tail) s)
   )
-)
-
-(defun fixed-html ()
-  "<!doctype html>
-    <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\" dir=\"ltr\">
-    <head><meta charset=\"utf-8\" /><title>Clisp Sample WebApp</title>
-    </head><body>
-      <h1>mod_lisp 2.0</h1>
-      <p>This is a constant html string sent by CMUCL + mod_lisp 2.0 + Apache2 + OS X</p>
-      <p>~a</p>
-      <a href=\"/lisp/system-info\">Debug Information</a>
-    </body></html>"
 )
 
 (defun fetch-mod-lisp-url (server url &key (nb-fetch 1) (port 3000) close-socket)
