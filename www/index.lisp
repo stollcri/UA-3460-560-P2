@@ -4,7 +4,6 @@
 
 ;; To test it eval this:
 ;; (start-apache-listener)
-;; (fetch-mod-lisp-url "localhost" "/asp/fixed")
 
 (defconstant +apache-port+ 3000)
 (defvar *apache-stream* nil) ;the socket to apache
@@ -83,7 +82,7 @@
 (defun process-apache-command (command)
   (let
     ((html
-      (if (equal (cdr (assoc "url" command :test #'string=)) "/lisp/system-info")
+      (if (eq (cdr (assoc "url" command :test #'string=)) "/lisp/system-info")
         ; get system infor right away, in case of problems with latter logic
         (html-debug-table command)
         ; pass url string, everything after "/lisp"
@@ -104,22 +103,56 @@
   )
 )
 
+(defun parse-url-query-worker (query-string)
+  (if (position #\= query-string)
+    ; there is a variable/value delimiter
+    (list ; lists are nested to create a list of lists in parse-url-query
+      (list
+        (subseq query-string 0 (position #\= query-string))
+        (subseq query-string (+ 1 (position #\= query-string)))
+      )
+    )
+    ; there is no variable/value delimiter (value is blank)
+    (list ; lists are nested to create a list of lists in parse-url-query
+      (list
+        (subseq query-string 0 (position #\= query-string))
+        ""
+      )
+    )
+  )
+)
+
+(defun parse-url-query (query-string)
+  (if (= (length query-string) 0)
+    ; the query string is empty
+    NIL
+    ; the query string is not empty
+    (if (position #\& query-string)
+      ; there are multiple url query variables
+      (append ; use append to create list of lists
+        (parse-url-query-worker
+          (subseq query-string 0 (position #\& query-string))
+        )
+        (parse-url-query
+          (subseq query-string (+ 1 (position #\& query-string)))
+        )
+      )
+      ; there is only one url query variable
+      (parse-url-query-worker query-string)
+    )
+  )
+)
+
 (defun get-html-content (page-name)
   (if (position #\? page-name)
     ; we have a query string to parse
     (html-dynamic
-      (subseq
-        page-name
-        0
-        (position #\? page-name)
-      )
-      (subseq
-        page-name
-        (position #\? page-name)
-      )
+      (subseq page-name 0 (position #\? page-name))
+      (parse-url-query (subseq page-name (+ 1 (position #\? page-name))))
     )
     ; no query string pass page name (with leading "/")
-    (html-fixed page-name)
+    ;(html-fixed page-name)
+    (html-dynamic page-name "")
   )
 )
 
@@ -178,54 +211,5 @@
     )
     (write-string "</table>" s)
     (write-string (html-tail) s)
-  )
-)
-
-(defun fetch-mod-lisp-url (server url &key (nb-fetch 1) (port 3000) close-socket)
-  (let
-    ((socket (ext:connect-to-inet-socket server port)) (reply))
-    (unwind-protect
-      (let
-        ((stream (sys:make-fd-stream socket :input t :output t)))
-        (dotimes
-          (i nb-fetch)
-          (write-string "url" stream)
-          (write-char #\NewLine stream)
-          (write-string url stream)
-          (write-char #\NewLine stream)
-          (write-string "end" stream)
-          (write-char #\NewLine stream)
-          (force-output stream)
-          (setf reply (read-reply stream))
-          (when close-socket
-            (close stream)
-            (setf stream nil)
-          )
-        )
-      )
-      (unix:unix-close socket)
-    )
-    reply
-  )
-)
-
-(defun read-reply (socket)
-  (let*
-    (
-      (header
-        (loop for key = (read-line socket nil nil)
-           while (and key (string-not-equal key "end"))
-           for value = (read-line socket nil nil)
-           collect (cons key value)
-        )
-      )
-      (content-length (cdr (assoc "Content-Length" header :test #'string=)))
-      (content (when content-length (make-string (parse-integer content-length :junk-allowed t))))
-    )
-    (when content
-      (read-sequence content socket)
-      (push (cons "reply-content" content) header)
-    )
-    header
   )
 )
