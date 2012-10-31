@@ -82,15 +82,7 @@
 (defun process-apache-command (command)
   (let
     ((html
-      (if (eq (cdr (assoc "url" command :test #'string=)) "/lisp/system-info")
-        ; get system infor right away, in case of problems with latter logic
-        (html-debug-table command)
-        ; pass url string, everything after "/lisp"
-        ; "/lisp" is required for mod_lisp to activate,
-        ; so this should pass "/" and the page name
-        ; (e.g. /lisp/test => /test)
-        (get-html-content (subseq (cdr (assoc "url" command :test #'string=)) 5))
-      )
+      (get-html-content (subseq (cdr (assoc "url" command :test #'string=)) 5))
     ))
     (write-header-line "Status" "200 OK")
     (write-header-line "Content-Type" "text/html")
@@ -167,49 +159,33 @@
   "</body></html>"
 )
 
-(defun html-fixed (page-name)
-  (with-output-to-string (s)
-    (write-string (html-head) s)
-    (write-string
-      "<h1>mod_lisp 2.0</h1>
-        <p>This is a constant html string sent by CMUCL + mod_lisp 2.0 + Apache2 + OS X</p>
-        <a href=\"/lisp/system-info\">System Information</a>"
-      s
-    )
-    (format s "<p>Page name: ~a</p>" page-name)
-    (write-string (html-tail) s)
-  )
-)
-
 (defun html-dynamic (page-name query-string)
-  (with-output-to-string (s)
-    (write-string (html-head) s)
-    (write-string
-      "<h1>mod_lisp 2.0</h1>
-        <p>This is a constant html string sent by CMUCL + mod_lisp 2.0 + Apache2 + OS X</p>
-        <a href=\"/lisp/system-info\">System Information</a>"
-      s
+  (if (string= page-name "/nlp")
+    (html-content-nlp query-string)
+    ; show the default page
+    (with-output-to-string (s)
+      (write-string (html-head) s)
+      (write-string
+        "<h1>mod_lisp 2.0</h1>
+          <p>This is a default html string sent by CMUCL + mod_lisp 2.0 + Apache2 + OS X</p>"
+        s
+      )
+      (format s "<p>Page name: ~a</p>" page-name)
+      (format s "<p>Query string: ~a</p>" query-string)
+      (write-string (html-tail) s)
     )
-    (format s "<p>Page name: ~a</p>" page-name)
-    (format s "<p>Query string: ~a</p>" query-string)
-    (write-string (html-tail) s)
   )
 )
 
-(defun html-debug-table (command)
+(defun html-content-nlp (query-string)
   (with-output-to-string (s)
     (write-string (html-head) s)
     (write-string
-      "<table bgcolor=\"#c0c0c0\">
-        <tr bgcolor=\"yellow\"><th colspan=2>CMUCL + mod_lisp 2.0 + Apache2 + OS X</th></tr>
-        <tr bgcolor=\"yellow\"><th>Key</th><th>Value</th></tr>"
+      "<h1>Natural Language Processing</h1>
+        <p>Something goes here</p>"
       s
     )
-    (format s "<tr bgcolor=\"#F0F0c0\"><td>apache-nb-use-socket</td><td>~a</td></tr>"  *apache-nb-use-socket*)
-    (loop for (key . value) in command do
-      (format s "<tr bgcolor=\"#F0F0c0\"><td>~a</td><td>~a</td></tr>" key value)
-    )
-    (write-string "</table>" s)
+    (format s "<p>Query string: ~a</p>" query-string)
     (write-string (html-tail) s)
   )
 )
