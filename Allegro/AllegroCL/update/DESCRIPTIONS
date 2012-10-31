@@ -1,0 +1,107 @@
+[ DESCRIPTIONS File Last Updated: 16-Feb-10 19:04:07 GMT ]
+
+This directory contains all the publicly available patches for:
+
+     product: Allegro CL
+     version: 8.2
+     architecture: macosx86
+     directory: update/
+
+There are two types of files in this directory:
+
+   DESCRIPTIONS
+    -- This information file.
+
+   p<m><p><nnn>.<vvv>
+    -- where <m> is 1 character denoting the Lisp version, <p> is 1
+       character denoting the product, <nnn> are 3 characters denoting
+       the patch, and <vvv> are 3 characters denoting the patch
+       version.
+
+For more information on installing and using patches, see
+ftp://ftp.franz.com/pub/patches/8.2/README.
+
+Patch File Descriptions
+
+   This section lists the descriptions of the patch files available in
+   this directory.  All patches publicly available as of the date on
+   the top of this file are listed here.  The descriptions listed are
+   admittedly cryptic and may not reveal all the problems that the
+   patches fix.  Also not every "known" problem is fixable by a patch
+   file.  Contact Franz Inc. (see below) if you have questions about
+   patches or have a problem which seems not to be fixed by any of the
+   patches in this directory.
+
+   Gaps in the numbering do not necessarily indicate missing patches.
+
+   If you have any questions about any patch or the patch loading
+   procedure, please contact Franz Inc. by email at bugs@franz.com, by
+   phone at (510) 452-2000 (during US Pacific time zone work hours), or
+   by fax at (510) 452-0182.
+
+
+_ _ _ _ _ Descriptions Listing _ _ _ _ _
+
+Patch                  Description
+
+pin001.003 : Correct a typo that causes ecase to fail.
+   Note: Loaded only if (featurep :jlinker) returns non-nil.
+pin001.001 : Supersede patch update/pin001.001. Fix now in code/jlinker.001 patch.
+   Note: Loaded only if (featurep :jlinker) returns non-nil.
+pin001.001 : Correct a typo that causes ecase to fail.
+   Note: Loaded only if (featurep :jlinker) returns non-nil.
+pim001.001 : Add timeout to terminate socket write when destination gone.
+   Note: Loaded only if (featurep :aclrpc) returns non-nil.
+pil003.001 : New license renewal warning in IDE title bar for Express or Evaluation.
+   Note: Loaded only if (featurep :ide) returns non-nil.
+pil002.001 : IDE symbol completion error when parent package module not available.
+   Note: Loaded only if (featurep :ide) returns non-nil.
+pil001.001 : String replace skips the currently-selected search match on GTK.
+   Note: Loaded only if (featurep :ide) returns non-nil.
+pik003.001 : Can't drag a bottom window border upward much on GTK in some cases.
+   Note: Loaded only if (featurep :common-graphics) returns non-nil.
+pik002.001 : Buttons and tab-controls copy a dialog's custom background color on GTK.
+   Note: Loaded only if (featurep :common-graphics) returns non-nil.
+pik001.001 : A form window with pop-up true was recreated as a top-level window on GTK.
+   Note: Loaded only if (featurep :common-graphics) returns non-nil.
+pij004.001 : Fix drawing of ovals in the first quadrant.
+   Note: Loaded only if (featurep :clim) returns non-nil.
+pij001.003 : Superseded patch, replaced by clixm.001.
+   Note: Loaded only if (featurep (and :clim :clim-motif)) returns non-nil.
+pij001.002 : Fix	loading	of X11 latin-1 fallback fonts in CLIM.
+   Note: Loaded only if (featurep (and :clim :clim-motif)) returns non-nil.
+pij001.001 : Remove warnings about missing fallback charsets from CLIM startup.
+   Note: Loaded only if (featurep (and :clim :clim-motif)) returns non-nil.
+pih001.001 : Add support for launchd DISPLAY settings in macosx. Requires code/clx.001 patch.
+   Note: Loaded only if (featurep :cw-x) returns non-nil.
+pib008.001 : Fix bad multiple-values compilation.
+   Note: Loaded only if (featurep :compiler) returns non-nil.
+pib006.002 : Fix dotimes and dolist compilation with high safety.
+   Note: Loaded only if (featurep :compiler) returns non-nil.
+pib006.001 : Fix dotimes and dolist compilation with high safety.
+   Note: Loaded only if (featurep :compiler) returns non-nil.
+pib005.001 : Fix register allocation uncatch bug.
+   Note: Loaded only if (featurep :compiler) returns non-nil.
+pib004.001 : Disable source debugging attempts on Sparc and AIX.
+   Note: Loaded only if (featurep :compiler) returns non-nil.
+pib003.001 : Fix esoteric register allocation bug.
+   Note: Loaded only if (featurep :compiler) returns non-nil.
+pib002.001 : Fix type propagation of setq'd lexical variables.
+   Note: Loaded only if (featurep :compiler) returns non-nil.
+pib001.001 : Fix compiler bug in type propagator.
+   Note: Loaded only if (featurep :compiler) returns non-nil.
+pia015.001 : Disable #! parsing when loading a file with -L.
+pia014.001 : Fix nesting behavior of #-/#+.
+pia013.002 : Fix race condition in ensure-directories-exist.
+pia013.001 : Fix race condition in ensure-directories-exist.
+pia012.001 : Fix readlink file size limit in symbolic-link-p.
+pia011.001 : Fix complex trace of method function specs.
+pia010.001 : Export in-case-mode and supporting functionality.
+pia008.001 : Fix case issue loading external-format files.
+pia007.001 : Fix with-underlying-simple-vector not to warn at high safety.
+pia006.001 : Fix negative-infinity on read.
+pia005.001 : Fix difference in interactive-force-output when streamc is loaded.
+pia004.001 : Add excl::newtime funtion which reports page-faults.
+pia003.001 : Fix the return value from read-octets.
+pia002.001 : Fix typep on bit arrays.
+pia001.001 : Fix macrolet/symbol-macrolet elision issues.

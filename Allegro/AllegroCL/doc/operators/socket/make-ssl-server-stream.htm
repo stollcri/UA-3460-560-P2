@@ -1,0 +1,269 @@
+<html><head><meta http-equiv="content-type" name="description" content="text/html; charset=UTF-8"> <title>make-ssl-server-stream</title><link rel="stylesheet" href="../../acldoc-styles.css" type="text/css"></head><body><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"><b>Function</b></td><td align="left" bgcolor="#00FFFF"><b>Package: socket</b></td><td align="center" bgcolor="#00FFFF"><a href="../../contents.htm"><b>ToC</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../introduction.htm"><b>DocOverview</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../cgide.htm"><b>CGDoc</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../release-notes.htm"><b>RelNotes</b></a></td><td align="center" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../index.htm"><b>Index</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="../../introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/operators/socket/make-ssl-server-stream.htm">8.1 version</a></td></tr></table><h2 id="2">make-ssl-server-stream</h2>
+
+<p id="3"><b>Arguments: </b><i>
+socket </i>&amp;key <i>certificate key certificate-password method verify max-depth ca-file ca-directory ciphers</i><i>
+</i></p>
+
+
+
+
+
+<p id="4">
+This function is not available in all versions. Generally, you must
+have an Enterprise license to use this function. Also, you must have
+the OpenSSL libraries installed for this facility to work. Note that
+shared library versions of the OpenSSL libraries (required by Allegro
+CL) are not available on all platforms. The SSL functionality is in
+the <i>ssl</i> module. To ensure it is loaded, evaluate
+<code>(require :ssl)</code>. Calling this function automatically
+loads the module.
+</p>
+<p id="5">
+This function creates and returns a new SSL server socket stream that
+communicates via SSL via the given socket. Once this function is
+called and an SSL socket stream is returned, no I/O calls should be
+done directly to <i>socket</i>.  Note that closing the
+SSL socket stream will result in the original socket file descriptor
+being closed as well.  Therefore, the idiomatic way to establish an
+SSL server socket stream is:
+</p>
+<pre id="6">
+  ;; SOCK is already a socket:
+  (setf sock (make-ssl-server-stream sock ...))
+</pre>
+<p id="7">
+Unless <a href="ssl-do-handshake.htm"><b>ssl-do-handshake</b></a> is called, the secure
+connection isn't negotiated until the first byte is sent through the
+SSL socket stream to the underlying stream (and this will usually
+occur when the first <a href="../../../ansicl/dictentr/finish-o.htm"><b>force-output</b></a> is done to the SSL socket stream).
+</p>
+<p id="8">
+When that first write is done a negotiation process is begun that
+involves reads and writes. This negotiation process will not occur if
+the SSL socket on the other end of the connection is not sitting waiting
+for data to arrive. Thus if you create two connected sockets in a
+single Lisp process, and make one the client and the other the server,
+and then write to the client side the Lisp will hang since the server
+side socket isn't being read.  You can make this work if you use the Lisp
+multiprocessing facility (see <a href="../../multiprocessing.htm">multiprocessing.htm</a>)
+to cause the server socket to be read at the same time that the write
+to the client socket is being done.
+</p>
+
+<p id="9">
+See the example file
+<i>server.pem</i> in <i>[Allegro
+directory]/examples/ssl/</i>.
+</p>
+
+<p id="10">
+If the server side of an SSL connection sends data before it receives
+data from the client, the data will not go through until the SSL
+handshake (which is initiated by the client) has completed.
+</p>
+
+
+
+<h3 id="11">
+The keyword arguments
+</h3>
+<p id="12">
+<a href="make-ssl-server-stream.htm"><b>make-ssl-server-stream</b></a>'s keyword
+arguments are the same as <a href="make-ssl-client-stream.htm"><b>make-ssl-client-stream</b></a>'s. The
+keyword arguments to <a href="make-ssl-server-stream.htm"><b>make-ssl-server-stream</b></a> are:
+</p>
+<ul>
+<li id="13">
+
+
+<b><i>method</i></b> keyword argument allows control
+over the SSL protocol handshake process. Supported SSL protocols are
+SSLv2, SSLv3, and TLSv1, from oldest to
+newest. The <i>method</i> keyword argument can be:
+<ul>
+<li id="14">
+<code>:sslv23</code>: (the default) the server will handle
+SSLv2, SSLv3, and TLSv1. The highest protocol version that is common
+between the client and server will be selected. This method allows for
+best compatibility.
+</li>
+<li id="15">
+<code>:sslv2</code>: the server will only handle SSLv2.  This
+option is not recommended as SSLv2 has known security issues (such as
+susceptibility to man In the middle attacks).
+</li>
+<li id="16">
+<code>:sslv3</code>: the server will only handle SSLv3.
+</li>
+<li id="17">
+<code>:sslv3+</code>: this is the same as :sslv23 except that,
+after handshake, if the selected protocol is SSLv2, an error will be
+generated. This option allows for high handshake compabitility while
+avoiding communication under the deprecated SSLv2 protocol.
+</li>
+<li id="18">
+<code>:tlsv1</code>: the server will only handle TLSv1.
+</li>
+</ul>
+
+</li>
+<li id="19">
+
+<b><i>certificate</i></b> names a file which contains
+one or more PEM-encoded certificates.  The first (or only) certificate
+in the file will be used to identify the client (in the case of
+<a href="make-ssl-client-stream.htm"><b>make-ssl-client-stream</b></a>) or server (in
+the case of <a href="make-ssl-server-stream.htm"><b>make-ssl-server-stream</b></a>).  Optionally,
+subsequent entries in the file may be used to supply intermediate CA
+certificates (also known as a certificate chain).
+
+</li>
+<li id="20">
+
+The <b><i>key</i></b> argument is a string or pathname
+naming a file containing the private RSA key corresponding the the
+public key in the certificate. The file must be in PEM format. The key
+can be stored in an encrypted form which requires a pass phrase
+to read, but in that case the
+<i>certificate-password</i> must also be specified. If
+the key is stored in the certificate file, then you needn't specify
+the <i>key</i> argument.
+
+</li>
+<li id="21">
+
+The <b><i>certificate-password</i></b> argument, if
+specified, should be a string. If the private key stored with the
+certificate inside the file named by the
+<i>certificate</i> argument is encrypted, then this
+value is used as the key to decrypt it.
+
+</li>
+<li id="22">
+
+<b><i>verify</i></b> can be <code>nil</code>, <code>:optional</code>, or
+<code>:required</code>.  Due to the way OpenSSL is implemented,
+the behavior of peer verification differs for servers and
+servers. Here we describe the behavior for clients. See <a href="make-ssl-client-stream.htm"><b>make-ssl-client-stream</b></a> for a
+discussion of the client behavior.
+
+<ul>
+<li id="23">
+
+<b>:verify nil</b> means that the server will not ask the client to
+supply a certificate and will not do automatic verification if the
+client supplies a certificate anyway.  If the client does provide a
+certificate, manual verification can be done using <a href="get-ssl-peer-certificate.htm"><b>get-ssl-peer-certificate</b></a> and <a href="get-ssl-verify-result.htm"><b>get-ssl-verify-result</b></a>.
+
+</li>
+<li id="24">
+
+<b>:verify :optional</b> means that the client will be asked to supply
+a certificate during SSL handshake.  The certificate (if
+supplied) will be automatically verified during SSL handshake.
+If verification fails, an error will be generated during SSL
+handshake.
+
+</li>
+<li id="25">
+
+<b>:verify :required</b> means that the client will be asked to supply
+a certificate during SSL handshake.  The client certificate will
+be automatically verified during SSL handshake.  If the client
+does not supply a certificate or if verification of the supplied
+certificate fails, an error will be generated during SSL
+handshake.
+
+</li>
+</ul>
+
+</li>
+<li id="26">
+
+<b><i>maxdepth</i></b> must be an integer (which
+defaults to 10) which indicates the maximum allowable depth of the
+certificate verification chain.  If the chain exceeds this depth, an
+error will be generated during SSL handshake.
+
+</li>
+<li id="27">
+
+<b><i>ca-file</i></b> specifies the name of a file
+containing a series of trusted PEM-encoded Intermediate CA or Root CA
+certificates that will be used during peer certificate verification.
+Keep in mind that, when using on an SSL server, the subject name
+information for each of these certificates is supplied to the peer
+during SSL handshake, so you may want to keep the number of
+certificates listed in the file to a minimum. A file containing
+certificates of well-known root CAs can be found in
+<b>[acl directory]/examples/ssl/ca-bundle.crt</b>.
+
+</li>
+<li id="28">
+
+<b><i>ca-directory</i></b> specifies the name of a
+directory containing a series of trusted Intermediate CA or Root CA
+certificate files that will be used during peer certificate
+verification.  Each file in the directory should contain one
+certificate.  The files should be named based on the hash value of the
+certificate subject name.  If more than one certificate with the same
+hash value exists, the extension must be different (e.g. 9d66eef0.0,
+9d66eef0.1 etc). The search is performed in the ordering of the
+extension number, regardless of other properties of the certificates.
+Use the <b>c_rehash</b> (available via standard OpenSSL distributions)
+utility to create the necessary links.
+
+</li>
+
+<li id="29">
+<b><i>ciphers</i></b>: if
+the <i>ciphers</i> keyword argument is supplied, it must
+be a string which specifies an OpenSSL cipher list. This list
+determines which ciphers the SSL server will support. The strongest
+common entry from this list and the list supplied by the client during
+handshake will be used. If there is no entry in common, SSL handshake
+will fail and an error will be generated.
+<p id="30">
+For details on the cipher list format, see the CIPHER LIST FORMAT
+section of <a href="http://www.openssl.org/docs/apps/ciphers.html" target="_blank">http://www.openssl.org/docs/apps/ciphers.html</a>.
+</p>
+</li>
+
+</ul>
+
+<h3 id="31">
+The deprecated other-certificates argument
+</h3>
+
+<p id="32">
+<a href="make-ssl-server-stream.htm"><b>make-ssl-server-stream</b></a>
+also accepts the now deprecated
+<b><i>other-certificates</i></b> keyword argument, but a
+warning is signaled if a value is specified for it. (Note we do not
+list this keyword argument in the argument list.) The value of
+<b><i>other-certificates</i></b> should be a string
+naming a file of other certificates (in PEM format) that are needed to
+establish a trust hierarchy reaching up to a certificate that is
+implicitly trusted by the browser.  If the certificate was obtained
+from a well known root certificate authority then you won't need to
+specify anything for this argument. The
+<i>certificate</i> keyword argument, which previously
+expected only the primary certificate as a value now loads a whole
+certificate chain if the file specified as its value has multiple
+certificates in it and so there is no need for an
+<i>other-certificates</i> argument.
+</p>
+
+
+
+
+<p id="33">
+See <a href="make-ssl-client-stream.htm"><b>make-ssl-client-stream</b></a>. See also
+<a href="../../socket.htm">socket.htm</a> for information on sockets. For
+information on Secure Sockets, see the section <a href="../../socket.htm#ssl-1">Secure Socket Layer (SSL)</a> in
+that document.
+</p>
+
+<hr><p id="34"><small>Copyright (c) 1998-2010, Franz Inc. Oakland, CA., USA. All rights reserved.</small><br><small>Documentation for Allegro CL version 8.2. This page was not revised from the 8.1 page.</small><br>
+<small>Created 2010.1.21.</small>
+<br></p><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"></td><td align="left" bgcolor="#00FFFF"></td><td align="center" bgcolor="#00FFFF"><a href="../../contents.htm"><b>ToC</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../introduction.htm"><b>DocOverview</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../cgide.htm"><b>CGDoc</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../release-notes.htm"><b>RelNotes</b></a></td><td align="center" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../index.htm"><b>Index</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="../../introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/operators/socket/make-ssl-server-stream.htm">8.1 version</a></td></tr></table></body></html>

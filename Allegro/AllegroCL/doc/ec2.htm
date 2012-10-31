@@ -1,0 +1,3592 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=UTF-8"> <title>The Allegro CL interface to the Amazon Elastic Compute Cloud (EC2)</title></head><link rel="stylesheet" href="acldoc-styles.css" type="text/css"><body><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"><a href="contents.htm"><b>ToC</b></a></td><td align="left" bgcolor="#00FFFF"><a href="introduction.htm"><b>DocOverview</b></a></td><td align="left" bgcolor="#00FFFF"><a href="cgide.htm"><b>CGDoc</b></a></td><td align="left" bgcolor="#00FFFF"><a href="release-notes.htm"><b>RelNotes</b></a></td><td align="left" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="left" bgcolor="#00FFFF"><a href="index.htm"><b>Index</b></a></td><td align="left" bgcolor="#00FFFF"><a href="permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/ec2.htm">8.1 version</a></td></tr></table><h1 id="2">The Allegro CL interface to the Amazon Elastic Compute Cloud (EC2)</h1><p id="3">This document contains the following sections:</p><a href="#ec2-intro-1">1.0 EC2 introduction</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-mod-pack-2">1.1 The EC2 module, package, and supported platforms</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-example-setup-2">1.2 Example requirements</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-general-comments-2">1.3 General comments on the EC2 interface</a><br><a href="#ec2-requirements-1">2.0 EC2 setup and requirements</a><br><a href="#ec2-classes-1">3.0 EC2 classes</a><br><a href="#ec2-image-manip-1">4.0 Functions for image manipulation</a><br><a href="#instance-manipulation-ops-1">5.0 Functions for instance manipulation</a><br><a href="#key-pair-manipulation-1">6.0 Functions for key pair manipulation</a><br><a href="#security-manipulation-1">7.0 Functions for security manipulation</a><br><a href="#functions-elastic-address-manipulation-1">8.0 Functions for Elastic IP address manipulation</a><br><a href="#ebs-manipulation-1">9.0 Functions for EBS manipulation</a><br><a href="#high-level-funs-1">10.0 High-level EC2 functions</a><br><a href="#misc-ops-1">11.0 Miscellaneous functions</a><br><a href="#ec2-vars-1">Appendix A. EC2 variables</a><br><a href="#ec2-classes-1">Appendix B. EC2 classes</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-instance-class-2">Appendix B.1. The ec2-instance class</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-image-2">Appendix B.2. The ec2-image class</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-key-2">Appendix B.3. The ec2-key class</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-security-group-2">Appendix B.4. The ec2-security-group class</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-ip-permissions-2">Appendix B.5. The ec2-ip-permissions class</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-volume-2">Appendix B.6. The ec2-volume class</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-attachment-2">Appendix B.7. The ec2-attachment class</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-snapshot-2">Appendix B.8. The ec2-snapshot class</a><br><a href="#ec2-ops-1">Appendix C. EC2 operators</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-image-ops-2">Appendix C.1. Image manipulation operators</a><br>&nbsp;&nbsp;&nbsp;<a href="#ops-instance-manip-2">Appendix C.2. Instance manipulation operators</a><br>&nbsp;&nbsp;&nbsp;<a href="#key-pair-ops-2">Appendix C.3. Key pair manipulation operators</a><br>&nbsp;&nbsp;&nbsp;<a href="#security-manipulation-ops-2">Appendix C.4. Security manipulation operators</a><br>&nbsp;&nbsp;&nbsp;<a href="#elastic-address-manip-ops-2">Appendix C.5. Elastic IP address manipulation operators</a><br>&nbsp;&nbsp;&nbsp;<a href="#ebs-manipulation-ops-2">Appendix C.6. Functionality for EBS manipulation</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-high-level-ops-2">Appendix C.7. High-level operators</a><br>&nbsp;&nbsp;&nbsp;<a href="#ec2-misc-ops-2">Appendix C.8. Miscellaneous operators</a><br><a href="#ec2-other-1">Appendix D. EC2 other functionality</a><br><hr><hr><h2 id="4"><a name="ec2-intro-1">1.0 EC2 introduction</a></h2>
+
+<p id="5">
+Allegro CL provides an interface to the API for the Amazon Elastic
+Compute Cloud (EC2).  Amazon has different versions of their API and
+we use version 2008-12-01.  The Getting Started Guide for this version
+is described here:
+<a href="http://docs.amazonwebservices.com/AWSEC2/2008-12-01/GettingStartedGuide/">http://docs.amazonwebservices.com/AWSEC2/2008-12-01/GettingStartedGuide/</a>.
+The API documentation for this version is here:
+<a href="http://developer.amazonwebservices.com/connect/entry.jspa?externalID=1665&categoryID=118">http://developer.amazonwebservices.com/connect/entry.jspa?externalID=1665&categoryID=118</a>.
+</p>
+<p id="6">
+To use Amazon's EC2, you must have an Amazon Web Services account.
+You can sign up for that
+here: <a href="http://aws.amazon.com/">http://aws.amazon.com/</a>.
+This document is specific to the version of the API given above.  When
+a new version of the API is released by Amazon, we will need to port
+the current interface to EC2 to that new API version.
+</p>
+
+<p id="7">
+The Allegro CL interface to EC2 uses the Amazon Query API.  The other
+choices were the command line tools and SOAP API.  We use neither,
+however we do believe the command line tools are useful as there are
+some things you can do with the CLI that you cannot do with the Query
+or SOAP APIs.  We also find the Elasticfox add-on for FireFox very
+useful.  You can download it here:
+<a href="http://developer.amazonwebservices.com/connect/entry.jspa?externalID=609">http://developer.amazonwebservices.com/connect/entry.jspa?externalID=609</a>.
+</p>
+<p id="8">
+Almost all of the Lisp API has a direct mapping to the EC2 Query API,
+but there are a few things in the Lisp API that assume `ssh' access to
+the running instances being managed from Lisp.  Specifically, the
+queries of load average and memory usages have no mirror in the Amazon
+API.  These Lisp constructs use `ssh' and standard Linux commands to
+operate, so they will only be useful with Linux guests.  There is a
+section below about the extra information needed to use these Lisp API
+entries.
+</p>
+
+<hr><h2 id="9"><a name="ec2-mod-pack-2">1.1 The EC2 module, package, and supported platforms</a></h2>
+
+<p id="10">
+The module for the Lisp API is named <b>ec2</b>. Load the module with
+a form like:
+</p>
+
+<pre id="11">
+(require :ec2)
+</pre>
+
+<p id="12">
+It is not an error to evaluate that form when the module is already loaded.
+</p>
+<p id="13">
+Symbols naming functionality in the module are in the <b>net.ec2</b>
+package. We assume in this document that the net.ec2 package is used
+so we do not qualify exported symbols in that package. Use the package
+by evaluating <code>(use-package :ec2)</code> after the module
+is loaded.
+</p>
+<h3 id="14">
+SSL moduled is needed
+</h3>
+<p id="15">
+The Amazon Query API requires the use of SSL, so the EC2 module only
+works on those systems where SSL is supported--at the time of this
+writing, all but 64-bit Mac OS X. You can tell if your implementation
+supports SSL if the feature <code>:ssl-support</code> is on the
+<a href="../ansicl/dictentr/features.htm"><code>*features*</code></a>
+list. If the form <code>(featurep :ssl-support)</code> returns a
+non-<code>nil</code> value, SSL is supported on your
+platform.
+</p>
+
+
+
+<hr><h2 id="16"><a name="ec2-example-setup-2">1.2 Example requirements</a></h2>
+
+<p id="17">
+The example in this document assume the following forms, or
+equivalents, have been evaluated:
+</p>
+<pre id="18">
+  (require :ec2)
+  (use-package :net.ec2)
+  :ld ~/src/aws.cl
+</pre>
+
+<p id="19">
+The last form, using the <a href="tpl-commands/ld.htm"><b>:ld</b></a>
+top-level command, loads the file that sets the value of various
+special variables as described
+in <a href="#ec2-requirements-1">Section 2.0 EC2 setup and requirements</a>. See the
+information in that section under the
+heading <a href="#aw2-file">Using a file to set the keys
+and identity</a>.
+</p>
+
+
+
+<hr><h2 id="20"><a name="ec2-general-comments-2">1.3 General comments on the EC2 interface</a></h2>
+
+<ul>
+<li id="21">
+<b>This document is not a manual for the Amazon EC2</b>. We assume you
+know what it is and how to use it. This document describes how you
+can interface to EC2 using Lisp. Follow the links above for the Amazon
+documentation on EC2. Further, while we say what kind of Lisp object
+(a number, a string, an instance of a class, or whatever) should be
+supplied as an argument, we do not always say exactly what the
+possible values are or what effects the different values have,
+depending on users looking for that information in the Amazon EC2
+documentation.
+</li>
+<li id="22">
+<b>EC2 objects are CLOS instances</b>. With the exception of the
+<a href="ec2.htm#ec2-identity-class-bookmarkxx"><code>ec2-identity</code></a> class, there are readers
+rather than accessors for slots, so the values cannot be changed
+with <b>setf</b>. (These values should all be considered read-only.)
+The values in the CLOS objects are populated by calls to the EC2 API.
+</li>
+<li id="23">
+<b>Describe means return rather than print information</b>.
+The word <i>describe</i> as generally used in Lisp
+means print information about whatever is being described. The word in
+the EC2 API means return information about the current state of something
+in the cloud.   New instances are always created by the <i>describe-</i>
+functions.   Calling
+a <b>describe-</b> function, like, for example, <a href="ec2.htm#describe-instances-op-bookmarkxx"><b>describe-instances</b></a>,
+causes new instances of the objects being described to be created
+containing current information.
+</li>
+</ul>
+
+
+
+<hr><hr><h2 id="24"><a name="ec2-requirements-1">2.0 EC2 setup and requirements</a></h2>
+
+<p id="25">
+To use the Allegro CL EC2 API you need to have an AWS access key and secret
+access key. You obtain these from Amazon's website and we will assume
+you have them. You also need an SSH keypair name, since ssh is the
+sole method of interacting with your running instances.
+</p>
+<p id="26">
+The following three special symbols are essential to using EC2 and
+must be set before using any functions in the API. The values of each
+variable should be a string.
+</p>
+
+<ul>
+<li id="27">
+<a href="ec2.htm#s_aws-access-key_s-var-bookmarkxx"><code>*aws-access-key*</code></a>: your AWS access key.
+</li>
+<li id="28">
+<a href="ec2.htm#s_aws-secret-access-key_s-var-bookmarkxx"><code>*aws-secret-access-key*</code></a>: your AWS secret
+access key. Never give this to anyone and guard the security of this
+access key.
+</li>
+<li id="29">
+<a href="ec2.htm#s_aws-keypair-name_s-var-bookmarkxx"><code>*aws-keypair-name*</code></a>: the name of your SSH
+keypair. See <a href="ec2.htm#create-key-pair-op-bookmarkxx"><b>create-key-pair</b></a> for more information.
+</li>
+</ul>
+
+
+<p id="30">
+Once you have set the access key, the secret access key, and the
+keypair name, you can create your EC2 identity for use by the API by
+evaluating this form which creates an <a href="ec2.htm#ec2-identity-class-bookmarkxx"><code>ec2-identity</code></a> instance
+suitable as the value for <a href="ec2.htm#s_ec2-identity_s-var-bookmarkxx"><code>*ec2-identity*</code></a>:
+</p>
+<pre id="31">
+(setq *ec2-identity* (make-instance 'ec2-identity))
+</pre>
+<p id="32">
+The slots in the class ec2-identity take their initforms from the values
+of the three variables above.
+</p>
+
+<h3 id="33">
+<a name="aw2-file"></a>
+Using a file to set the keys and identity
+</h3>
+
+<p id="34">
+Once set, your EC2 identity is implicitly used by various API
+functions. It's probably a good idea to put the setting of
+<a href="ec2.htm#s_aws-access-key_s-var-bookmarkxx"><code>*aws-access-key*</code></a>, <a href="ec2.htm#s_aws-secret-access-key_s-var-bookmarkxx"><code>*aws-secret-access-key*</code></a>,
+<a href="ec2.htm#s_aws-keypair-name_s-var-bookmarkxx"><code>*aws-keypair-name*</code></a>,
+and <a href="ec2.htm#s_ec2-identity_s-var-bookmarkxx"><code>*ec2-identity*</code></a> in a file that is
+appropriately protected. The examples below will
+use <b>~/src/aws.cl</b>. It should contain something like this:
+</p>
+
+<pre id="35">
+  (in-package :net.ec2)
+
+  (setq *aws-access-key* "...")
+  (setq *aws-secret-access-key* "...")
+  (setq *aws-keypair-name* "aws")
+  (setq *ec2-identity* (make-instance 'ec2-identity))
+</pre>
+
+<h3 id="36">
+Other variables
+</h3>
+
+<p id="37">
+The values of the following special variables should be considered
+read-only:
+</p>
+
+<ul>
+<li id="38">
+<a href="ec2.htm#s_ec2-signature-version_s-var-bookmarkxx"><code>*ec2-signature-version*</code></a>: the signature
+version for API calls.
+</li>
+<li id="39">
+<a href="ec2.htm#s_ec2-api-version_s-var-bookmarkxx"><code>*ec2-api-version*</code></a>: the EC2 API version
+used by the Lisp API
+</li>
+</ul>
+
+<p id="40">
+The variable <a href="ec2.htm#s_ec2-signature-method_s-var-bookmarkxx"><code>*ec2-signature-method*</code></a> specifies the
+encoding method.
+</p>
+
+
+<p id="41">
+The value of the following two special variables are used by anything in
+the Lisp API that needs to SSH into running instances:
+</p>
+
+<ul>
+<li id="42">
+<a href="ec2.htm#s_default-ssh-identity-file_s-var-bookmarkxx"><code>*default-ssh-identity-file*</code></a>: the file on
+your local computer which names your private key for using SSH to the
+remotely running instances. See <a href="ec2.htm#create-key-pair-op-bookmarkxx"><b>create-key-pair</b></a> below for information on
+how to create the contents of that file.
+</li>
+<li id="43">
+<a href="ec2.htm#s_default-ssh-user_s-var-bookmarkxx"><code>*default-ssh-user*</code></a>: the user SSH should
+use when accessing remote running instances (initial value "root").
+</li>
+</ul>
+
+<p id="44">
+The following are used to name a default AMI (Amazon Machine Image)
+and instance type (these terms are defined
+on <a href="http://aws.amazon.com/">http://aws.amazon.com/</a>).
+</p>
+
+<ul>
+<li id="45">
+<a href="ec2.htm#s_default-ami-name_s-var-bookmarkxx"><code>*default-ami-name*</code></a>: the default AMI which
+the API should use. This and <a href="ec2.htm#s_default-instance-type_s-var-bookmarkxx"><code>*default-instance-type*</code></a> must match, in the
+sense that the instance must be suitable for the machine image. The
+initial value is "ami-2a5fba43", which is equivalent to
+fedora-8-x86_64-base-v1.07.manifest.xml
+</li>
+<li id="46">
+<a href="ec2.htm#s_default-instance-type_s-var-bookmarkxx"><code>*default-instance-type*</code></a>: the default
+instance type. This and <a href="ec2.htm#s_default-ami-name_s-var-bookmarkxx"><code>*default-ami-name*</code></a> must match. The initial
+value is "m1.large".
+</li>
+</ul>
+
+<h3 id="47">
+EC2 errors
+</h3>
+
+<p id="48">
+Errors signaled by the Allegro CL EC2 API are of
+type <a href="ec2.htm#ec2-error-class-bookmarkxx"><code>ec2-error</code></a>.
+</p>
+
+<hr><hr><h2 id="49"><a name="ec2-classes-1">3.0 EC2 classes</a></h2>
+
+<p id="50">
+The EC2 functionality uses CLOS classes. Each class typically has a
+large number of slots. A complete list of the slots of each class
+is given in an appendix, along with definitions of associated
+functions. Here we just give brief introductions.
+</p>
+<h3 id="51">
+The ec2-instance class
+</h3>
+
+<p id="52">
+<a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a> is the name of the
+class for which many API functions return an instance.  This
+represents a running AMI in the cloud.  The functions defined for this
+class.
+</p>
+<h3 id="53">
+The ec2-image class
+</h3>
+
+<p id="54">
+<a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a> is the name of the
+class for which many API functions return an instance. This represents
+images which can be run on the cloud.
+</p>
+<h3 id="55">
+The ec2-key class
+</h3>
+
+<p id="56">
+<a href="ec2.htm#ec2-key-class-bookmarkxx"><code>ec2-key</code></a> is the name of the class
+for which some API functions return an instance. This represents the
+SSH keyname used to access a remotely running instance.
+</p>
+
+<h3 id="57">
+The ec2-security-group class
+</h3>
+
+<p id="58">
+<a href="ec2.htm#ec2-security-group-class-bookmarkxx"><code>ec2-security-group</code></a> is the name of the
+class for which some API functions return an instance.  This
+represents a security group
+definition. See <a href="#ec2-security-group-2">Appendix B.4 The ec2-security-group class</a>
+for information on slots, the predicate function, and accessors.
+</p>
+
+<h3 id="59">
+The ec2-ip-permissions class
+</h3>
+
+<p id="60">
+ec2-ip-permissions is the name of the class for which some
+API functions return an instance.  This represents the permissions
+which can be set for access to an
+instance. See <a href="#ec2-ip-permissions-2">Appendix B.5 The ec2-ip-permissions class</a> for
+information on slots, the predicate function, and accessors. 
+</p>
+
+<h3 id="61">
+The ec2-volume class
+</h3>
+
+<p id="62">
+<a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a> is the name of the
+class for which some API functions return an instance. This represents
+the volume definition, or unit of
+storage. See <a href="#ec2-volume-2">Appendix B.6 The ec2-volume class</a> for
+information on slots, the predicate function, and accessors.
+</p>
+
+<h3 id="63">
+The ec2-attachment class
+</h3>
+
+<p id="64">
+<a href="ec2.htm#ec2-attachment-class-bookmarkxx"><code>ec2-attachment</code></a> is the name of the
+class for which some API functions return an instance. This
+represents an attached volume on an
+instance. See <a href="#ec2-attachment-2">Appendix B.7 The ec2-attachment class</a> for
+information on slots, the predicate function, and accessors.
+</p>
+
+<h3 id="65">
+The ec2-snapshot class
+</h3>
+
+<p id="66">
+<a href="ec2.htm#ec2-snapshot-class-bookmarkxx"><code>ec2-snapshot</code></a> is the name of the
+class for which some API functions return an instance. This
+represents a snapshot of a volume.
+See <a href="#ec2-snapshot-2">Appendix B.8 The ec2-snapshot class</a> for information on
+slots, the predicate function, and accessors.
+</p>
+
+
+<hr><hr><h2 id="67"><a name="ec2-image-manip-1">4.0 Functions for image manipulation</a></h2>
+
+<p id="68">
+This section deals with registering, querying and deregistering
+images. The functions discussed are listed below. Follow the links for
+the complete definitions.
+</p>
+
+<ul>
+<li id="69">
+<a href="ec2.htm#register-image-op-bookmarkxx"><b>register-image</b></a> (<i>manifest</i>): register
+an image with Amazon. Returns an image id.
+</li>
+<li id="70">
+<a href="ec2.htm#describe-images-op-bookmarkxx"><b>describe-images</b></a> (&key <i>image-id
+owner executable-by</i>): return a list of available images
+(<a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a> instances) after updating the
+information about them.
+</li>
+<li id="71">
+<a href="ec2.htm#deregister-image-op-bookmarkxx"><b>deregister-image</b></a> (<i>image-id</i>):
+deregister an image.
+</li>
+</ul>
+
+<h3 id="72">
+describe-images example
+</h3>
+
+<pre id="73">
+cl-user(5): <b>(describe-images :image-id *default-ami-name*)</b>
+(#&lt;ec2-image
+    id=&quot;ami-2a5fba43&quot;
+    location=&quot;ec2-public-images/fedora-8-x86_64-base-v1.07.manifest.xml&quot;
+    state=:available
+    owner-id=&quot;amazon&quot;
+    is-public=t
+    architecture=&quot;x86_64&quot;
+    type=&quot;machine&quot;
+    kernel-id=&quot;aki-b51cf9dc&quot;
+    ramdisk-id=&quot;ari-b31cf9da&quot;
+    @ #x1001867df2&gt;)
+cl-user(6): <b>(describe-images :owner "self")</b>
+(#&lt;ec2-image
+    id=&quot;ami-871df9ee&quot;
+    location=&quot;/bms/bms.manifest.xml&quot;
+    state=:available
+    owner-id=&quot;210979525344&quot;
+    architecture=&quot;x86_64&quot;
+    type=&quot;machine&quot;
+    @ #x100188dca2#gt;)
+cl-user(7): <b>(length (describe-images))</b>
+1265
+</pre>
+
+<hr><hr><h2 id="74"><a name="instance-manipulation-ops-1">5.0 Functions for instance manipulation</a></h2>
+
+<p id="75">
+This section deals with running, querying and terminating instances.
+See <a href="#ops-instance-manip-2">Appendix C.2 Instance manipulation operators</a> for formal
+definitions of the functions mentioned in this section.
+</p>
+
+<ul>
+<li id="76">
+<a href="ec2.htm#run-instances-op-bookmarkxx"><b>run-instances</b></a> (<i>image-id min-count
+max-count</i> &key <i>wait verbose</i> (<i>identity</i>
+*ec2-identity*) <i>instance-type</i> (<i>key-name</i>
+*aws-keypair-name*) <i>kernel-id ramdisk-id availability-zone</i>):
+runs one or more instances on the cloud. Upon success returns a list
+of <a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a> instances. See the full
+description for descriptions of the arguments.
+</li>
+<li id="77">
+<a href="ec2.htm#describe-instances-op-bookmarkxx"><b>describe-instances</b></a> (&key
+(<i>states</i> '(:running :shutting-down :pending)) (<i>identity</i>
+*ec2-identity*) <i>instances</i>): returns a list of instances running
+in the cloud (the information cached in Lisp will be updated). The
+keywords (see the full descripion for details) can narrow the result,
+which is a list of <a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a> instances.
+</li>
+<li id="78">
+<a href="ec2.htm#terminate-instances-op-bookmarkxx"><b>terminate-instances</b></a>
+(&rest <i>instances</i>): terminates the set of instances given by the
+arguments, one or more instances of <a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a>. Returns a
+list of status information for each terminated instance.
+</li>
+</ul>
+
+<h3 id="79">
+Instance manipulation functionality example
+</h3>
+
+<pre id="80">
+cl-user(8): <b>(setq instances1
+	       (run-instances "ami-2b5fba42" 2 2 :wait t :verbose t))</b>
+; waiting for instance i-e51aa58c to enter :running state.
+; waiting for instance i-e51aa58c to enter :running state.
+[repeated similar lines deleted for space]
+; waiting for instance i-e21aa58b to enter :running state.
+; waiting for instance i-e21aa58b to enter :running state.
+(#&lt;ec2-instance
+    id=&quot;i-e21aa58b&quot;
+    image-id=&quot;ami-2b5fba42&quot;
+    state-name=:running
+    state-code=16
+    private-dns-name=&quot;domU-12-31-39-00-ED-D7.compute-1.internal&quot;
+    dns-name=&quot;ec2-75-101-197-132.compute-1.amazonaws.com&quot;
+    key-name=&quot;aws&quot;
+    ami-launch-index=0
+    instance-type=&quot;m1.small&quot;
+    launch-time=3437965484
+    availability-zone=&quot;us-east-1c&quot;
+    kernel-id=&quot;aki-a71cf9ce&quot;
+    ramdisk-id=&quot;ari-a51cf9cc&quot;
+    reservation-id=&quot;r-113c9e78&quot;
+    owner-id=&quot;210979525344&quot;
+    identity=#&lt;ec2-identity
+                ssh-identity-file=&quot;~/.ssh/id_rsa-aws&quot;
+                ssh-user=&quot;root&quot;
+                keypair-name=&quot;aws&quot;
+                @ #x10017de392&gt;
+    @ #x1001977c92&gt;
+ #&lt;ec2-instance
+    id=&quot;i-e51aa58c&quot;
+    image-id=&quot;ami-2b5fba42&quot;
+    state-name=:running
+    state-code=16
+    private-dns-name=&quot;domU-12-31-39-00-C4-E3.compute-1.internal&quot;
+    dns-name=&quot;ec2-75-101-236-186.compute-1.amazonaws.com&quot;
+    key-name=&quot;aws&quot;
+    ami-launch-index=1
+    instance-type=&quot;m1.small&quot;
+    launch-time=3437965484
+    availability-zone=&quot;us-east-1c&quot;
+    kernel-id=&quot;aki-a71cf9ce&quot;
+    ramdisk-id=&quot;ari-a51cf9cc&quot;
+    reservation-id=&quot;r-113c9e78&quot;
+    owner-id=&quot;210979525344&quot;
+    identity=#&lt;ec2-identity
+                ssh-identity-file=&quot;~/.ssh/id_rsa-aws&quot;
+                ssh-user=&quot;root&quot;
+                keypair-name=&quot;aws&quot;
+                @ #x10017de392&gt;
+    @ #x1001900c52&gt;)
+
+
+;; Get the status of just the instances in the list `instances1'
+;;
+cl-user(9): <b>(describe-instances :instances instances1)</b>
+(#&lt;ec2-instance
+    id=&quot;i-e51aa58c&quot;
+    image-id=&quot;ami-2b5fba42&quot;
+    state-name=:running
+    state-code=16
+    private-dns-name=&quot;domU-12-31-39-00-C4-E3.compute-1.internal&quot;
+    dns-name=&quot;ec2-75-101-236-186.compute-1.amazonaws.com&quot;
+    key-name=&quot;aws&quot;
+    ami-launch-index=1
+    instance-type=&quot;m1.small&quot;
+    launch-time=3437965484
+    availability-zone=&quot;us-east-1c&quot;
+    kernel-id=&quot;aki-a71cf9ce&quot;
+    ramdisk-id=&quot;ari-a51cf9cc&quot;
+    reservation-id=&quot;r-113c9e78&quot;
+    owner-id=&quot;210979525344&quot;
+    identity=#&lt;ec2-identity
+                ssh-identity-file=&quot;~/.ssh/id_rsa-aws&quot;
+                ssh-user=&quot;root&quot;
+                keypair-name=&quot;aws&quot;
+                @ #x10017de392&gt;
+    @ #x10019c92a2&gt;
+ #&lt;ec2-instance
+    id=&quot;i-e21aa58b&quot;
+    image-id=&quot;ami-2b5fba42&quot;
+    state-name=:running
+    state-code=16
+    private-dns-name=&quot;domU-12-31-39-00-ED-D7.compute-1.internal&quot;
+    dns-name=&quot;ec2-75-101-197-132.compute-1.amazonaws.com&quot;
+    key-name=&quot;aws&quot;
+    ami-launch-index=0
+    instance-type=&quot;m1.small&quot;
+    launch-time=3437965484
+    availability-zone=&quot;us-east-1c&quot;
+    kernel-id=&quot;aki-a71cf9ce&quot;
+    ramdisk-id=&quot;ari-a51cf9cc&quot;
+    reservation-id=&quot;r-113c9e78&quot;
+    owner-id=&quot;210979525344&quot;
+    identity=#&lt;ec2-identity
+                ssh-identity-file=&quot;~/.ssh/id_rsa-aws&quot;
+                ssh-user=&quot;root&quot;
+                keypair-name=&quot;aws&quot;
+                @ #x10017de392&gt;
+    @ #x10019c8d72&gt;)
+cl-user(10): <b>(terminate-instances instances1)</b>
+((:instanceId "i-e21aa58b" :shutdownState-code "32" :shutdownState-name
+  "shutting-down" :previousState-code "16" :previousState-name "running")
+ (:instanceId "i-e51aa58c" :shutdownState-code "32" :shutdownState-name
+  "shutting-down" :previousState-code "16" :previousState-name "running"))
+cl-user(11): 
+</pre>
+
+<hr><hr><h2 id="81"><a name="key-pair-manipulation-1">6.0 Functions for key pair manipulation</a></h2>
+
+<p id="82">
+This section deals with creation, querying and deleting key
+pair. See <a href="#key-pair-ops-2">Appendix C.3 Key pair manipulation operators</a> for formal
+descriptions of the functions listed in this section.
+</p>
+
+<ul>
+<li id="83">
+<a href="ec2.htm#create-key-pair-op-bookmarkxx"><b>create-key-pair</b></a> (<i>key-name</i>): creates
+a new 2048 bit RSA key pair, used when lauching new instances, and
+subsequent access thereafter. On success, return a list of key name,
+key fingerprint (SHA-1 digest of the DER encoded private key) and the
+key material (an unencrypted PEM encoded RSA private key).
+</li>
+<li id="84">
+<a href="ec2.htm#describe-key-pairs-op-bookmarkxx"><b>describe-key-pairs</b></a> (&key key-names):
+retrieves the active key pairs and returns a list
+of <a href="ec2.htm#ec2-key-class-bookmarkxx"><code>ec2-key</code></a> instances.
+</li>
+<li id="85">
+<a href="ec2.htm#delete-key-pair-op-bookmarkxx"><b>delete-key-pair</b></a> (<i>key-name</i>): deletes
+the key pair given
+by <i>key-name</i>. Returns <code>t</code>
+upon success.
+</li>
+</ul>
+
+<h3 id="86">
+Key pair manipulation examples
+</h3>
+
+<pre id="87">
+cl-user(11): <b>(describe-key-pairs)</b>
+(#&lt;ec2-key
+    name=&quot;aws&quot;
+    fingerprint=&quot;22:f9:ce:8e:ee:09:ce:54:61:80:6a:32:e6:70:d3:27:22:e0:5d:bf&quot;
+    @ #x1001a3e6a2&gt;)
+cl-user(12): <b>(create-key-pair "test-key")</b>
+("test-key" "37:08:00:46:d1:01:ba:81:4b:f7:69:ea:23:00:31:28:20:fe:36:32"
+ "-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEApheBcjqYIza2Bs71xLciKZP+QoXpn+Gg8ODRHwxQ4x67UXZrjBJ+LiBIHvvX
+Tk6mV0dcgEVK9JayjdWFl8QEH2uQVISpwN8yAryyL9WlqhqK8PKumjEXFhwkRDY6Th7Affrt66rc
+kDWF5oeR34SDS1hyVhs4bHV35ti4OMG352LsID9nuX/KUIpozXh8hUs/ZNpEKppsGlG0qcrCLuUX
+[text deleted to save space]
+mFgxEHBoDSi7EenJFm78iwIXJBvhT3IHxETZTXCcFvx/cQKBgQCAZ9A3CWBUbqIovJAGiRgfH/6r
+A41m7GpYpg0hL9T0h0glNqGeeeH3MsMOeYnNyxKlJQdwCihSrm8t0X9ZG5YEThqdyrC6hoSvi006
+/O/ua7m8nDDbppEdTh7tmYCSpt269HMDGxc6wIbc1FIJWBLKVox3chFA+aATADOqecYzLg==
+-----END RSA PRIVATE KEY-----")
+cl-user(13): <b>(describe-key-pairs)</b>
+(#&lt;ec2-key
+    name=&quot;aws&quot;
+    fingerprint=&quot;22:f9:ce:8e:ee:09:ce:54:61:80:6a:32:e6:70:d3:27:22:e0:5d:bf&quot;
+    @ #x1001aabd82&gt;
+ #&lt;ec2-key
+    name=&quot;test-key&quot;
+    fingerprint=&quot;37:08:00:46:d1:01:ba:81:4b:f7:69:ea:23:00:31:28:20:fe:36:32&quot;
+    @ #x1001aabd22&gt;)
+cl-user(14): <b>(delete-key-pair "test-key")</b>
+t
+cl-user(15): <b>(describe-key-pairs)</b>
+(#&lt;ec2-key
+    name=&quot;aws&quot;
+    fingerprint=&quot;22:f9:ce:8e:ee:09:ce:54:61:80:6a:32:e6:70:d3:27:22:e0:5d:bf&quot;
+    @ #x1001adb922&gt;)
+cl-user(16): 
+</pre>
+
+<hr><hr><h2 id="88"><a name="security-manipulation-1">7.0 Functions for security manipulation</a></h2>
+
+<p id="89">
+This section deals with creation, querying, deleting, authorizing and
+revoking authorization for security
+groups. See <a href="#security-manipulation-ops-2">Appendix C.4 Security manipulation operators</a>
+for formal definitions of the functions mentioned in this section.
+</p>
+
+<ul>
+<li id="90">
+<a href="ec2.htm#create-security-group-op-bookmarkxx"><b>create-security-group</b></a> (<i>name
+description</i>): creates a new security group
+named <i>name</i> with
+description <i>description</i>, both
+strings. Returns <code>t</code> upon success.
+</li>
+<li id="91">
+<a href="ec2.htm#describe-security-groups-op-bookmarkxx"><b>describe-security-groups</b></a> (&key
+<i>group-names</i>): returns a list of security groups, instances of
+<a href="ec2.htm#ec2-security-group-class-bookmarkxx"><code>ec2-security-group</code></a>. Information about the
+security-groups is updated before being returned.
+</li>
+<li id="92">
+<a href="ec2.htm#delete-security-group-op-bookmarkxx"><b>delete-security-group</b></a> (<i>name</i>):
+deletes the security group
+named <i>name</i>. Returns <code>t</code>
+upon success.
+</li>
+<li id="93">
+<a href="ec2.htm#authorize-security-group-ingress-op-bookmarkxx"><b>authorize-security-group-ingress</b></a>
+(<i>name</i> &key
+<i>source-group-name source-group-owner-id ip-protocol from-port
+to-port cidr-ip</i>): modifies security
+group <i>name</i> by the actions specified in the given
+keyword arguments. See the full description for details.
+</li>
+<li id="94">
+<a href="ec2.htm#revoke-security-group-ingress-op-bookmarkxx"><b>revoke-security-group-ingress</b></a> (<i>name</i>
+&key <i>source-group-name source-group-owner-id ip-protocol
+from-port to-port cidr-ip</i>): this function is the inverse of
+<a href="ec2.htm#authorize-security-group-ingress-op-bookmarkxx"><b>authorize-security-group-ingress</b></a>, revoking
+any authorization granted by previous calls to that function.
+</li>
+</ul>
+
+<h3 id="95">
+Security group examples
+</h3>
+
+<pre id="96">
+cl-user(16): <b>(describe-security-groups)</b>
+(#&lt;ec2-security-group
+    owner-id=&quot;210979525344&quot;
+    name=&quot;default&quot;
+    description=&quot;default group&quot;
+    ip-permissions=(#&lt;ec2-ip-permissions tcp: 0=&gt;65535&gt;
+                    #&lt;ec2-ip-permissions udp: 0=&gt;65535&gt;
+                    #&lt;ec2-ip-permissions icmp: -1=&gt;-1&gt;
+                    #&lt;ec2-ip-permissions tcp: 22=&gt;22: 0.0.0.0/0&gt;
+                    #&lt;ec2-ip-permissions tcp: 80=&gt;80: 0.0.0.0/0&gt;
+                    #&lt;ec2-ip-permissions tcp: 3666=&gt;3666: 0.0.0.0/0&gt;
+                    #&lt;ec2-ip-permissions tcp: 3667=&gt;3667: 0.0.0.0/0&gt;
+                    #&lt;ec2-ip-permissions tcp: 8080=&gt;8080: 0.0.0.0/0&gt;)
+    @ #x1001b08232&gt;)
+cl-user(17): <b>(create-security-group "testgroup" "my test group")</b>
+t
+cl-user(18): <b>(authorize-security-group-ingress
+	      "testgroup" :to-port 22 :from-port 22)</b>
+t
+cl-user(19): <b>(authorize-security-group-ingress
+	      "testgroup" :to-port 80 :from-port 80)</b>
+t
+cl-user(20): <b>(describe-security-groups :group-names "testgroup")</b>
+(#&lt;ec2-security-group
+    owner-id=&quot;210979525344&quot;
+    name=&quot;testgroup&quot;
+    description=&quot;my test group&quot;
+    ip-permissions=(#&lt;ec2-ip-permissions tcp: 22=&gt;22: 0.0.0.0/0&gt;
+                    #&lt;ec2-ip-permissions tcp: 80=&gt;80: 0.0.0.0/0&gt;)
+    @ #x1001b87ee2&gt;)
+cl-user(21): <b>(revoke-security-group-ingress
+	      "testgroup" :to-port 80 :from-port 80)</b>
+t
+cl-user(22): <b>(describe-security-groups :group-names "testgroup")</b>
+(#&lt;ec2-security-group
+    owner-id=&quot;210979525344&quot;
+    name=&quot;testgroup&quot;
+    description=&quot;my test group&quot;
+    ip-permissions=(#&lt;ec2-ip-permissions tcp: 22=&gt;22: 0.0.0.0/0&gt;)
+    @ #x1001bc7252&gt;)
+cl-user(23): <b>(delete-security-group "testgroup")</b>
+t
+cl-user(24): <b>(describe-security-groups)</b>
+(#&lt;ec2-security-group
+    owner-id=&quot;210979525344&quot;
+    name=&quot;default&quot;
+    description=&quot;default group&quot;
+    ip-permissions=(#&lt;ec2-ip-permissions tcp: 0=&gt;65535&gt;
+                    #&lt;ec2-ip-permissions udp: 0=&gt;65535&gt;
+                    #&lt;ec2-ip-permissions icmp: -1=&gt;-1&gt;
+                    #&lt;ec2-ip-permissions tcp: 22=&gt;22: 0.0.0.0/0&gt;
+                    #&lt;ec2-ip-permissions tcp: 80=&gt;80: 0.0.0.0/0&gt;
+                    #&lt;ec2-ip-permissions tcp: 3666=&gt;3666: 0.0.0.0/0&gt;
+                    #&lt;ec2-ip-permissions tcp: 3667=&gt;3667: 0.0.0.0/0&gt;
+                    #&lt;ec2-ip-permissions tcp: 8080=&gt;8080: 0.0.0.0/0&gt;)
+    @ #x1001bff662&gt;)
+cl-user(25): 
+</pre>
+
+<hr><hr><h2 id="97"><a name="functions-elastic-address-manipulation-1">8.0 Functions for Elastic IP address manipulation</a></h2>
+
+<p id="98">
+This section deals with allocating, querying, releasing, associating
+and disassociating Elastic IP
+address. See <a href="#elastic-address-manip-ops-2">Appendix C.5 Elastic IP address manipulation operators</a>
+for formal definitions of the functions mentioned in this section.
+</p>
+
+<ul>
+<li id="99">
+<a href="ec2.htm#allocate-address-op-bookmarkxx"><b>allocate-address</b></a> (): allocates an Elastic,
+or static, IP address, which is returned as a string, if successful.
+</li>
+<li id="100">
+<a href="ec2.htm#describe-addresses-op-bookmarkxx"><b>describe-addresses</b></a> (): returns a list of
+the current mapping of IP to AMI in a list.
+</li>
+<li id="101">
+<a href="ec2.htm#release-address-op-bookmarkxx"><b>release-address</b></a> (<i>ip</i>): releases an
+elastic IP address, given by <i>ip</i>, a string.
+</li>
+<li id="102">
+<a href="ec2.htm#associate-address-op-bookmarkxx"><b>associate-address</b></a> (<i>instance ip</i>):
+associates IP <i>ip</i>, a string,
+with <i>instance</i>, an <a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a>. Returns
+<code>t</code> if successful.
+</li>
+<li id="103">
+<a href="ec2.htm#disassociate-address-op-bookmarkxx"><b>disassociate-address</b></a> (<i>ip</i>):
+disassociates IP <i>ip</i> from whatever instance it is
+associated with. Returns <code>t</code> if successful.
+</li>
+</ul>
+
+<h3 id="104">
+Elastic address examples
+</h3>
+
+<pre id="105">
+cl-user(25): <b>(setq ip (allocate-address))</b>
+"174.129.252.59"
+cl-user(26): <b>(describe-addresses)</b>
+(("174.129.252.59"))
+cl-user(27): <b>(setq instances (run-instances "ami-2b5fba42" 1 1 :wait t))</b>
+(#&lt;ec2-instance
+    id=&quot;i-c71aa5ae&quot;
+    image-id=&quot;ami-2b5fba42&quot;
+    state-name=:running
+    state-code=16
+    private-dns-name=&quot;domU-12-31-39-00-EC-35.compute-1.internal&quot;
+    dns-name=&quot;ec2-67-202-33-184.compute-1.amazonaws.com&quot;
+    key-name=&quot;aws&quot;
+    ami-launch-index=0
+    instance-type=&quot;m1.small&quot;
+    launch-time=3437965713
+    availability-zone=&quot;us-east-1c&quot;
+    kernel-id=&quot;aki-a71cf9ce&quot;
+    ramdisk-id=&quot;ari-a51cf9cc&quot;
+    reservation-id=&quot;r-f33c9e9a&quot;
+    owner-id=&quot;210979525344&quot;
+    identity=#&lt;ec2-identity
+                ssh-identity-file=&quot;~/.ssh/id_rsa-aws&quot;
+                ssh-user=&quot;root&quot;
+                keypair-name=&quot;aws&quot;
+                @ #x1001de94e2&gt;
+    @ #x1002012732&gt;)
+cl-user(28): <b>(describe-instances :instances (car instances))</b>
+(#&lt;ec2-instance
+    id=&quot;i-c71aa5ae&quot;
+    image-id=&quot;ami-2b5fba42&quot;
+    state-name=:running
+    state-code=16
+    private-dns-name=&quot;domU-12-31-39-00-EC-35.compute-1.internal&quot;
+    dns-name=&quot;ec2-67-202-33-184.compute-1.amazonaws.com&quot;
+    key-name=&quot;aws&quot;
+    ami-launch-index=0
+    instance-type=&quot;m1.small&quot;
+    launch-time=3437965713
+    availability-zone=&quot;us-east-1c&quot;
+    kernel-id=&quot;aki-a71cf9ce&quot;
+    ramdisk-id=&quot;ari-a51cf9cc&quot;
+    reservation-id=&quot;r-f33c9e9a&quot;
+    owner-id=&quot;210979525344&quot;
+    identity=#&lt;ec2-identity
+                ssh-identity-file=&quot;~/.ssh/id_rsa-aws&quot;
+                ssh-user=&quot;root&quot;
+                keypair-name=&quot;aws&quot;
+                @ #x1001de94e2&gt;
+    @ #x1002046df2&gt;)
+cl-user(29): <b>(associate-address (car instances) ip)</b>
+t
+cl-user(30): <b>(describe-addresses)</b>
+(("174.129.252.59" . "i-c71aa5ae"))
+cl-user(31): <b>(describe-instances :instances (car instances))</b>
+(#&lt;ec2-instance
+    id=&quot;i-c71aa5ae&quot;
+    image-id=&quot;ami-2b5fba42&quot;
+    state-name=:running
+    state-code=16
+    private-dns-name=&quot;domU-12-31-39-00-EC-35.compute-1.internal&quot;
+    dns-name=&quot;ec2-174-129-252-59.compute-1.amazonaws.com&quot;
+    key-name=&quot;aws&quot;
+    ami-launch-index=0
+    instance-type=&quot;m1.small&quot;
+    launch-time=3437965713
+    availability-zone=&quot;us-east-1c&quot;
+    kernel-id=&quot;aki-a71cf9ce&quot;
+    ramdisk-id=&quot;ari-a51cf9cc&quot;
+    reservation-id=&quot;r-f33c9e9a&quot;
+    owner-id=&quot;210979525344&quot;
+    identity=#&lt;ec2-identity
+                ssh-identity-file=&quot;~/.ssh/id_rsa-aws&quot;
+                ssh-user=&quot;root&quot;
+                keypair-name=&quot;aws&quot;
+                @ #x1001de94e2&gt;
+    @ #x10020a6722&gt;)
+cl-user(32): <b>(disassociate-address ip)</b>
+t
+cl-user(33): <b>(describe-addresses)</b>
+(("174.129.252.59"))
+cl-user(34): <b>(release-address ip)</b>
+t
+cl-user(35): <b>(describe-addresses)</b>
+nil
+cl-user(36): <b>(describe-instances :instances (car instances))</b>
+(#&lt;ec2-instance
+    id=&quot;i-c71aa5ae&quot;
+    image-id=&quot;ami-2b5fba42&quot;
+    state-name=:running
+    state-code=16
+    private-dns-name=&quot;domU-12-31-39-00-EC-35.compute-1.internal&quot;
+    key-name=&quot;aws&quot;
+    ami-launch-index=0
+    instance-type=&quot;m1.small&quot;
+    launch-time=3437965713
+    availability-zone=&quot;us-east-1c&quot;
+    kernel-id=&quot;aki-a71cf9ce&quot;
+    ramdisk-id=&quot;ari-a51cf9cc&quot;
+    reservation-id=&quot;r-f33c9e9a&quot;
+    owner-id=&quot;210979525344&quot;
+    identity=#&lt;ec2-identity
+                ssh-identity-file=&quot;~/.ssh/id_rsa-aws&quot;
+                ssh-user=&quot;root&quot;
+                keypair-name=&quot;aws&quot;
+                @ #x1001de94e2&gt;
+    @ #x10021260e2&gt;)
+cl-user(37): <b>(terminate-instances instances)</b>
+((:instanceId "i-c71aa5ae" :shutdownState-code "32" :shutdownState-name
+  "shutting-down" :previousState-code "16" :previousState-name "running"))
+cl-user(38): 
+</pre>
+
+<p id="106">
+In the above the DNS name changes from
+"ec2-75-101-222-252.compute-1.amazonaws.com" to
+"ec2-174-129-251-53.compute-1.amazonaws.com".  The former was the
+default assigned DNS name and the latter the one from the allocated IP
+address.  Note: it is unclear why the :dns-name slot of the instance
+returned after disassociating the IP is unset in values returned by
+the EC2 API.
+</p>
+
+<hr><hr><h2 id="107"><a name="ebs-manipulation-1">9.0 Functions for EBS manipulation</a></h2>
+
+<p id="108">
+This section deals with EBS volumes and
+snapshots. See <a href="#ebs-manipulation-ops-2">Appendix C.6 Functionality for EBS manipulation</a>
+for the formal descriptions of the functions mentioned.
+</p>
+
+<ul>
+<li id="109">
+<a href="ec2.htm#create-volume-op-bookmarkxx"><b>create-volume</b></a> (<i>availability-zone</i>
+&key <i>size snapshot</i>): create a volume
+in <i>availability-zone</i>,
+with <i>size</i> or data from a snapshot you own given
+by <i>snapshot</i>'.
+</li>
+<li id="110">
+<a href="ec2.htm#describe-volumes-op-bookmarkxx"><b>describe-volumes</b></a>
+(&key <i>volumes</i>): describes all active volumes (after
+updating the cached information about them), or narrow to a specific
+list of them given by <i>volumes</i>. Returns a list
+of updated <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a> instances.
+</li>
+<li id="111">
+<a href="ec2.htm#delete-volume-op-bookmarkxx"><b>delete-volume</b></a> (<i>volume</i>): delete the
+given volume.
+</li>
+<li id="112">
+<a href="ec2.htm#attach-volume-op-bookmarkxx"><b>attach-volume</b></a> (<i>volume instance
+device</i>): attach <i>volume</i>
+to <i>instance</i> giving it the
+name <i>device</i>. Returns an instance
+of <a href="ec2.htm#ec2-attachment-class-bookmarkxx"><code>ec2-attachment</code></a> if successful.
+</li>
+<li id="113">
+<a href="ec2.htm#detach-volume-op-bookmarkxx"><b>detach-volume</b></a> (<i>volume instance</i>
+&key <i>device force</i>): detach <i>volume</i>
+on <i>instance</i>. See the full description for the
+meaning of the keyword arguments. Returns an instances
+of <a href="ec2.htm#ec2-attachment-class-bookmarkxx"><code>ec2-attachment</code></a> if successful.
+</li>
+<li id="114">
+<a href="ec2.htm#create-snapshot-op-bookmarkxx"><b>create-snapshot</b></a> (<i>volume</i>): create a
+snapshot of <i>volume</i>, returning
+an <a href="ec2.htm#ec2-snapshot-class-bookmarkxx"><code>ec2-snapshot</code></a> if successful.
+</li>
+<li id="115">
+<a href="ec2.htm#describe-snapshots-op-bookmarkxx"><b>describe-snapshots</b></a>
+(&key <i>snapshots</i>): describe the current snapshots after
+updating teh cached information about
+them. If <i>snapshots</i> is specified, just those
+snapshots are described. Returns the list of snapshots described.
+</li>
+<li id="116">
+<a href="ec2.htm#delete-snapshot-op-bookmarkxx"><b>delete-snapshot</b></a> (<i>snapshot</i>): deletes
+the given <i>snapshot</i>.
+Returns <code>t</code> if successful.
+</li>
+</ul>
+
+<h3 id="117">
+Example with volumes and snapshots
+</h3>
+
+<pre id="118">
+cl-user(38): <b>(setq i (car (run-instances "ami-2b5fba42" 1 1 :wait t)))</b>
+#&lt;ec2-instance
+   id=&quot;i-b41aa5dd&quot;
+   image-id=&quot;ami-2b5fba42&quot;
+   state-name=:running
+   state-code=16
+   private-dns-name=&quot;domU-12-31-39-00-ED-54.compute-1.internal&quot;
+   dns-name=&quot;ec2-75-101-174-18.compute-1.amazonaws.com&quot;
+   key-name=&quot;aws&quot;
+   ami-launch-index=0
+   instance-type=&quot;m1.small&quot;
+   launch-time=3437965855
+   availability-zone=&quot;us-east-1c&quot;
+   kernel-id=&quot;aki-a71cf9ce&quot;
+   ramdisk-id=&quot;ari-a51cf9cc&quot;
+   reservation-id=&quot;r-d23c9ebb&quot;
+   owner-id=&quot;210979525344&quot;
+   identity=#&lt;ec2-identity
+               ssh-identity-file=&quot;~/.ssh/id_rsa-aws&quot;
+               ssh-user=&quot;root&quot;
+               keypair-name=&quot;aws&quot;
+               @ #x10017dd802&gt;
+   @ #x1001a7dd72&gt;
+cl-user(39): <b>(setq v1 (create-volume "us-east-1c" :size 1))</b>
+#&lt;ec2-volume
+   id=&quot;vol-4593772c&quot;
+   size=&quot;1&quot;
+   status=&quot;creating&quot;
+   create-time=&quot;2008-12-11T06:32:02.000Z&quot;
+   @ #x1001ab7bf2&gt;
+cl-user(40): <b>(describe-volumes)</b>
+(#&lt;ec2-volume
+    id=&quot;vol-4593772c&quot;
+    size=&quot;1&quot;
+    status=&quot;available&quot;
+    create-time=&quot;2008-12-11T06:32:02.000Z&quot;
+    @ #x1001ad19a2&gt;
+ #&lt;ec2-volume
+    id=&quot;vol-9b8d69f2&quot;
+    size=&quot;200&quot;
+    status=&quot;in-use&quot;
+    create-time=&quot;2008-12-05T22:07:41.000Z&quot;
+    attachments=(#&lt;ec2-attachment # # # # @ #x1001ada132&gt;)
+    @ #x1001ada1c2&gt;)
+cl-user(41): <b>(attach-volume v1 i "/dev/sdh")</b>
+#&lt;ec2-attachment
+   volume-id=&quot;vol-4593772c&quot;
+   instance-id=&quot;i-b41aa5dd&quot;
+   status=&quot;attaching&quot;
+   attach-time=&quot;2008-12-11T06:32:13.000Z&quot;
+   device=&quot;/dev/sdh&quot;
+   @ #x1001afbf32&gt;
+cl-user(42): <b>(describe-volumes)</b>
+(#&lt;ec2-volume
+    id=&quot;vol-4593772c&quot;
+    size=&quot;1&quot;
+    status=&quot;in-use&quot;
+    create-time=&quot;2008-12-11T06:32:02.000Z&quot;
+    attachments=(#&lt;ec2-attachment # # # # @ #x1001b183d2&gt;)
+    @ #x1001b18462&gt;
+ #&lt;ec2-volume
+    id=&quot;vol-9b8d69f2&quot;
+    size=&quot;200&quot;
+    status=&quot;in-use&quot;
+    create-time=&quot;2008-12-05T22:07:41.000Z&quot;
+    attachments=(#&lt;ec2-attachment # # # # @ #x1001b184e2&gt;)
+    @ #x1001b18572&gt;)
+cl-user(43): 
+</pre>
+
+<p id="119">
+Now, on the instance itself, I initialize the new attached device (we
+are showing the shell interaction, with the # prompt indicating the
+user is <b>root</b>):
+</p>
+
+<pre id="120">
+# <b>fdisk /dev/sdh</b>
+...
+
+Command (m for help): <b>p</b>
+
+Disk /dev/sdh: 1073 MB, 1073741824 bytes
+255 heads, 63 sectors/track, 130 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk identifier: 0x5f4d21ed
+
+   Device Boot      Start         End      Blocks   Id  System
+
+Command (m for help): <b>n</b>
+Command action
+   e   extended
+   p   primary partition (1-4)
+<b>p</b>
+Partition number (1-4): <b>1</b>
+First cylinder (1-130, default 1): 
+
+Using default value 1
+Last cylinder or +size or +sizeM or +sizeK (1-130, default 130): 
+Using default value 130
+
+Command (m for help): <b>p</b>
+
+Disk /dev/sdh: 1073 MB, 1073741824 bytes
+255 heads, 63 sectors/track, 130 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk identifier: 0x5f4d21ed
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdh1               1         130     1044193+  83  Linux
+
+Command (m for help): <b>w</b>
+The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+Syncing disks.
+# <b>mkfs /dev/sdh1</b>
+mke2fs 1.40.4 (31-Dec-2007)
+Filesystem label=
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+130560 inodes, 261048 blocks
+13052 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=268435456
+8 block groups
+32768 blocks per group, 32768 fragments per group
+16320 inodes per group
+Superblock backups stored on blocks: 
+	32768, 98304, 163840, 229376
+
+Writing inode tables: done                            
+Writing superblocks and filesystem accounting information: done
+
+This filesystem will be automatically checked every 38 mounts or
+180 days, whichever comes first.  Use tune2fs -c or -i to override.
+# <b>mkdir /v1</b>
+# <b>mount /dev/sdh1 /v1</b>
+# <b>df -h /v1</b>
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/sdh1            1004M  1.3M  952M   1% /v1
+# 
+</pre>
+
+<p id="121">
+Now back in Lisp:
+</p>
+
+<pre id="122">
+cl-user(43): <b>(create-snapshot v1)</b>
+#&lt;ec2-snapshot
+   id=&quot;snap-c821c2a1&quot;
+   volume-id=&quot;vol-4593772c&quot;
+   status=&quot;pending&quot;
+   start-time=&quot;2008-12-11T06:34:20.000Z&quot;
+   @ #x1001b48562&gt;
+cl-user(44): <b>(describe-snapshots)</b>
+(#&lt;ec2-snapshot
+    id=&quot;snap-c821c2a1&quot;
+    volume-id=&quot;vol-4593772c&quot;
+    status=&quot;completed&quot;
+    start-time=&quot;2008-12-11T06:34:20.000Z&quot;
+    progress=&quot;100%&quot;
+    @ #x1001b60ee2&gt;)
+cl-user(45): 
+</pre>
+
+<p id="123">
+Now, create a new volume from a snapshot, instead of specifying the
+size directly:
+</p>
+
+<pre id="124">
+cl-user(45): <b>(setq snapshot (car (describe-snapshots)))</b>
+#&lt;ec2-snapshot
+   id=&quot;snap-c821c2a1&quot;
+   volume-id=&quot;vol-4593772c&quot;
+   status=&quot;completed&quot;
+   start-time=&quot;2008-12-11T06:34:20.000Z&quot;
+   progress=&quot;100%&quot;
+   @ #x1001b82f12&gt;
+cl-user(46): <b>(setq v2 (create-volume "us-east-1c" :snapshot snapshot))</b>
+#&lt;ec2-volume
+   id=&quot;vol-4693772f&quot;
+   size=&quot;1&quot;
+   status=&quot;creating&quot;
+   create-time=&quot;2008-12-11T06:34:47.000Z&quot;
+   snapshot-id=&quot;snap-c821c2a1&quot;
+   @ #x1001ba25c2&gt;
+cl-user(47): <b>(attach-volume v2 i "/dev/sdi")</b>
+#&lt;ec2-attachment
+   volume-id=&quot;vol-4693772f&quot;
+   instance-id=&quot;i-b41aa5dd&quot;
+   status=&quot;attaching&quot;
+   attach-time=&quot;2008-12-11T06:34:56.000Z&quot;
+   device=&quot;/dev/sdi&quot;
+   @ #x1001bbd6c2&gt;
+cl-user(48): <b>(describe-volumes)</b>
+(#&lt;ec2-volume
+    id=&quot;vol-4693772f&quot;
+    size=&quot;1&quot;
+    status=&quot;in-use&quot;
+    create-time=&quot;2008-12-11T06:34:47.000Z&quot;
+    attachments=(#&lt;ec2-attachment # # # # @ #x1001bdba42&gt;)
+    @ #x1001bdbad2&gt;
+ #&lt;ec2-volume
+    id=&quot;vol-4593772c&quot;
+    size=&quot;1&quot;
+    status=&quot;in-use&quot;
+    create-time=&quot;2008-12-11T06:32:02.000Z&quot;
+    attachments=(#&lt;ec2-attachment # # # # @ #x1001bdbb52&gt;)
+    @ #x1001bdbbe2&gt;
+ #&lt;ec2-volume
+    id=&quot;vol-9b8d69f2&quot;
+    size=&quot;200&quot;
+    status=&quot;in-use&quot;
+    create-time=&quot;2008-12-05T22:07:41.000Z&quot;
+    attachments=(#&lt;ec2-attachment # # # # @ #x1001bdbc62&gt;)
+    @ #x1001bdbcf2&gt;)
+</pre>
+
+<p id="125">
+Let's undo what we did above:
+</p>
+
+<pre id="126">
+cl-user(151): <b>(delete-snapshot snapshot)</b>
+t
+cl-user(152): <b>(describe-snapshots)</b>
+nil
+</pre>
+
+<p id="127">
+Detach is required before delete:
+</p>
+
+<pre id="128">
+cl-user(52): <b>(delete-volume v1)</b>
+Error: IncorrectState: The volume 'vol-4593772c' is 'in-use'..
+  [condition type: ec2-error]
+
+Restart actions (select using :continue):
+ 0: Return to Top Level (an "abort" restart).
+ 1: Abort entirely from this (lisp) process.
+[1] cl-user(53): <b>:res</b>
+cl-user(54): <b>(detach-volume v1 i :device "/dev/sdh")</b>
+#&lt;ec2-attachment
+   volume-id=&quot;vol-4593772c&quot;
+   instance-id=&quot;i-b41aa5dd&quot;
+   status=&quot;detaching&quot;
+   attach-time=&quot;2008-12-11T06:32:13.000Z&quot;
+   device=&quot;/dev/sdh&quot;
+   @ #x1001c61152&gt;
+cl-user(55): <b>(detach-volume v2 i :device "/dev/sdi")</b>
+#&lt;ec2-attachment
+   volume-id=&quot;vol-4693772f&quot;
+   instance-id=&quot;i-b41aa5dd&quot;
+   status=&quot;detaching&quot;
+   attach-time=&quot;2008-12-11T06:34:56.000Z&quot;
+   device=&quot;/dev/sdi&quot;
+   @ #x1001c7e262&gt;
+</pre>
+
+<p id="129">
+/dev/sdh1 is still mounted, so it will not detach:
+</p>
+
+<pre id="130">
+cl-user(56): <b>(describe-volumes)</b>
+(#&lt;ec2-volume
+    id=&quot;vol-4693772f&quot;
+    size=&quot;1&quot;
+    status=&quot;available&quot;
+    create-time=&quot;2008-12-11T06:34:47.000Z&quot;
+    @ #x1001e3f2a2&gt;
+ #&lt;ec2-volume
+    id=&quot;vol-4593772c&quot;
+    size=&quot;1&quot;
+    status=&quot;in-use&quot;
+    create-time=&quot;2008-12-11T06:32:02.000Z&quot;
+    attachments=(#&lt;ec2-attachment # # # # @ #x1001e3f322&gt;)
+    @ #x1001e3f3b2&gt;
+ #&lt;ec2-volume
+    id=&quot;vol-9b8d69f2&quot;
+    size=&quot;200&quot;
+    status=&quot;in-use&quot;
+    create-time=&quot;2008-12-05T22:07:41.000Z&quot;
+    attachments=(#&lt;ec2-attachment # # # # @ #x1001e3f432&gt;)
+    @ #x1001e3f4c2&gt;)
+</pre>
+
+<p id="131">
+It is now unmounted, so the status should change:
+</p>
+
+<pre id="132">
+cl-user(57): <b>(describe-volumes)</b>
+(#&lt;ec2-volume
+    id=&quot;vol-4693772f&quot;
+    size=&quot;1&quot;
+    status=&quot;available&quot;
+    create-time=&quot;2008-12-11T06:34:47.000Z&quot;
+    @ #x1001e714e2&gt;
+ #&lt;ec2-volume
+    id=&quot;vol-4593772c&quot;
+    size=&quot;1&quot;
+    status=&quot;available&quot;
+    create-time=&quot;2008-12-11T06:32:02.000Z&quot;
+    @ #x1001e71572&gt;
+ #&lt;ec2-volume
+    id=&quot;vol-9b8d69f2&quot;
+    size=&quot;200&quot;
+    status=&quot;in-use&quot;
+    create-time=&quot;2008-12-05T22:07:41.000Z&quot;
+    attachments=(#&lt;ec2-attachment # # # # @ #x1001e715f2&gt;)
+    @ #x1001e71682&gt;)
+cl-user(58): 
+</pre>
+
+<hr><hr><h2 id="133"><a name="high-level-funs-1">10.0 High-level EC2 functions</a></h2>
+
+<p id="134">
+This section details the high-level EC2 functions, some of which
+require SSH access to the
+instance. See <a href="#ec2-high-level-ops-2">Appendix C.7 High-level operators</a> for
+the formal descriptions of the functions mentioned.
+</p>
+
+<ul>
+<li id="135">
+<a href="ec2.htm#wait-for-instances-op-bookmarkxx"><b>wait-for-instances</b></a> (<i>instances</i>
+&key (<i>state</i> :running) <i>verbose</i> (<i>sleep</i> 2)
+(<i>identity</i> *ec2-identity*)): waits
+for <i>instances</i> to enter a
+particular <i>state</i>, then returns a newly made
+<a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a>s with slots containing new
+values.
+</li>
+<li id="136">
+<a href="ec2.htm#query-status-op-bookmarkxx"><b>query-status</b></a> (<i>instance</i>
+&key <i>identity</i>): returns the status of <i>instance</i>and, as a
+second return value, a new copy of the instance, just in case it
+changed.
+</li>
+<li id="137">
+<a href="ec2.htm#query-load-op-bookmarkxx"><b>query-load</b></a> (<i>instance</i>): returns the
+three values printed by the <b>/usr/bin/uptime</b> command, as
+multiple values. (This function requires SSH access and only works
+with Linux guest operating system.)
+</li>
+<li id="138">
+<a href="ec2.htm#query-memory-op-bookmarkxx"><b>query-memory</b></a> (<i>instance</i>): returns
+two values as multiple values, the used and free memory as reported by
+the <b>/usr/bin/free</b> command. (This function requires SSH access
+and only works with Linux guest operating system.)
+</li>
+<li id="139">
+<a href="ec2.htm#ssh-command-output-op-bookmarkxx"><b>ssh-command-output</b></a> (<i>instance
+command</i> &key &allow-other-keys): just
+like <a href="os-interface.htm#command-output-op-bookmarkxx"><b>excl.osi:command-output</b></a>, except
+it takes an additional required argument (the first), which is the
+instance on which to execute the command via ssh.
+</li>
+<li id="140">
+<a href="ec2.htm#ssh-copy-file-op-bookmarkxx"><b>ssh-copy-file</b></a> (<i>instance local-file
+remote-file</i> &key (<i>preserve-time</i> t) <i>recurse</i>
+&allow-other-keys): Copy <i>local-file</i> to the
+pathname relative to <i>instance</i> using name
+<i>remote-file</i>.
+</li>
+</ul>
+
+<h3 id="141">
+Example using query-status, query-load, and query-memory
+</h3>
+
+<pre id="142">
+cl-user(58): <b>(query-status i)</b>
+:running
+#&lt;ec2-instance
+   id=&quot;i-b41aa5dd&quot;
+   image-id=&quot;ami-2b5fba42&quot;
+   state-name=:running
+   state-code=16
+   private-dns-name=&quot;domU-12-31-39-00-ED-54.compute-1.internal&quot;
+   dns-name=&quot;ec2-75-101-174-18.compute-1.amazonaws.com&quot;
+   key-name=&quot;aws&quot;
+   ami-launch-index=0
+   instance-type=&quot;m1.small&quot;
+   launch-time=3437965855
+   availability-zone=&quot;us-east-1c&quot;
+   kernel-id=&quot;aki-a71cf9ce&quot;
+   ramdisk-id=&quot;ari-a51cf9cc&quot;
+   reservation-id=&quot;r-d23c9ebb&quot;
+   owner-id=&quot;210979525344&quot;
+   identity=#&lt;ec2-identity
+               ssh-identity-file=&quot;~/.ssh/id_rsa-aws&quot;
+               ssh-user=&quot;root&quot;
+               keypair-name=&quot;aws&quot;
+               @ #x10017dd802&gt;
+   @ #x1001ea26d2&gt;
+cl-user(59): <b>(query-load i)</b>
+0.0
+0.05
+0.02
+cl-user(60): <b>(query-memory i)</b>
+298136
+1449628
+cl-user(61): 
+</pre>
+
+<hr><hr><h2 id="143"><a name="misc-ops-1">11.0 Miscellaneous functions</a></h2>
+
+<p id="144">
+See <a href="#ec2-misc-ops-2">Appendix C.8 Miscellaneous operators</a> for formal
+definitions of the functions listed in this section.
+</p>
+
+<ul>
+<li id="145">
+<a href="ec2.htm#describe-availability-zones-op-bookmarkxx"><b>describe-availability-zones</b></a>
+(&rest <i>zone-names</i>): returns a list of availability zones
+and their current status.
+</li>
+</ul>
+
+<h3 id="146">
+Example using describe-availability-zones
+</h3>
+<pre id="147">
+cl-user(117): <b>(describe-availability-zones)</b>
+(("us-east-1c" . "available") ("us-east-1b" . "available")
+ ("us-east-1a" . "available"))
+cl-user(119): 
+</pre>
+
+<ul>
+<li id="148">
+<a href="ec2.htm#get-console-output-op-bookmarkxx"><b>get-console-output</b></a> (<i>instance</i>):
+returns a cons of the universal time and the console output
+from <i>instance</i>, as a string. If no output is yet
+available, then <code>nil</code> is returned for the
+string (so the return value is a singleton list containing the
+universal time).
+</li>
+</ul>
+
+<h3 id="149">
+Example using get-console-output
+</h3>
+
+<pre id="150">
+cl-user(65): <b>(get-console-output i)</b>
+(3437966094
+ . "Linux version 2.6.21.7-2.fc8xen (mockbuild@xenbuilder1.fedora.redhat.com) (gcc version 4.1.2 20070925 (Red Hat 4.1.2-33)) #1 SMP Fri Feb 15 12:39:36 EST 2008
+BIOS-provided physical RAM map:
+sanitize start
+sanitize bail 0
+...
+Fedora release 8 (Werewolf)
+Kernel 2.6.21.7-2.fc8xen on an i686
+
+domU-12-31-39-00-ED-54 login: ")
+cl-user(66): 
+</pre>
+
+<ul>
+<li id="151">
+<a href="ec2.htm#reboot-instances-op-bookmarkxx"><b>reboot-instances</b></a>
+(&rest <i>instances</i>): returns the specified instances. Returns
+`t' if successful.
+</li>
+<li id="152">
+<a href="ec2.htm#describe-regions-op-bookmarkxx"><b>describe-regions</b></a>
+(&rest <i>region-names</i>): returns a list of regions and
+(possibly) their url.
+</li>
+</ul>
+
+<h3 id="153">
+Example using describe-regions
+</h3>
+<pre id="154">
+cl-user(7): <b>(describe-regions)</b>
+(("us-east-1") ("eu-west-1"))
+cl-user(8): 
+</pre>
+
+<hr><hr><h2 id="155"><a name="ec2-vars-1">Appendix A: EC2 variables</a></h2>
+
+<hr><h3 id="156"><a name="s_aws-access-key_s-var-bookmarkxx"></a>*aws-access-key*</h3><h3 id="157">Variable</h3><h4 id="158">Package: net.ec2</h4>
+
+<p id="159">
+The value should a string which is your AWS access key.
+</p>
+<hr>
+
+<hr><h3 id="160"><a name="s_aws-secret-access-key_s-var-bookmarkxx"></a>*aws-secret-access-key*</h3><h3 id="161">Variable</h3><h4 id="162">Package: net.ec2</h4>
+
+<p id="163">
+The value should be a string which is your AWS secret access key.
+Never give this to anyone and guard the security of this access key.
+</p>
+<hr>
+
+<hr><h3 id="164"><a name="s_aws-keypair-name_s-var-bookmarkxx"></a>*aws-keypair-name*</h3><h3 id="165">Variable</h3><h4 id="166">Package: net.ec2</h4>
+
+<p id="167">
+The value should be a string which is the name of your SSH keypair.
+See <a href="ec2.htm#create-key-pair-op-bookmarkxx"><b>create-key-pair</b></a> for more
+information.
+</p>
+<hr>
+
+
+<hr><h3 id="168"><a name="s_ec2-identity_s-var-bookmarkxx"></a>*ec2-identity*</h3><h3 id="169">Variable</h3><h4 id="170">Package: net.ec2</h4>
+
+<p id="171">
+The SSH identity for use by the Lisp API. Only used for those API
+functions which need to use SSH.
+</p>
+<hr>
+
+
+<hr><h3 id="172"><a name="s_ec2-signature-version_s-var-bookmarkxx"></a>*ec2-signature-version*</h3><h3 id="173">Variable</h3><h4 id="174">Package: net.ec2</h4>
+
+<p id="175">
+The signature version for API calls.  Do not change the value of
+this symbol. 
+</p>
+<hr>
+
+<hr><h3 id="176"><a name="s_ec2-signature-method_s-var-bookmarkxx"></a>*ec2-signature-method*</h3><h3 id="177">Variable</h3><h4 id="178">Package: net.ec2</h4>
+
+<p id="179">
+The signature method for API calls. You would specify the type of
+encoding used by setting or binding this variable but currently only
+"HmacSHA1" is supported so there is no reason to modify the value. (We
+do not support SHA-256 in ACL yet.) 
+</p>
+<hr>
+
+<hr><h3 id="180"><a name="s_ec2-api-version_s-var-bookmarkxx"></a>*ec2-api-version*</h3><h3 id="181">Variable</h3><h4 id="182">Package: net.ec2</h4>
+
+<p id="183">
+The EC2 API version used by the Lisp API.  Do not change the value of
+this symbol. 
+</p>
+<hr>
+
+<hr><h3 id="184"><a name="s_default-ssh-identity-file_s-var-bookmarkxx"></a>*default-ssh-identity-file*</h3><h3 id="185">Variable</h3><h4 id="186">Package: net.ec2</h4>
+
+<p id="187">
+The value should be a string which names a the file of your local
+computer which names your private key for using SSH to the remotely
+running instances.
+</p>
+<p id="188">
+See <a href="ec2.htm#create-key-pair-op-bookmarkxx"><b>create-key-pair</b></a> below for information on
+how to create the contents of this file.
+</p>
+<p id="189">
+The initial value is "~/.ssh/id_rsa-aws"
+</p>
+<hr>
+
+<hr><h3 id="190"><a name="s_default-ssh-user_s-var-bookmarkxx"></a>*default-ssh-user*</h3><h3 id="191">Variable</h3><h4 id="192">Package: net.ec2</h4>
+
+<p id="193">
+The value should be a string which names of the user SSH should use
+when accessing remote running instances.
+</p>
+<p id="194">
+The initial value is "root".
+</p>
+<hr>
+
+<p id="195">
+The following are used to name a default AMI (Amazon Machine Image)
+and instance type (these terms are defined
+on <a href="http://aws.amazon.com/">http://aws.amazon.com/</a>).
+</p>
+
+<hr><h3 id="196"><a name="s_default-ami-name_s-var-bookmarkxx"></a>*default-ami-name*</h3><h3 id="197">Variable</h3><h4 id="198">Package: net.ec2</h4>
+
+<p id="199">
+A string naming the default AMI which the API should use. This
+and <a href="ec2.htm#s_default-instance-type_s-var-bookmarkxx"><code>*default-instance-type*</code></a> must match, in the
+sense that the instance must be suitable for the machine
+image. Mismatches will cause
+errors. See <a href="http://aws.amazon.com/">http://aws.amazon.com/</a>
+for further information.
+</p>
+<p id="200">
+The initial value is "ami-2a5fba43", which is equivalent to
+fedora-8-x86_64-base-v1.07.manifest.xml
+</p>
+
+<hr>
+
+<hr><h3 id="201"><a name="s_default-instance-type_s-var-bookmarkxx"></a>*default-instance-type*</h3><h3 id="202">Variable</h3><h4 id="203">Package: net.ec2</h4>
+
+<p id="204">
+A string naming the default instance type. This
+and <a href="ec2.htm#s_default-ami-name_s-var-bookmarkxx"><code>*default-ami-name*</code></a> must match (see the
+description of <a href="ec2.htm#s_default-ami-name_s-var-bookmarkxx"><code>*default-ami-name*</code></a>).
+</p>
+<p id="205">
+The initial value is "m1.large".
+</p>
+
+<hr>
+
+
+
+<hr><h3 id="206"><a name="s_default-ami-name_s-var-bookmarkxx"></a>*default-ami-name*</h3><h3 id="207">Variable</h3><h4 id="208">Package: net.ec2</h4>
+
+<p id="209">
+A string naming the default AMI which the API should use. This
+and <a href="ec2.htm#s_default-instance-type_s-var-bookmarkxx"><code>*default-instance-type*</code></a> must match, in the
+sense that the instance must be suitable for the machine
+image. Mismatches will cause
+errors. See <a href="http://aws.amazon.com/">http://aws.amazon.com/</a>
+for further information.
+</p>
+<p id="210">
+The initial value is "ami-2a5fba43", which is equivalent to
+fedora-8-x86_64-base-v1.07.manifest.xml
+</p>
+
+<hr>
+
+<hr><h3 id="211"><a name="s_default-instance-type_s-var-bookmarkxx"></a>*default-instance-type*</h3><h3 id="212">Variable</h3><h4 id="213">Package: net.ec2</h4>
+
+<p id="214">
+A string naming the default instance type. This
+and <a href="ec2.htm#s_default-ami-name_s-var-bookmarkxx"><code>*default-ami-name*</code></a> must match (see the
+description of <a href="ec2.htm#s_default-ami-name_s-var-bookmarkxx"><code>*default-ami-name*</code></a>).
+</p>
+<p id="215">
+The initial value is "m1.large".
+</p>
+
+<hr>
+
+
+<hr><hr><h2 id="216"><a name="ec2-classes-1">Appendix B: EC2 classes</a></h2>
+
+
+
+<hr><h2 id="217"><a name="ec2-instance-class-2">Appendix B.1 The ec2-instance class</a></h2>
+
+<hr><h3 id="218"><a name="ec2-instance-class-bookmarkxx"></a>ec2-instance</h3><h3 id="219">Class</h3><h4 id="220">Package: net.ec2</h4>
+
+<p id="221">
+The class for which many API
+functions return an instance. This represents a running AMI in the
+cloud.
+</p>
+<p id="222">
+The predicate that tests whether an object is an ec2-instance is
+ec2-instance-p. The following are accessors for the slots of this
+class:
+</p>
+
+<ul>
+<li id="223">
+<a href="ec2.htm#ec2-instance-ami-launch-index-op-bookmarkxx"><b>ec2-instance-ami-launch-index</b></a>
+</li>
+<li id="224">
+<a href="ec2.htm#ec2-instance-availability-zone-op-bookmarkxx"><b>ec2-instance-availability-zone</b></a>
+</li>
+<li id="225">
+<a href="ec2.htm#ec2-instance-dns-name-op-bookmarkxx"><b>ec2-instance-dns-name</b></a>
+</li>
+<li id="226">
+<a href="ec2.htm#ec2-instance-id-op-bookmarkxx"><b>ec2-instance-id</b></a>
+</li>
+<li id="227">
+<a href="ec2.htm#ec2-instance-identity-op-bookmarkxx"><b>ec2-instance-identity</b></a>
+</li>
+<li id="228">
+<a href="ec2.htm#ec2-instance-image-id-op-bookmarkxx"><b>ec2-instance-image-id</b></a>
+</li>
+<li id="229">
+<a href="ec2.htm#ec2-instance-instance-type-op-bookmarkxx"><b>ec2-instance-instance-type</b></a>
+</li>
+<li id="230">
+<a href="ec2.htm#ec2-instance-kernel-id-op-bookmarkxx"><b>ec2-instance-kernel-id</b></a>
+</li>
+<li id="231">
+<a href="ec2.htm#ec2-instance-key-name-op-bookmarkxx"><b>ec2-instance-key-name</b></a>
+</li>
+<li id="232">
+<a href="ec2.htm#ec2-instance-launch-time-op-bookmarkxx"><b>ec2-instance-launch-time</b></a>
+</li>
+<li id="233">
+<a href="ec2.htm#ec2-instance-owner-id-op-bookmarkxx"><b>ec2-instance-owner-id</b></a>
+</li>
+<li id="234">
+<a href="ec2.htm#ec2-instance-previous-state-code-op-bookmarkxx"><b>ec2-instance-previous-state-code</b></a>
+</li>
+<li id="235">
+<a href="ec2.htm#ec2-instance-previous-state-name-op-bookmarkxx"><b>ec2-instance-previous-state-name</b></a>
+</li>
+<li id="236">
+<a href="ec2.htm#ec2-instance-private-dns-name-op-bookmarkxx"><b>ec2-instance-private-dns-name</b></a>
+</li>
+<li id="237">
+<a href="ec2.htm#ec2-instance-ramdisk-id-op-bookmarkxx"><b>ec2-instance-ramdisk-id</b></a>
+</li>
+<li id="238">
+<a href="ec2.htm#ec2-instance-reason-op-bookmarkxx"><b>ec2-instance-reason</b></a>
+</li>
+<li id="239">
+<a href="ec2.htm#ec2-instance-reservation-id-op-bookmarkxx"><b>ec2-instance-reservation-id</b></a>
+</li>
+<li id="240">
+<a href="ec2.htm#ec2-instance-state-code-op-bookmarkxx"><b>ec2-instance-state-code</b></a>
+</li>
+<li id="241">
+<a href="ec2.htm#ec2-instance-state-name-op-bookmarkxx"><b>ec2-instance-state-name</b></a>
+</li>
+</ul>
+
+
+<hr>
+
+<hr><h3 id="242"><a name="ec2-instance-p-op-bookmarkxx"></a>ec2-instance-p</h3><h3 id="243">Generic Function</h3><h4 id="244">Package: net.ec2</h4>
+
+<p id="245"><b>Arguments: </b><i>
+object
+</i></p>
+
+<p id="246">
+The predicate for the class <a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a>, returning
+true when the argument is an ec2-instance
+and <code>nil</code> otherwise.
+</p>
+
+<hr>
+
+<hr><h3 id="247"><a name="ec2-instance-dns-name-op-bookmarkxx"></a>ec2-instance-dns-name</h3><h3 id="248">Generic Function</h3><h4 id="249">Package: net.ec2</h4>
+
+<p id="250"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="251">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+
+<hr><h3 id="252"><a name="ec2-instance-id-op-bookmarkxx"></a>ec2-instance-id</h3><h3 id="253">Generic Function</h3><h4 id="254">Package: net.ec2</h4>
+
+<p id="255"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="256">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="257"><a name="ec2-instance-image-id-op-bookmarkxx"></a>ec2-instance-image-id</h3><h3 id="258">Generic Function</h3><h4 id="259">Package: net.ec2</h4>
+
+<p id="260"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="261">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="262"><a name="ec2-instance-state-name-op-bookmarkxx"></a>ec2-instance-state-name</h3><h3 id="263">Generic Function</h3><h4 id="264">Package: net.ec2</h4>
+
+<p id="265"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="266">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="267"><a name="ec2-instance-state-code-op-bookmarkxx"></a>ec2-instance-state-code</h3><h3 id="268">Generic Function</h3><h4 id="269">Package: net.ec2</h4>
+
+<p id="270"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="271">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="272"><a name="ec2-instance-previous-state-name-op-bookmarkxx"></a>ec2-instance-previous-state-name</h3><h3 id="273">Generic Function</h3><h4 id="274">Package: net.ec2</h4>
+
+<p id="275"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="276">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="277"><a name="ec2-instance-previous-state-code-op-bookmarkxx"></a>ec2-instance-previous-state-code</h3><h3 id="278">Generic Function</h3><h4 id="279">Package: net.ec2</h4>
+
+<p id="280"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="281">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="282"><a name="ec2-instance-private-dns-name-op-bookmarkxx"></a>ec2-instance-private-dns-name</h3><h3 id="283">Generic Function</h3><h4 id="284">Package: net.ec2</h4>
+
+<p id="285"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="286">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="287"><a name="ec2-instance-owner-id-op-bookmarkxx"></a>ec2-instance-owner-id</h3><h3 id="288">Generic Function</h3><h4 id="289">Package: net.ec2</h4>
+
+<p id="290"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="291">
+The value is meta-information indirectly gleaned from EC2 API calls.
+</p>
+
+<hr>
+
+
+<hr><h3 id="292"><a name="ec2-instance-reason-op-bookmarkxx"></a>ec2-instance-reason</h3><h3 id="293">Generic Function</h3><h4 id="294">Package: net.ec2</h4>
+
+<p id="295"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="296">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="297"><a name="ec2-instance-key-name-op-bookmarkxx"></a>ec2-instance-key-name</h3><h3 id="298">Generic Function</h3><h4 id="299">Package: net.ec2</h4>
+
+<p id="300"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="301">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="302"><a name="ec2-instance-ami-launch-index-op-bookmarkxx"></a>ec2-instance-ami-launch-index</h3><h3 id="303">Generic Function</h3><h4 id="304">Package: net.ec2</h4>
+
+<p id="305"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="306">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="307"><a name="ec2-instance-instance-type-op-bookmarkxx"></a>ec2-instance-instance-type</h3><h3 id="308">Generic Function</h3><h4 id="309">Package: net.ec2</h4>
+
+<p id="310"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="311">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="312"><a name="ec2-instance-launch-time-op-bookmarkxx"></a>ec2-instance-launch-time</h3><h3 id="313">Generic Function</h3><h4 id="314">Package: net.ec2</h4>
+
+<p id="315"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="316">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="317"><a name="ec2-instance-availability-zone-op-bookmarkxx"></a>ec2-instance-availability-zone</h3><h3 id="318">Generic Function</h3><h4 id="319">Package: net.ec2</h4>
+
+<p id="320"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="321">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="322"><a name="ec2-instance-kernel-id-op-bookmarkxx"></a>ec2-instance-kernel-id</h3><h3 id="323">Generic Function</h3><h4 id="324">Package: net.ec2</h4>
+
+<p id="325"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="326">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="327"><a name="ec2-instance-ramdisk-id-op-bookmarkxx"></a>ec2-instance-ramdisk-id</h3><h3 id="328">Generic Function</h3><h4 id="329">Package: net.ec2</h4>
+
+<p id="330"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="331">
+Accessor of data returned by EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="332"><a name="ec2-instance-reservation-id-op-bookmarkxx"></a>ec2-instance-reservation-id</h3><h3 id="333">Generic Function</h3><h4 id="334">Package: net.ec2</h4>
+
+<p id="335"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="336">
+The value is meta-information indirectly gleaned from EC2 API calls.
+</p>
+
+<hr>
+
+<hr><h3 id="337"><a name="ec2-instance-identity-op-bookmarkxx"></a>ec2-instance-identity</h3><h3 id="338">Generic Function</h3><h4 id="339">Package: net.ec2</h4>
+
+<p id="340"><b>Arguments: </b><i>
+ec2-instance
+</i></p>
+
+<p id="341">
+The EC2 identity used in SSH access of the remotely running
+instance.
+</p>
+
+<hr>
+
+
+
+
+<hr><h2 id="342"><a name="ec2-image-2">Appendix B.2 The ec2-image class</a></h2>
+
+
+<hr><h3 id="343"><a name="ec2-image-class-bookmarkxx"></a>ec2-image</h3><h3 id="344">Class</h3><h4 id="345">Package: net.ec2</h4>
+
+<p id="346">
+The class for which many API
+functions return an instance. This represents images which can be
+run on the cloud. 
+</p>
+<p id="347">
+The predicate that tests whether an object is an ec2-instance is
+<a href="ec2.htm#ec2-image-p-op-bookmarkxx"><b>ec2-image-p</b></a>. The following are accessors
+for the slots of this class:
+</p>
+
+<ul>
+<li id="348">
+<a href="ec2.htm#ec2-image-architecture-op-bookmarkxx"><b>ec2-image-architecture</b></a>
+</li>
+<li id="349">
+<a href="ec2.htm#ec2-image-id-op-bookmarkxx"><b>ec2-image-id</b></a>
+</li>
+<li id="350">
+<a href="ec2.htm#ec2-image-is-public-op-bookmarkxx"><b>ec2-image-is-public</b></a>
+</li>
+<li id="351">
+<a href="ec2.htm#ec2-image-kernel-id-op-bookmarkxx"><b>ec2-image-kernel-id</b></a>
+</li>
+<li id="352">
+<a href="ec2.htm#ec2-image-location-op-bookmarkxx"><b>ec2-image-location</b></a>
+</li>
+<li id="353">
+<a href="ec2.htm#ec2-image-owner-id-op-bookmarkxx"><b>ec2-image-owner-id</b></a>
+</li>
+<li id="354">
+<a href="ec2.htm#ec2-image-ramdisk-id-op-bookmarkxx"><b>ec2-image-ramdisk-id</b></a>
+</li>
+<li id="355">
+<a href="ec2.htm#ec2-image-state-op-bookmarkxx"><b>ec2-image-state</b></a>
+</li>
+<li id="356">
+<a href="ec2.htm#ec2-image-type-op-bookmarkxx"><b>ec2-image-type</b></a>
+</li>
+</ul>
+
+
+<hr>
+
+<hr><h3 id="357"><a name="ec2-image-p-op-bookmarkxx"></a>ec2-image-p</h3><h3 id="358">Generic Function</h3><h4 id="359">Package: net.ec2</h4>
+
+<p id="360"><b>Arguments: </b><i>
+object
+</i></p>
+
+<p id="361">
+The predicate for the class <a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a>, returning
+true when the argument is an ec2-image
+and <code>nil</code> otherwise.
+</p>
+
+<hr>
+
+
+<hr><h3 id="362"><a name="ec2-image-architecture-op-bookmarkxx"></a>ec2-image-architecture</h3><h3 id="363">Generic Function</h3><h4 id="364">Package: net.ec2</h4>
+
+<p id="365"><b>Arguments: </b><i>
+ec2-image
+</i></p>
+
+<p id="366">
+The accessor to the named slot of an <a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="367"><a name="ec2-image-id-op-bookmarkxx"></a>ec2-image-id</h3><h3 id="368">Generic Function</h3><h4 id="369">Package: net.ec2</h4>
+
+<p id="370"><b>Arguments: </b><i>
+ec2-image
+</i></p>
+
+<p id="371">
+The accessor to the named slot of an <a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="372"><a name="ec2-image-is-public-op-bookmarkxx"></a>ec2-image-is-public</h3><h3 id="373">Generic Function</h3><h4 id="374">Package: net.ec2</h4>
+
+<p id="375"><b>Arguments: </b><i>
+ec2-image
+</i></p>
+
+<p id="376">
+The accessor to the named slot of an <a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="377"><a name="ec2-image-kernel-id-op-bookmarkxx"></a>ec2-image-kernel-id</h3><h3 id="378">Generic Function</h3><h4 id="379">Package: net.ec2</h4>
+
+<p id="380"><b>Arguments: </b><i>
+ec2-image
+</i></p>
+
+<p id="381">
+The accessor to the named slot of an <a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="382"><a name="ec2-image-location-op-bookmarkxx"></a>ec2-image-location</h3><h3 id="383">Generic Function</h3><h4 id="384">Package: net.ec2</h4>
+
+<p id="385"><b>Arguments: </b><i>
+ec2-image
+</i></p>
+
+<p id="386">
+The accessor to the named slot of an <a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="387"><a name="ec2-image-owner-id-op-bookmarkxx"></a>ec2-image-owner-id</h3><h3 id="388">Generic Function</h3><h4 id="389">Package: net.ec2</h4>
+
+<p id="390"><b>Arguments: </b><i>
+ec2-image
+</i></p>
+
+<p id="391">
+The accessor to the named slot of an <a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="392"><a name="ec2-image-ramdisk-id-op-bookmarkxx"></a>ec2-image-ramdisk-id</h3><h3 id="393">Generic Function</h3><h4 id="394">Package: net.ec2</h4>
+
+<p id="395"><b>Arguments: </b><i>
+ec2-image
+</i></p>
+
+<p id="396">
+The accessor to the named slot of an <a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="397"><a name="ec2-image-state-op-bookmarkxx"></a>ec2-image-state</h3><h3 id="398">Generic Function</h3><h4 id="399">Package: net.ec2</h4>
+
+<p id="400"><b>Arguments: </b><i>
+ec2-image
+</i></p>
+
+<p id="401">
+The accessor to the named slot of an <a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="402"><a name="ec2-image-type-op-bookmarkxx"></a>ec2-image-type</h3><h3 id="403">Generic Function</h3><h4 id="404">Package: net.ec2</h4>
+
+<p id="405"><b>Arguments: </b><i>
+ec2-image
+</i></p>
+
+<p id="406">
+The accessor to the named slot of an <a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a>.
+</p>
+<hr>
+
+
+
+
+<hr><h2 id="407"><a name="ec2-key-2">Appendix B.3 The ec2-key class</a></h2>
+
+
+<hr><h3 id="408"><a name="ec2-key-class-bookmarkxx"></a>ec2-key</h3><h3 id="409">Class</h3><h4 id="410">Package: net.ec2</h4>
+
+<p id="411">
+The class for which many API
+functions return an instance. This represents the SSH keyname used to
+access a remotely running instance.
+</p>
+<p id="412">
+The predicate that tests whether an object is an ec2-key is
+<a href="ec2.htm#ec2-key-p-op-bookmarkxx"><b>ec2-key-p</b></a>. The following are accessors
+for the slots of this class:
+</p>
+
+<ul>
+<li id="413">
+<a href="ec2.htm#ec2-key-fingerprint-op-bookmarkxx"><b>ec2-key-fingerprint</b></a>
+</li>
+<li id="414">
+<a href="ec2.htm#ec2-key-name-op-bookmarkxx"><b>ec2-key-name</b></a>
+</li>
+</ul>
+
+
+<hr>
+
+<hr><h3 id="415"><a name="ec2-key-p-op-bookmarkxx"></a>ec2-key-p</h3><h3 id="416">Generic Function</h3><h4 id="417">Package: net.ec2</h4>
+
+<p id="418"><b>Arguments: </b><i>
+object
+</i></p>
+
+<p id="419">
+The predicate for the class <a href="ec2.htm#ec2-key-class-bookmarkxx"><code>ec2-key</code></a>, returning
+true when the argument is an ec2-key
+and <code>nil</code> otherwise.
+</p>
+
+<hr>
+
+<hr><h3 id="420"><a name="ec2-key-name-op-bookmarkxx"></a>ec2-key-name</h3><h3 id="421">Generic Function</h3><h4 id="422">Package: net.ec2</h4>
+
+<p id="423"><b>Arguments: </b><i>
+ec2-key
+</i></p>
+
+<p id="424">
+The accessor to the named slot of an <a href="ec2.htm#ec2-key-class-bookmarkxx"><code>ec2-key</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="425"><a name="ec2-key-fingerprint-op-bookmarkxx"></a>ec2-key-fingerprint</h3><h3 id="426">Generic Function</h3><h4 id="427">Package: net.ec2</h4>
+
+<p id="428"><b>Arguments: </b><i>
+ec2-key
+</i></p>
+
+<p id="429">
+The accessor to the named slot of an <a href="ec2.htm#ec2-key-class-bookmarkxx"><code>ec2-key</code></a>.
+</p>
+<hr>
+
+
+
+<hr><h2 id="430"><a name="ec2-security-group-2">Appendix B.4 The ec2-security-group class</a></h2>
+
+
+<hr><h3 id="431"><a name="ec2-security-group-class-bookmarkxx"></a>ec2-security-group</h3><h3 id="432">Class</h3><h4 id="433">Package: net.ec2</h4>
+
+<p id="434">
+The class for which some API functions return an instance. This
+represents a security group definition.
+</p>
+<p id="435">
+The predicate that tests whether an object is an ec2-security-group is
+<a href="ec2.htm#ec2-security-group-p-op-bookmarkxx"><b>ec2-security-group-p</b></a>. The following are accessors
+for the slots of this class:
+</p>
+
+<ul>
+<li id="436">
+<a href="ec2.htm#ec2-security-group-description-op-bookmarkxx"><b>ec2-security-group-description</b></a>
+</li>
+<li id="437">
+<a href="ec2.htm#ec2-security-group-ip-permissions-op-bookmarkxx"><b>ec2-security-group-ip-permissions</b></a>
+</li>
+<li id="438">
+<a href="ec2.htm#ec2-security-group-name-op-bookmarkxx"><b>ec2-security-group-name</b></a>
+</li>
+<li id="439">
+<a href="ec2.htm#ec2-security-group-owner-id-op-bookmarkxx"><b>ec2-security-group-owner-id</b></a>
+</li>
+</ul>
+
+
+<hr>
+
+<hr><h3 id="440"><a name="ec2-security-group-p-op-bookmarkxx"></a>ec2-security-group-p</h3><h3 id="441">Generic Function</h3><h4 id="442">Package: net.ec2</h4>
+
+<p id="443"><b>Arguments: </b><i>
+object
+</i></p>
+
+<p id="444">
+The predicate for the class <a href="ec2.htm#ec2-security-group-class-bookmarkxx"><code>ec2-security-group</code></a>, returning
+true when the argument is an ec2-security-group
+and <code>nil</code> otherwise.
+</p>
+
+<hr>
+
+<hr><h3 id="445"><a name="ec2-security-group-description-op-bookmarkxx"></a>ec2-security-group-description</h3><h3 id="446">Generic Function</h3><h4 id="447">Package: net.ec2</h4>
+
+<p id="448"><b>Arguments: </b><i>
+ec2-security-group
+</i></p>
+
+<p id="449">
+The accessor to the named slot of an <a href="ec2.htm#ec2-security-group-class-bookmarkxx"><code>ec2-security-group</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="450"><a name="ec2-security-group-ip-permissions-op-bookmarkxx"></a>ec2-security-group-ip-permissions</h3><h3 id="451">Generic Function</h3><h4 id="452">Package: net.ec2</h4>
+
+<p id="453"><b>Arguments: </b><i>
+ec2-security-group
+</i></p>
+
+<p id="454">
+The accessor to the named slot of an <a href="ec2.htm#ec2-security-group-class-bookmarkxx"><code>ec2-security-group</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="455"><a name="ec2-security-group-name-op-bookmarkxx"></a>ec2-security-group-name</h3><h3 id="456">Generic Function</h3><h4 id="457">Package: net.ec2</h4>
+
+<p id="458"><b>Arguments: </b><i>
+ec2-security-group
+</i></p>
+
+<p id="459">
+The accessor to the named slot of an <a href="ec2.htm#ec2-security-group-class-bookmarkxx"><code>ec2-security-group</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="460"><a name="ec2-security-group-owner-id-op-bookmarkxx"></a>ec2-security-group-owner-id</h3><h3 id="461">Generic Function</h3><h4 id="462">Package: net.ec2</h4>
+
+<p id="463"><b>Arguments: </b><i>
+ec2-security-group
+</i></p>
+
+<p id="464">
+The accessor to the named slot of an <a href="ec2.htm#ec2-security-group-class-bookmarkxx"><code>ec2-security-group</code></a>.
+</p>
+<hr>
+
+
+
+<hr><h2 id="465"><a name="ec2-ip-permissions-2">Appendix B.5 The ec2-ip-permissions class</a></h2>
+
+<hr><h3 id="466"><a name="ec2-ip-permissions-class-bookmarkxx"></a>ec2-ip-permissions</h3><h3 id="467">Class</h3><h4 id="468">Package: net.ec2</h4>
+
+<p id="469">
+The class for which some
+API functions return an instance.  This represents the permissions
+which can be set for access to an
+instance.
+</p>
+<p id="470">
+The predicate that tests whether an object is an ec2-ip-permissions is
+<a href="ec2.htm#ec2-ip-permissions-p-op-bookmarkxx"><b>ec2-ip-permissions-p</b></a>. The following are accessors
+for the slots of this class:
+</p>
+
+<ul>
+<li id="471">
+<a href="ec2.htm#ec2-ip-permissions-from-port-op-bookmarkxx"><b>ec2-ip-permissions-from-port</b></a>
+</li>
+<li id="472">
+<a href="ec2.htm#ec2-ip-permissions-ip-protocol-op-bookmarkxx"><b>ec2-ip-permissions-ip-protocol</b></a>
+</li>
+<li id="473">
+<a href="ec2.htm#ec2-ip-permissions-ip-ranges-op-bookmarkxx"><b>ec2-ip-permissions-ip-ranges</b></a>
+</li>
+<li id="474">
+<a href="ec2.htm#ec2-ip-permissions-to-port-op-bookmarkxx"><b>ec2-ip-permissions-to-port</b></a>
+</li>
+</ul>
+
+
+<hr>
+
+<hr><h3 id="475"><a name="ec2-ip-permissions-p-op-bookmarkxx"></a>ec2-ip-permissions-p</h3><h3 id="476">Generic Function</h3><h4 id="477">Package: net.ec2</h4>
+
+<p id="478"><b>Arguments: </b><i>
+object
+</i></p>
+
+<p id="479">
+The predicate for the class <a href="ec2.htm#ec2-ip-permissions-class-bookmarkxx"><code>ec2-ip-permissions</code></a>, returning
+true when the argument is an ec2-ip-permissions
+and <code>nil</code> otherwise.
+</p>
+
+<hr>
+
+<hr><h3 id="480"><a name="ec2-ip-permissions-from-port-op-bookmarkxx"></a>ec2-ip-permissions-from-port</h3><h3 id="481">Generic Function</h3><h4 id="482">Package: net.ec2</h4>
+
+<p id="483"><b>Arguments: </b><i>
+ec2-ip-permissions
+</i></p>
+
+<p id="484">
+The accessor to the named slot of an <a href="ec2.htm#ec2-ip-permissions-class-bookmarkxx"><code>ec2-ip-permissions</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="485"><a name="ec2-ip-permissions-ip-protocol-op-bookmarkxx"></a>ec2-ip-permissions-ip-protocol</h3><h3 id="486">Generic Function</h3><h4 id="487">Package: net.ec2</h4>
+
+<p id="488"><b>Arguments: </b><i>
+ec2-ip-permissions
+</i></p>
+
+<p id="489">
+The accessor to the named slot of an <a href="ec2.htm#ec2-ip-permissions-class-bookmarkxx"><code>ec2-ip-permissions</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="490"><a name="ec2-ip-permissions-ip-ranges-op-bookmarkxx"></a>ec2-ip-permissions-ip-ranges</h3><h3 id="491">Generic Function</h3><h4 id="492">Package: net.ec2</h4>
+
+<p id="493"><b>Arguments: </b><i>
+ec2-ip-permissions
+</i></p>
+
+<p id="494">
+The accessor to the named slot of an <a href="ec2.htm#ec2-ip-permissions-class-bookmarkxx"><code>ec2-ip-permissions</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="495"><a name="ec2-ip-permissions-to-port-op-bookmarkxx"></a>ec2-ip-permissions-to-port</h3><h3 id="496">Generic Function</h3><h4 id="497">Package: net.ec2</h4>
+
+<p id="498"><b>Arguments: </b><i>
+ec2-ip-permissions
+</i></p>
+
+<p id="499">
+The accessor to the named slot of an <a href="ec2.htm#ec2-ip-permissions-class-bookmarkxx"><code>ec2-ip-permissions</code></a>.
+</p>
+<hr>
+
+
+
+
+<hr><h2 id="500"><a name="ec2-volume-2">Appendix B.6 The ec2-volume class</a></h2>
+
+<hr><h3 id="501"><a name="ec2-volume-class-bookmarkxx"></a>ec2-volume</h3><h3 id="502">Class</h3><h4 id="503">Package: net.ec2</h4>
+
+<p id="504">
+The class for which some API functions return an
+instance. This represents the volume definition, or unit of storage.
+</p>
+<p id="505">
+The predicate that tests whether an object is an ec2-volume is
+<a href="ec2.htm#ec2-volume-p-op-bookmarkxx"><b>ec2-volume-p</b></a>. The following are accessors
+for the slots of this class:
+</p>
+
+<ul>
+<li id="506">
+<a href="ec2.htm#ec2-volume-attachments-op-bookmarkxx"><b>ec2-volume-attachments</b></a>
+</li>
+<li id="507">
+<a href="ec2.htm#ec2-volume-create-time-op-bookmarkxx"><b>ec2-volume-create-time</b></a>
+</li>
+<li id="508">
+<a href="ec2.htm#ec2-volume-id-op-bookmarkxx"><b>ec2-volume-id</b></a>
+</li>
+<li id="509">
+<a href="ec2.htm#ec2-volume-size-op-bookmarkxx"><b>ec2-volume-size</b></a>
+</li>
+<li id="510">
+<a href="ec2.htm#ec2-volume-snapshot-id-op-bookmarkxx"><b>ec2-volume-snapshot-id</b></a>
+</li>
+<li id="511">
+<a href="ec2.htm#ec2-volume-status-op-bookmarkxx"><b>ec2-volume-status</b></a>
+</li>
+<li id="512">
+<a href="ec2.htm#ec2-volume-availability-zone-op-bookmarkxx"><b>ec2-volume-availability-zone</b></a>
+</li>
+</ul>
+
+
+<hr>
+
+<hr><h3 id="513"><a name="ec2-volume-p-op-bookmarkxx"></a>ec2-volume-p</h3><h3 id="514">Generic Function</h3><h4 id="515">Package: net.ec2</h4>
+
+<p id="516"><b>Arguments: </b><i>
+object
+</i></p>
+
+<p id="517">
+The predicate for the class <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a>, returning
+true when the argument is an ec2-volume
+and <code>nil</code> otherwise.
+</p>
+
+<hr>
+
+<hr><h3 id="518"><a name="ec2-volume-attachments-op-bookmarkxx"></a>ec2-volume-attachments</h3><h3 id="519">Generic Function</h3><h4 id="520">Package: net.ec2</h4>
+
+<p id="521"><b>Arguments: </b><i>
+ec2-volume
+</i></p>
+
+<p id="522">
+The accessor to the named slot of an <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="523"><a name="ec2-volume-create-time-op-bookmarkxx"></a>ec2-volume-create-time</h3><h3 id="524">Generic Function</h3><h4 id="525">Package: net.ec2</h4>
+
+<p id="526"><b>Arguments: </b><i>
+ec2-volume
+</i></p>
+
+<p id="527">
+The accessor to the named slot of an <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="528"><a name="ec2-volume-id-op-bookmarkxx"></a>ec2-volume-id</h3><h3 id="529">Generic Function</h3><h4 id="530">Package: net.ec2</h4>
+
+<p id="531"><b>Arguments: </b><i>
+ec2-volume
+</i></p>
+
+<p id="532">
+The accessor to the named slot of an <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="533"><a name="ec2-volume-size-op-bookmarkxx"></a>ec2-volume-size</h3><h3 id="534">Generic Function</h3><h4 id="535">Package: net.ec2</h4>
+
+<p id="536"><b>Arguments: </b><i>
+ec2-volume
+</i></p>
+
+<p id="537">
+The accessor to the named slot of an <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="538"><a name="ec2-volume-snapshot-id-op-bookmarkxx"></a>ec2-volume-snapshot-id</h3><h3 id="539">Generic Function</h3><h4 id="540">Package: net.ec2</h4>
+
+<p id="541"><b>Arguments: </b><i>
+ec2-volume
+</i></p>
+
+<p id="542">
+The accessor to the named slot of an <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="543"><a name="ec2-volume-status-op-bookmarkxx"></a>ec2-volume-status</h3><h3 id="544">Generic Function</h3><h4 id="545">Package: net.ec2</h4>
+
+<p id="546"><b>Arguments: </b><i>
+ec2-volume
+</i></p>
+
+<p id="547">
+The accessor to the named slot of an <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="548"><a name="ec2-volume-availability-zone-op-bookmarkxx"></a>ec2-volume-availability-zone</h3><h3 id="549">Generic Function</h3><h4 id="550">Package: net.ec2</h4>
+
+<p id="551"><b>Arguments: </b><i>
+ec2-volume
+</i></p>
+
+<p id="552">
+(Previously names <b>ec2-volume-zone</b>.)  The accessor to the named
+slot of an <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a>.
+</p>
+<hr>
+
+
+
+<hr><h2 id="553"><a name="ec2-attachment-2">Appendix B.7 The ec2-attachment class</a></h2>
+
+<hr><h3 id="554"><a name="ec2-attachment-class-bookmarkxx"></a>ec2-attachment</h3><h3 id="555">Class</h3><h4 id="556">Package: net.ec2</h4>
+
+<p id="557">
+The class for which some API functions return an instance. This
+represents an attached volume on an
+instance.
+</p>
+<p id="558">
+The predicate that tests whether an object is an ec2-attachment is
+<a href="ec2.htm#ec2-attachment-p-op-bookmarkxx"><b>ec2-attachment-p</b></a>. The following are accessors
+for the slots of this class:
+</p>
+
+<ul>
+<li id="559">
+<a href="ec2.htm#ec2-attachment-attach-time-op-bookmarkxx"><b>ec2-attachment-attach-time</b></a>
+</li>
+<li id="560">
+<a href="ec2.htm#ec2-attachment-device-op-bookmarkxx"><b>ec2-attachment-device</b></a>
+</li>
+<li id="561">
+<a href="ec2.htm#ec2-attachment-instance-id-op-bookmarkxx"><b>ec2-attachment-instance-id</b></a>
+</li>
+<li id="562">
+<a href="ec2.htm#ec2-attachment-size-op-bookmarkxx"><b>ec2-attachment-size</b></a>
+</li>
+<li id="563">
+<a href="ec2.htm#ec2-attachment-status-op-bookmarkxx"><b>ec2-attachment-status</b></a>
+</li>
+<li id="564">
+<a href="ec2.htm#ec2-attachment-volume-id-op-bookmarkxx"><b>ec2-attachment-volume-id</b></a>
+</li>
+</ul>
+
+
+<hr>
+
+<hr><h3 id="565"><a name="ec2-attachment-p-op-bookmarkxx"></a>ec2-attachment-p</h3><h3 id="566">Generic Function</h3><h4 id="567">Package: net.ec2</h4>
+
+<p id="568"><b>Arguments: </b><i>
+object
+</i></p>
+
+<p id="569">
+The predicate for the class <a href="ec2.htm#ec2-attachment-class-bookmarkxx"><code>ec2-attachment</code></a>, returning
+true when the argument is an ec2-attachment
+and <code>nil</code> otherwise.
+</p>
+
+<hr>
+
+<hr><h3 id="570"><a name="ec2-attachment-attach-time-op-bookmarkxx"></a>ec2-attachment-attach-time</h3><h3 id="571">Generic Function</h3><h4 id="572">Package: net.ec2</h4>
+
+<p id="573"><b>Arguments: </b><i>
+ec2-attachment
+</i></p>
+
+<p id="574">
+The accessor to the named slot of an <a href="ec2.htm#ec2-attachment-class-bookmarkxx"><code>ec2-attachment</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="575"><a name="ec2-attachment-device-op-bookmarkxx"></a>ec2-attachment-device</h3><h3 id="576">Generic Function</h3><h4 id="577">Package: net.ec2</h4>
+
+<p id="578"><b>Arguments: </b><i>
+ec2-attachment
+</i></p>
+
+<p id="579">
+The accessor to the named slot of an <a href="ec2.htm#ec2-attachment-class-bookmarkxx"><code>ec2-attachment</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="580"><a name="ec2-attachment-instance-id-op-bookmarkxx"></a>ec2-attachment-instance-id</h3><h3 id="581">Generic Function</h3><h4 id="582">Package: net.ec2</h4>
+
+<p id="583"><b>Arguments: </b><i>
+ec2-attachment
+</i></p>
+
+<p id="584">
+The accessor to the named slot of an <a href="ec2.htm#ec2-attachment-class-bookmarkxx"><code>ec2-attachment</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="585"><a name="ec2-attachment-size-op-bookmarkxx"></a>ec2-attachment-size</h3><h3 id="586">Generic Function</h3><h4 id="587">Package: net.ec2</h4>
+
+<p id="588"><b>Arguments: </b><i>
+ec2-attachment
+</i></p>
+
+<p id="589">
+The accessor to the named slot of an <a href="ec2.htm#ec2-attachment-class-bookmarkxx"><code>ec2-attachment</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="590"><a name="ec2-attachment-status-op-bookmarkxx"></a>ec2-attachment-status</h3><h3 id="591">Generic Function</h3><h4 id="592">Package: net.ec2</h4>
+
+<p id="593"><b>Arguments: </b><i>
+ec2-attachment
+</i></p>
+
+<p id="594">
+The accessor to the named slot of an <a href="ec2.htm#ec2-attachment-class-bookmarkxx"><code>ec2-attachment</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="595"><a name="ec2-attachment-volume-id-op-bookmarkxx"></a>ec2-attachment-volume-id</h3><h3 id="596">Generic Function</h3><h4 id="597">Package: net.ec2</h4>
+
+<p id="598"><b>Arguments: </b><i>
+ec2-attachment
+</i></p>
+
+<p id="599">
+The accessor to the named slot of an <a href="ec2.htm#ec2-attachment-class-bookmarkxx"><code>ec2-attachment</code></a>.
+</p>
+<hr>
+
+
+
+<hr><h2 id="600"><a name="ec2-snapshot-2">Appendix B.8 The ec2-snapshot class</a></h2>
+
+
+<hr><h3 id="601"><a name="ec2-snapshot-class-bookmarkxx"></a>ec2-snapshot</h3><h3 id="602">Class</h3><h4 id="603">Package: net.ec2</h4>
+
+<p id="604">
+The class for which some API functions return an
+instance. This represents a snapshot of a volume.
+</p>
+<p id="605">
+The predicate that tests whether an object is an
+ec2-snapshot is
+<a href="ec2.htm#ec2-snapshot-p-op-bookmarkxx"><b>ec2-snapshot-p</b></a>. The following are accessors
+for the slots of this class:
+</p>
+
+<ul>
+<li id="606">
+<a href="ec2.htm#ec2-snapshot-id-op-bookmarkxx"><b>ec2-snapshot-id</b></a>
+</li>
+<li id="607">
+<a href="ec2.htm#ec2-snapshot-progress-op-bookmarkxx"><b>ec2-snapshot-progress</b></a>
+</li>
+<li id="608">
+<a href="ec2.htm#ec2-snapshot-start-time-op-bookmarkxx"><b>ec2-snapshot-start-time</b></a>
+</li>
+<li id="609">
+<a href="ec2.htm#ec2-snapshot-status-op-bookmarkxx"><b>ec2-snapshot-status</b></a>
+</li>
+<li id="610">
+<a href="ec2.htm#ec2-snapshot-volume-id-op-bookmarkxx"><b>ec2-snapshot-volume-id</b></a>
+</li>
+</ul>
+
+
+<hr>
+
+<hr><h3 id="611"><a name="ec2-snapshot-p-op-bookmarkxx"></a>ec2-snapshot-p</h3><h3 id="612">Generic Function</h3><h4 id="613">Package: net.ec2</h4>
+
+<p id="614"><b>Arguments: </b><i>
+object
+</i></p>
+
+<p id="615">
+The predicate for the class <a href="ec2.htm#ec2-snapshot-class-bookmarkxx"><code>ec2-snapshot</code></a>, returning
+true when the argument is an ec2-snapshot
+and <code>nil</code> otherwise.
+</p>
+
+<hr>
+
+<hr><h3 id="616"><a name="ec2-snapshot-id-op-bookmarkxx"></a>ec2-snapshot-id</h3><h3 id="617">Generic Function</h3><h4 id="618">Package: net.ec2</h4>
+
+<p id="619"><b>Arguments: </b><i>
+ec2-snapshot
+</i></p>
+
+<p id="620">
+The accessor to the named slot of the snapshot class.
+</p>
+
+<hr>
+
+<hr><h3 id="621"><a name="ec2-snapshot-progress-op-bookmarkxx"></a>ec2-snapshot-progress</h3><h3 id="622">Generic Function</h3><h4 id="623">Package: net.ec2</h4>
+
+<p id="624"><b>Arguments: </b><i>
+ec2-snapshot
+</i></p>
+
+<p id="625">
+The accessor to the named slot of the snapshot class.
+</p>
+
+<hr>
+
+<hr><h3 id="626"><a name="ec2-snapshot-start-time-op-bookmarkxx"></a>ec2-snapshot-start-time</h3><h3 id="627">Generic Function</h3><h4 id="628">Package: net.ec2</h4>
+
+<p id="629"><b>Arguments: </b><i>
+ec2-snapshot
+</i></p>
+
+<p id="630">
+The accessor to the named slot of the snapshot class.
+</p>
+
+<hr>
+
+<hr><h3 id="631"><a name="ec2-snapshot-status-op-bookmarkxx"></a>ec2-snapshot-status</h3><h3 id="632">Generic Function</h3><h4 id="633">Package: net.ec2</h4>
+
+<p id="634"><b>Arguments: </b><i>
+ec2-snapshot
+</i></p>
+
+<p id="635">
+The accessor to the named slot of the snapshot class.
+</p>
+
+<hr>
+
+<hr><h3 id="636"><a name="ec2-snapshot-volume-id-op-bookmarkxx"></a>ec2-snapshot-volume-id</h3><h3 id="637">Generic Function</h3><h4 id="638">Package: net.ec2</h4>
+
+<p id="639"><b>Arguments: </b><i>
+ec2-snapshot
+</i></p>
+
+<p id="640">
+The accessor to the named slot of the snapshot class.
+</p>
+
+<hr>
+
+
+
+<hr><hr><h2 id="641"><a name="ec2-ops-1">Appendix C: EC2 operators</a></h2>
+
+<hr><h2 id="642"><a name="ec2-image-ops-2">Appendix C.1 Image manipulation operators</a></h2>
+
+<hr><h3 id="643"><a name="register-image-op-bookmarkxx"></a>register-image</h3><h3 id="644">Function</h3><h4 id="645">Package: net.ec2</h4>
+
+<p id="646"><b>Arguments: </b><i>
+manifest
+</i></p>
+<p id="647">
+Register an image with Amazon. <b><i>manifest</i></b>
+is the full path to your AMI manifest in Amazon S3 storage, a string.
+</p>
+<p id="648">
+The return value is an image ID, which is unique to the AMI you just
+registered.
+</p>
+<p id="649">
+See <a href="ec2.htm#deregister-image-op-bookmarkxx"><b>deregister-image</b></a>.
+</p>
+<hr>
+	
+<hr><h3 id="650"><a name="describe-images-op-bookmarkxx"></a>describe-images</h3><h3 id="651">Function</h3><h4 id="652">Package: net.ec2</h4>
+
+<p id="653"><b>Arguments: </b><i>
+</i>&amp;key <i>image-id owner executable-by</i><i>
+</i></p>
+
+<p id="654">
+Return a list of available images (<a href="ec2.htm#ec2-image-class-bookmarkxx"><code>ec2-image</code></a>
+instances). The search can be narrowed by supplying any of the keyword
+arguments.
+</p>
+<p id="655">
+<b><i>image-id</i></b> is a list of image IDs to use in
+the search. It is a list of strings, or a single string.
+</p>
+<p id="656">
+<b><i>owner</i></b> is a list of owners to use in the
+search. It is a list of strings, or a single string.
+</p>
+<p id="657">
+<b><i>executable-by</i></b> is a list which specific
+users have access. It is a list of strings, or a single string.
+</p>
+<hr>
+
+<hr><h3 id="658"><a name="deregister-image-op-bookmarkxx"></a>deregister-image</h3><h3 id="659">Function</h3><h4 id="660">Package: net.ec2</h4>
+
+<p id="661"><b>Arguments: </b><i>
+image-id
+</i></p>
+
+<p id="662">
+Deregister an image,
+where <b><i>image-id</i></b> is the image instance
+returned by a call to <a href="ec2.htm#register-image-op-bookmarkxx"><b>register-image</b></a> or <a href="ec2.htm#describe-images-op-bookmarkxx"><b>describe-images</b></a>.
+</p>
+<p id="663">
+Returns <code>t</code> upon success.
+</p>
+<hr>
+
+
+
+
+<hr><h2 id="664"><a name="ops-instance-manip-2">Appendix C.2 Instance manipulation operators</a></h2>
+
+<p id="665">
+See <a href="#instance-manipulation-ops-1">Section 5.0 Functions for instance manipulation</a> for
+more information and examples.
+</p>
+
+<hr><h3 id="666"><a name="run-instances-op-bookmarkxx"></a>run-instances</h3><h3 id="667">Function</h3><h4 id="668">Package: net.ec2</h4>
+
+<p id="669"><b>Arguments: </b><i>
+image-id min-count max-count </i>&amp;key <i>wait verbose</i> (<i>identity</i> *ec2-identity*)<i> instance-type</i> (<i>key-name</i> *aws-keypair-name*)<i> kernel-id ramdisk-id availability-zone</i><i>
+</i></p>
+
+<p id="670">
+Runs one or more instances on the cloud.  Upon success returns a list
+of <a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a> instances.
+</p>
+<p id="671">
+<b><i>image-id</i></b> is a string naming an
+image. <b><i>min-count</i></b>
+and <b><i>max-count</i></b> are
+numbers. If <i>min-count</i> cannot be launched, none
+are launched. No more than <i>max-count</i> will be
+launched but the number actually launched may be less
+than <i>max-count</i>.
+</p>
+<p id="672">
+The keyword arguments are:
+</p>
+<ul>
+<li id="673">
+<b><i>wait</i></b>: if specified true, wait for the
+instance to start and become available. If <i>wait</i>
+is <code>nil</code>, then this function returns
+immediately, even before the newly run instance is usable.
+</li>
+<li id="674">
+<b><i>verbose</i></b>: if specified true, messages about
+the operation of the function are printed. Especially useful with
+<code>:wait t</code>.
+</li>
+<li id="675">
+<b><i>identity</i></b>
+and <b><i>key-name</i></b>: these arguments specify how
+the instance will be accessed after it has started. Without these,
+you could create an orphaned image--you would need to use the EC2
+comand line tools or some other means to terminate the instance.
+</li>
+<li id="676">
+<b><i>instance-type</i></b> specifies what type of
+instance you would like. For example, "m1.large" or "m1.xlarge".
+</li>
+<li id="677">
+<b><i>kernel-id</i></b>, <b><i>ramdisk-id</i></b>
+and <b><i>availability-zone</i></b>: these can be
+supplied to change the what and where the instance runs.
+</li>
+</ul>
+
+<hr>
+
+<hr><h3 id="678"><a name="describe-instances-op-bookmarkxx"></a>describe-instances</h3><h3 id="679">Function</h3><h4 id="680">Package: net.ec2</h4>
+
+<p id="681"><b>Arguments: </b><i>
+</i>&amp;key  (<i>states</i> (quote (:running :shutting-down :pending))) (<i>identity</i> *ec2-identity*)<i> instances</i><i>
+</i></p>
+
+<p id="682">
+Return a list of instances running in the cloud after updating the
+cached information in Lisp. The keywords can narrow the result, which
+is a list of <a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a> instances.
+</p>
+<p id="683">
+<b><i>states</i></b> specifies which states to
+consider. Valid values are: <code>:running</code>,
+<code>:shutting-down</code>, <code>:pending</code> and
+<code>:terminated</code>. These values are determined by the
+EC2 API, given here:
+<a href="http://docs.amazonwebservices.com/AWSEC2/2008-12-01/DeveloperGuide/">http://docs.amazonwebservices.com/AWSEC2/2008-12-01/DeveloperGuide/</a>,
+and are just keyword versions of the strings used to represent these
+states in the EC2 API.
+</p>
+<p id="684">
+<b><i>identity</i></b> specifies which identity to use
+for the API access.
+</p>
+<p id="685">
+<b><i>instances</i></b> narrows the search to a specific
+set of instances. This is useful because the data in Lisp
+representing running instances does grow stale over time, and the
+state of a running instance changes.
+</p>
+
+<hr>
+
+<hr><h3 id="686"><a name="terminate-instances-op-bookmarkxx"></a>terminate-instances</h3><h3 id="687">Function</h3><h4 id="688">Package: net.ec2</h4>
+
+<p id="689"><b>Arguments: </b><i>
+</i> &amp;rest <i>instances</i><i>
+</i></p>
+
+<p id="690">
+Terminate the set of instances given
+by <b><i>instances</i></b>, which should be one or
+more <a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a>s.
+</p>
+<p id="691">
+Returns a list of status information for each terminated instance.
+</p>
+
+<hr>
+
+
+
+
+<hr><h2 id="692"><a name="key-pair-ops-2">Appendix C.3 Key pair manipulation operators</a></h2>
+
+<p id="693">
+See <a href="#key-pair-manipulation-1">Section 6.0 Functions for key pair manipulation</a> for more
+information and examples using the functions defined in this section.
+</p>
+
+<hr><h3 id="694"><a name="create-key-pair-op-bookmarkxx"></a>create-key-pair</h3><h3 id="695">Function</h3><h4 id="696">Package: net.ec2</h4>
+
+<p id="697"><b>Arguments: </b><i>
+key-name
+</i></p>
+
+<p id="698">
+Create a new 2048 bit RSA key pair, used when lauching new
+instances, and subsequent access thereafter. On success, return a
+list of key name, key fingerprint (SHA-1 digest of the DER encoded
+private key) and the key material (an unencrypted PEM encoded RSA
+private key).
+</p>
+<p id="699">
+The third list item, the PEM encoded RSA private key can be used as
+the contents for the file pointed to by
+<a href="ec2.htm#s_default-ssh-identity-file_s-var-bookmarkxx"><code>*default-ssh-identity-file*</code></a>. The key-name
+can be used as the value of the variable <a href="ec2.htm#s_aws-keypair-name_s-var-bookmarkxx"><code>*aws-keypair-name*</code></a>.
+</p>
+<hr>
+
+<hr><h3 id="700"><a name="describe-key-pairs-op-bookmarkxx"></a>describe-key-pairs</h3><h3 id="701">Function</h3><h4 id="702">Package: net.ec2</h4>
+
+<p id="703"><b>Arguments: </b><i>
+</i>&amp;key <i>key-names</i><i>
+</i></p>
+
+<p id="704">
+Retrieve the active key pairs and return a list
+of <a href="ec2.htm#ec2-key-class-bookmarkxx"><code>ec2-key</code></a> instances, after updating the
+information cached in Lisp about them.
+</p>
+<hr>
+
+<hr><h3 id="705"><a name="delete-key-pair-op-bookmarkxx"></a>delete-key-pair</h3><h3 id="706">Function</h3><h4 id="707">Package: net.ec2</h4>
+
+<p id="708"><b>Arguments: </b><i>
+key-name
+</i></p>
+
+<p id="709">
+Delete the key pair given by <b><i>key-name</i></b>.
+Returns <code>t</code> upon success.
+</p>
+<hr>
+
+
+
+<hr><h2 id="710"><a name="security-manipulation-ops-2">Appendix C.4 Security manipulation operators</a></h2>
+
+<p id="711">
+See <a href="#security-manipulation-1">Section 7.0 Functions for security manipulation</a> for more
+information and examples using the functions defined in this section.
+</p>
+
+<hr><h3 id="712"><a name="create-security-group-op-bookmarkxx"></a>create-security-group</h3><h3 id="713">Function</h3><h4 id="714">Package: net.ec2</h4>
+
+<p id="715"><b>Arguments: </b><i>
+name description
+</i></p>
+
+<p id="716">
+Creates a new security group named <b><i>name</i></b>
+with description `description', both strings.
+Returns <code>t</code> upon success.
+</p>
+
+<hr>
+
+<hr><h3 id="717"><a name="describe-security-groups-op-bookmarkxx"></a>describe-security-groups</h3><h3 id="718">Function</h3><h4 id="719">Package: net.ec2</h4>
+
+<p id="720"><b>Arguments: </b><i>
+</i>&amp;key <i>group-names</i><i>
+</i></p>
+
+<p id="721">
+Returns a list of security groups, instances of <a href="ec2.htm#ec2-security-group-class-bookmarkxx"><code>ec2-security-group</code></a>,
+after updating the information cached in Lisp about
+them. If <i>group-names</i> is specified, only those
+will be updated and returned.
+</p>
+
+<hr>
+
+<hr><h3 id="722"><a name="delete-security-group-op-bookmarkxx"></a>delete-security-group</h3><h3 id="723">Function</h3><h4 id="724">Package: net.ec2</h4>
+
+<p id="725"><b>Arguments: </b><i>
+name
+</i></p>
+
+<p id="726">
+Deletes a security group named <b><i>name</i></b>.
+Returns <code>t</code> upon success.
+</p>
+
+<hr>
+
+<hr><h3 id="727"><a name="authorize-security-group-ingress-op-bookmarkxx"></a>authorize-security-group-ingress</h3><h3 id="728">Function</h3><h4 id="729">Package: net.ec2</h4>
+
+<p id="730"><b>Arguments: </b><i>
+name </i>&amp;key <i>source-group-name source-group-owner-id ip-protocol from-port to-port cidr-ip</i><i>
+</i></p>
+
+<p id="731">
+Modify security group <b><i>name</i></b> by the actions
+specified in the given keyword arguments. There are two types of
+authorization: user/group pair permission and CIDR IP permission.
+</p>
+<h3 id="732">
+user/group pair permission:
+</h3>
+<p id="733">
+<b><i>source-group-name</i></b> and
+<b><i>source-group-owner-id</i></b> are used to add an
+owner to a group.
+</p>
+<h3 id="734">
+CIDR IP permission:
+</h3>
+<p id="735">
+<b><i>ip-protocol</i></b> is the protocol for the
+authorization, one
+of <code>:tcp</code>, <code>:udp</code>,
+or <code>:icmp</code>. The default protocol
+is <code>:tcp</code>.
+</p>
+<p id="736">
+<b><i>from-port</i></b>
+and <b><i>to-port</i></b> are the source and destination
+ports, both integers.
+</p>
+<p id="737">
+<b><i>cidr-ip</i></b> is the IP range, a string. For
+example, "0.0.0.0/0" for all IP addresses, the default.
+</p>
+
+<hr>
+
+<hr><h3 id="738"><a name="revoke-security-group-ingress-op-bookmarkxx"></a>revoke-security-group-ingress</h3><h3 id="739">Function</h3><h4 id="740">Package: net.ec2</h4>
+
+<p id="741"><b>Arguments: </b><i>
+name </i>&amp;key <i>source-group-name source-group-owner-id ip-protocol from-port to-port cidr-ip</i><i>
+</i></p>
+
+<p id="742">
+This function is the inverse of <a href="ec2.htm#authorize-security-group-ingress-op-bookmarkxx"><b>authorize-security-group-ingress</b></a>, revoking
+any authorization granted by previous calls to that function.
+</p>
+
+<hr>
+
+
+
+<hr><h2 id="743"><a name="elastic-address-manip-ops-2">Appendix C.5 Elastic IP address manipulation operators</a></h2>
+
+<p id="744">
+See <a href="#functions-elastic-address-manipulation-1">Section 8.0 Functions for Elastic IP address manipulation</a>
+for more information and examples.
+</p>
+
+<hr><h3 id="745"><a name="allocate-address-op-bookmarkxx"></a>allocate-address</h3><h3 id="746">Function</h3><h4 id="747">Package: net.ec2</h4>
+
+<p id="748"><b>Arguments: </b><i>
+</i></p>
+
+<p id="749">
+Allocates an Elastic, or static, IP address. It is returned as a
+string, if successful.
+</p>
+
+<hr>
+
+<hr><h3 id="750"><a name="describe-addresses-op-bookmarkxx"></a>describe-addresses</h3><h3 id="751">Function</h3><h4 id="752">Package: net.ec2</h4>
+
+<p id="753"><b>Arguments: </b><i>
+</i></p>
+
+<p id="754">
+Returns a list of the current mapping of IP to AMI in a list.
+</p>
+
+<hr>
+
+<hr><h3 id="755"><a name="release-address-op-bookmarkxx"></a>release-address</h3><h3 id="756">Function</h3><h4 id="757">Package: net.ec2</h4>
+
+<p id="758"><b>Arguments: </b><i>
+ip
+</i></p>
+
+<p id="759">
+Release an elastic IP address, given
+by <b><i>ip</i></b>, a string.
+</p>
+
+<hr>
+
+<hr><h3 id="760"><a name="associate-address-op-bookmarkxx"></a>associate-address</h3><h3 id="761">Function</h3><h4 id="762">Package: net.ec2</h4>
+
+<p id="763"><b>Arguments: </b><i>
+instance ip
+</i></p>
+
+<p id="764">
+Associate IP <b><i>ip</i></b>, a string, with 
+<b><i>instance</i></b> (an <a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a>). Returns
+<code>t</code> if successful.
+</p>
+
+<hr>
+
+<hr><h3 id="765"><a name="disassociate-address-op-bookmarkxx"></a>disassociate-address</h3><h3 id="766">Function</h3><h4 id="767">Package: net.ec2</h4>
+
+<p id="768"><b>Arguments: </b><i>
+ip
+</i></p>
+
+<p id="769">
+Disassociates IP <b><i>ip</i></b>' from whatever
+instance it is associated with. Returns <code>t</code> if
+successful.
+</p>
+
+<hr>
+
+
+
+<hr><h2 id="770"><a name="ebs-manipulation-ops-2">Appendix C.6 Functionality for EBS manipulation</a></h2>
+
+<p id="771">
+See <a href="#ebs-manipulation-1">Section 9.0 Functions for EBS manipulation</a> for further
+information and an example using these functions.
+</p>
+
+
+<hr><h3 id="772"><a name="create-volume-op-bookmarkxx"></a>create-volume</h3><h3 id="773">Function</h3><h4 id="774">Package: net.ec2</h4>
+
+<p id="775"><b>Arguments: </b><i>
+availability-zone </i>&amp;key <i>size snapshot</i><i>
+</i></p>
+
+<p id="776">
+
+Create a volume in <b><i>availability-zone</i></b>,
+which should be a string naming an availability-zone (see
+<a href="ec2.htm#describe-availability-zones-op-bookmarkxx"><b>describe-availability-zones</b></a>), with
+specified <b><i>size</i></b> (a number of gigabytes) or
+with data from a snapshot you own given
+by <b><i>snapshot</i></b>. Only one of the
+arguments <i>size</i> or <i>snapshot</i>
+can be given.
+</p>
+
+<hr>
+
+<hr><h3 id="777"><a name="describe-volumes-op-bookmarkxx"></a>describe-volumes</h3><h3 id="778">Function</h3><h4 id="779">Package: net.ec2</h4>
+
+<p id="780"><b>Arguments: </b><i>
+</i>&amp;key <i>volumes</i><i>
+</i></p>
+
+<p id="781">
+return a list of all active volumes (if <i>volumes</i>
+is unspecified) or a list of volumes specified
+by <i>volumes</i>. <b><i>volumes</i></b>,
+if specified, should be a list of <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a>
+instances. Returns a list of <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a> instances.
+</p>
+
+<hr>
+
+<hr><h3 id="782"><a name="delete-volume-op-bookmarkxx"></a>delete-volume</h3><h3 id="783">Function</h3><h4 id="784">Package: net.ec2</h4>
+
+<p id="785"><b>Arguments: </b><i>
+volume
+</i></p>
+
+<p id="786">
+Delete the given volume. <b><i>volume</i></b> must be of
+type <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a>.
+Returns <code>t</code> if successful.
+</p>
+
+<hr>
+
+<hr><h3 id="787"><a name="attach-volume-op-bookmarkxx"></a>attach-volume</h3><h3 id="788">Function</h3><h4 id="789">Package: net.ec2</h4>
+
+<p id="790"><b>Arguments: </b><i>
+volume instance device
+</i></p>
+
+<p id="791">
+Attach <i>volume</i> (an <a href="ec2.htm#ec2-volume-class-bookmarkxx"><code>ec2-volume</code></a>)
+to <i>instance</i> (an <a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a>) giving it
+the name <i>device</i> (a string). Returns an instance of
+<a href="ec2.htm#ec2-attachment-class-bookmarkxx"><code>ec2-attachment</code></a> if successful.
+</p>
+
+<hr>
+
+<hr><h3 id="792"><a name="detach-volume-op-bookmarkxx"></a>detach-volume</h3><h3 id="793">Function</h3><h4 id="794">Package: net.ec2</h4>
+
+<p id="795"><b>Arguments: </b><i>
+volume instance </i>&amp;key <i>device force</i><i>
+</i></p>
+
+<p id="796">
+Detach <b><i>volume</i></b>
+on <b><i>instance</i></b>. If <b><i>device</i></b>
+is given, only detach if <i>volume</i> is attached using
+that device name. If
+<b><i>force</i></b> is specified
+non-<code>nil</code>, detach even if in use. Returns an
+instance of <a href="ec2.htm#ec2-attachment-class-bookmarkxx"><code>ec2-attachment</code></a> if successful.
+</p>
+
+<hr>
+
+<hr><h3 id="797"><a name="create-snapshot-op-bookmarkxx"></a>create-snapshot</h3><h3 id="798">Function</h3><h4 id="799">Package: net.ec2</h4>
+
+<p id="800"><b>Arguments: </b><i>
+volume
+</i></p>
+
+<p id="801">
+Create a snapshot of <b><i>volume</i></b>, returning an
+<a href="ec2.htm#ec2-snapshot-class-bookmarkxx"><code>ec2-snapshot</code></a> if successful.
+</p>
+
+<hr>
+
+<hr><h3 id="802"><a name="describe-snapshots-op-bookmarkxx"></a>describe-snapshots</h3><h3 id="803">Function</h3><h4 id="804">Package: net.ec2</h4>
+
+<p id="805"><b>Arguments: </b><i>
+</i>&amp;key <i>snapshots</i><i>
+</i></p>
+
+<p id="806">
+Returns a list of description of all current snapshots, or of those
+specified by <b><i>snapshots</i></b> if specified, after
+updating the information cached in Lisp about them. Returns a list
+of <a href="ec2.htm#ec2-snapshot-class-bookmarkxx"><code>ec2-snapshot</code></a> instances.
+</p>
+
+<hr>
+
+<hr><h3 id="807"><a name="delete-snapshot-op-bookmarkxx"></a>delete-snapshot</h3><h3 id="808">Function</h3><h4 id="809">Package: net.ec2</h4>
+
+<p id="810"><b>Arguments: </b><i>
+snapshot
+</i></p>
+
+<p id="811">
+Delete the given <b><i>snapshot</i></b>.
+Returns <code>t</code> if successful.
+</p>
+
+<hr>
+
+
+
+
+
+<hr><h2 id="812"><a name="ec2-high-level-ops-2">Appendix C.7 High-level operators</a></h2>
+
+<p id="813">
+See <a href="#high-level-funs-1">Section 10.0 High-level EC2 functions</a> for more
+information on these functions.
+</p>
+
+<hr><h3 id="814"><a name="wait-for-instances-op-bookmarkxx"></a>wait-for-instances</h3><h3 id="815">Function</h3><h4 id="816">Package: net.ec2</h4>
+
+<p id="817"><b>Arguments: </b><i>
+instances </i>&amp;key  (<i>state</i> :running)<i> verbose</i> (<i>sleep</i> 2) (<i>identity</i> *ec2-identity*)<i>
+</i></p>
+
+<p id="818">
+Wait for <b><i>instances</i></b> to enter a particular
+<b><i>state</i></b>. <i>instances</i> can
+be a single instance of a list of instances.
+</p>
+<p id="819">
+<b><i>state</i></b> is a keyword identifying the state
+the instances should be in when this function returns. The default
+is <code>:running</code>. See <a href="ec2.htm#describe-instances-op-bookmarkxx"><b>describe-instances</b></a> for
+other possible values for state (we list the possible values in one
+place only so changes can most easily be tracked consistently.)
+</p>
+<p id="820">
+<b><i>verbose</i></b> causes reports sent to
+<a href="../ansicl/dictentr/terminal.htm"><code>*terminal-io*</code></a> of the
+actions performed.
+</p>
+<p id="821">
+<b><i>sleep</i></b> specifies the query period.
+</p>
+<p id="822">
+<b><i>identity</i></b> specifies which identity to use
+for the API access.
+</p>
+<p id="823">
+When the instances are in the new state, this function returns a list
+of the newly made instances of type <a href="ec2.htm#ec2-instance-class-bookmarkxx"><code>ec2-instance</code></a>. New
+instances are returned rather than the argument list of instances
+because the status of various slots in those objects could have
+different values.
+</p>
+
+<hr>
+
+<hr><h3 id="824"><a name="query-status-op-bookmarkxx"></a>query-status</h3><h3 id="825">Function</h3><h4 id="826">Package: net.ec2</h4>
+
+<p id="827"><b>Arguments: </b><i>
+instance </i>&amp;key  (<i>identity</i> *ec2-identity*)<i>
+</i></p>
+
+<p id="828">
+Return two values: the status of <b><i>instance</i></b>,
+and a new copy of the instance, just in case it changed.
+</p>
+<p id="829">
+<b><i>identity</i></b> specifies which identity to use
+for the API access.
+</p>
+
+<hr>
+
+<hr><h3 id="830"><a name="query-load-op-bookmarkxx"></a>query-load</h3><h3 id="831">Function</h3><h4 id="832">Package: net.ec2</h4>
+
+<p id="833"><b>Arguments: </b><i>
+instance
+</i></p>
+
+
+<p id="834">
+Return as multiple values the three values printed by
+the <b>/usr/bin/uptime</b> command.
+</p>
+<p id="835">
+This function requires SSH access and only works with Linux guest
+operating system.
+</p>
+
+<hr>
+
+<hr><h3 id="836"><a name="query-memory-op-bookmarkxx"></a>query-memory</h3><h3 id="837">Function</h3><h4 id="838">Package: net.ec2</h4>
+
+<p id="839"><b>Arguments: </b><i>
+instance
+</i></p>
+
+<p id="840">
+Return two values: the used and free memory as reported by the
+<b>/usr/bin/free</b> command.
+</p>
+<p id="841">
+This function requires SSH access and only works with Linux guest
+operating system.
+</p>
+
+<hr>
+
+<hr><h3 id="842"><a name="ssh-command-output-op-bookmarkxx"></a>ssh-command-output</h3><h3 id="843">Function</h3><h4 id="844">Package: net.ec2</h4>
+
+<p id="845"><b>Arguments: </b><i>
+instance command </i>&amp;key <i>  &amp;allow-other-keys
+</i></p>
+<p id="846">
+This function is just
+like <a href="os-interface.htm#command-output-op-bookmarkxx"><b>excl.osi:command-output</b></a>, except
+it takes an additional required argument (the first), which is the
+instance on which to execute the command via ssh.
+</p>
+
+<hr>
+
+<hr><h3 id="847"><a name="ssh-copy-file-op-bookmarkxx"></a>ssh-copy-file</h3><h3 id="848">Function</h3><h4 id="849">Package: net.ec2</h4>
+
+<p id="850"><b>Arguments: </b><i>
+instance local-file remote-file </i>&amp;key  (<i>preserve-time</i> t)<i> recurse</i><i>  &amp;allow-other-keys
+</i></p>
+
+<p id="851">
+Copy <b><i>local-file</i></b> to the pathname relative
+to <b><i>instance</i></b> using
+name <b><i>remote-file</i></b>.  All keywords to
+<a href="os-interface.htm#command-output-op-bookmarkxx"><b>excl.osi:command-output</b></a> are also
+accepted.  <b><i>preserve-time</i></b>
+and <b><i>recurse</i></b> correspond to the -p and -r
+scp command line arguments.
+</p>
+
+<hr>
+
+
+
+
+
+<hr><h2 id="852"><a name="ec2-misc-ops-2">Appendix C.8 Miscellaneous operators</a></h2>
+
+<p id="853">
+See <a href="#misc-ops-1">Section 11.0 Miscellaneous functions</a> for more information and
+examples.
+</p>
+
+
+<hr><h3 id="854"><a name="describe-availability-zones-op-bookmarkxx"></a>describe-availability-zones</h3><h3 id="855">Function</h3><h4 id="856">Package: net.ec2</h4>
+
+<p id="857"><b>Arguments: </b><i>
+</i> &amp;rest <i>zone-names</i><i>
+</i></p>
+
+<p id="858">
+Returns a list of availability zones and their current
+status. <b><i>zone-names</i></b> can be used to narrow
+the return value search to a specific set of zone names.
+</p>
+<hr>
+
+
+<hr><h3 id="859"><a name="get-console-output-op-bookmarkxx"></a>get-console-output</h3><h3 id="860">Function</h3><h4 id="861">Package: net.ec2</h4>
+
+<p id="862"><b>Arguments: </b><i>
+instance
+</i></p>
+
+<p id="863">
+Return the console output from <b><i>instance</i></b>,
+as a string. The actual return value is a dotted cons of the time the
+output was last updated and a string containing the output. If no
+output is yet available, then <code>nil</code> is returned
+for the string.
+</p>
+<p id="864">
+The time is in Common Lisp universal time.
+</p>
+<p id="865">
+The return value from the EC2 API is a base64 string. This function
+converts the base64 to a human readable string.
+</p>
+
+<hr>
+
+<hr><h3 id="866"><a name="reboot-instances-op-bookmarkxx"></a>reboot-instances</h3><h3 id="867">Function</h3><h4 id="868">Package: net.ec2</h4>
+
+<p id="869"><b>Arguments: </b><i>
+</i> &amp;rest <i>instances</i><i>
+</i></p>
+
+<p id="870">
+Reboots the specified instances. Returns <code>t</code> if
+successful.
+</p>
+
+<hr>
+
+<hr><h3 id="871"><a name="describe-regions-op-bookmarkxx"></a>describe-regions</h3><h3 id="872">Function</h3><h4 id="873">Package: net.ec2</h4>
+
+<p id="874"><b>Arguments: </b><i>
+</i> &amp;rest <i>region-names</i><i>
+</i></p>
+
+<p id="875">
+Returns a list of regions and (possibly) their url.
+</p>
+<p id="876">
+<b><i>region-names</i></b> can be used to narrow the
+return value search to a specific set of region names.
+</p>
+
+
+<hr>
+
+
+
+
+<hr><hr><h2 id="877"><a name="ec2-other-1">Appendix D: EC2 other functionality</a></h2>
+
+<hr><h3 id="878"><a name="ec2-identity-class-bookmarkxx"></a>ec2-identity</h3><h3 id="879">Class</h3><h4 id="880">Package: net.ec2</h4>
+
+<p id="881">
+This is the class for ec2-identities. You create an identity
+and set the value of <a href="ec2.htm#s_ec2-identity_s-var-bookmarkxx"><code>*ec2-identity*</code></a> to it when you start using
+the EC2 API. The slots are <code>keypair-name</code> (defaults to
+the value of <a href="ec2.htm#s_aws-keypair-name_s-var-bookmarkxx"><code>*aws-keypair-name*</code></a>), <code>ssh-user</code>
+(defaults to the value of <a href="ec2.htm#s_default-ssh-user_s-var-bookmarkxx"><code>*default-ssh-user*</code></a>)
+and <code>ssh-identity-file</code> (defaults to the value of
+<a href="ec2.htm#s_default-ssh-identity-file_s-var-bookmarkxx"><code>*default-ssh-identity-file*</code></a>). See
+<a href="#ec2-requirements-1">Section 2.0 EC2 setup and requirements</a> for information of
+initializing the EC2 API. You create and identity instance with
+<a href="../ansicl/dictentr/make-ins.htm"><b>make-instance</b></a>, as always with
+CLOS objects:
+</p>
+
+<pre id="882">
+(make-instance 'ec2-identity)
+</pre>
+
+<hr>
+
+<p id="883">
+There are three accessors to <a href="ec2.htm#ec2-identity-class-bookmarkxx"><code>ec2-identity</code></a> slots:
+</p>
+
+<hr><h3 id="884"><a name="ec2-identity-ssh-identity-file-op-bookmarkxx"></a>ec2-identity-ssh-identity-file</h3><h3 id="885">Generic Function</h3><h4 id="886">Package: net.ec2</h4>
+
+<p id="887"><b>Arguments: </b><i>
+ec2-identity
+</i></p>
+
+<p id="888">
+Accessor to the ssh-identity-file slot of an <a href="ec2.htm#ec2-identity-class-bookmarkxx"><code>ec2-identity</code></a>.
+</p>
+
+<hr>
+
+<hr><h3 id="889"><a name="ec2-identity-keypair-name-op-bookmarkxx"></a>ec2-identity-keypair-name</h3><h3 id="890">Generic Function</h3><h4 id="891">Package: net.ec2</h4>
+
+<p id="892"><b>Arguments: </b><i>
+ec2-identity
+</i></p>
+
+<p id="893">
+Accessor to the keypair-name slot of an <a href="ec2.htm#ec2-identity-class-bookmarkxx"><code>ec2-identity</code></a>.
+</p>
+
+<hr>
+
+<hr><h3 id="894"><a name="ec2-identity-ssh-user-op-bookmarkxx"></a>ec2-identity-ssh-user</h3><h3 id="895">Generic Function</h3><h4 id="896">Package: net.ec2</h4>
+
+<p id="897"><b>Arguments: </b><i>
+ec2-identity
+</i></p>
+
+<p id="898">
+Accessor to the ssh-user slot of an <a href="ec2.htm#ec2-identity-class-bookmarkxx"><code>ec2-identity</code></a>.
+</p>
+
+<hr>
+
+
+<hr><h3 id="899"><a name="ec2-error-class-bookmarkxx"></a>ec2-error</h3><h3 id="900">Class</h3><h4 id="901">Package: net.ec2</h4>
+
+<p id="902">
+The condition type of errors signaled by the Allegro CL EC2 API.
+</p>
+
+<hr>
+
+
+</body><hr><p id="2"><small>Copyright (c) 1998-2010, Franz Inc. Oakland, CA., USA. All rights reserved.</small><br><small>Documentation for Allegro CL version 8.2. This page was not revised from the 8.1 page.</small><br>
+<small>Created 2010.1.21.</small>
+<br></p><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"><a href="contents.htm"><b>ToC</b></a></td><td align="left" bgcolor="#00FFFF"><a href="introduction.htm"><b>DocOverview</b></a></td><td align="left" bgcolor="#00FFFF"><a href="cgide.htm"><b>CGDoc</b></a></td><td align="left" bgcolor="#00FFFF"><a href="release-notes.htm"><b>RelNotes</b></a></td><td align="left" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="left" bgcolor="#00FFFF"><a href="index.htm"><b>Index</b></a></td><td align="left" bgcolor="#00FFFF"><a href="permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/ec2.htm">8.1 version</a></td></tr></table></html>

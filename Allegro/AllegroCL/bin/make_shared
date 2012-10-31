@@ -1,0 +1,49 @@
+#! /bin/sh
+
+if test "$#" -lt 1; then
+	print "Usage: make_shared -o file.so file1 [file2 ...]"
+	exit -2
+fi
+
+fname=
+libraries=
+objects=
+rpath=
+
+while test $# -gt 0; do
+	case $1 in
+	-o)	shift
+		fname=`dirname $1`/`basename $1 .dylib`
+		;;
+	*.o)
+		if test ! -f $1; then
+			echo "$arg0: file $1 does not exist."
+			exit 1
+		fi
+		objects="${objects} $1"
+		;;
+	-l*)
+		libraries="$libraries $1"
+		;;
+	*.a)
+		libraries="$libraries $1"
+		;;
+	-L*)
+		rpath="$rpath $1"
+		;;
+	-undefined)
+		shift
+		libraries="-undefined $1 $libraries"
+		;;
+	*)
+		echo "$arg0: bad argument: $1"
+		exit 1
+		;;
+	esac
+	shift
+done
+
+libraries="$libraries -lc"
+
+echo ld -bundle -flat_namespace -o $fname.dylib $objects $rpath $libraries
+ld -bundle -flat_namespace -o $fname.dylib $objects $rpath $libraries

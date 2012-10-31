@@ -1,0 +1,47 @@
+<html><head><meta http-equiv="content-type" name="description" content="text/html; charset=UTF-8"> <title>*current-thread*</title><link rel="stylesheet" href="../../acldoc-styles.css" type="text/css"></head><body><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"><b>Variable</b></td><td align="left" bgcolor="#00FFFF"><b>Package: system</b></td><td align="center" bgcolor="#00FFFF"><a href="../../contents.htm"><b>ToC</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../introduction.htm"><b>DocOverview</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../cgide.htm"><b>CGDoc</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../release-notes.htm"><b>RelNotes</b></a></td><td align="center" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../index.htm"><b>Index</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="../../introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/variables/system/s_current-thread_s.htm">8.1 version</a></td></tr></table><h2 id="2">*current-thread*</h2>
+
+
+
+
+
+
+<p id="3">
+The symbol <b><code>sys:*current-thread*</code></b> names a
+symbol-macro which when executed returns the current thread. Note,
+despite being called a "variable", this symbol does not have a
+value. Evaluating the symbol results in the current thread as a return
+value, but applying <a href="../../../ansicl/dictentr/boundp.htm"><b>boundp</b></a> to
+this symbol returns <code>nil</code> and applying <a href="../../../ansicl/dictentr/symbol-v.htm"><b>symbol-value</b></a> to it results in an
+error. (We call it a "variable" because we do not really have a
+documentation category that fits it otherwise.)
+</p>
+<p id="4">
+<a href="s_current-thread_s.htm"><code>sys:*current-thread*</code></a>
+is implemented as a symbol-macro because doing so is much more
+efficient, getting the value in just several instructions without even
+needing, on some platforms, a memory reference.
+</p>
+<p id="5">
+The distinction between
+thread and process is arcane, but the most important thing is this:
+</p>
+<ul>
+<li id="6">
+Thread objects are simple static structures that contain the
+information used to schedule.
+</li>
+<li id="7">
+Process objects are clos instances, allowing the application to
+define subclasses for whatever purpose.
+</li>
+</ul>
+
+<p id="8">
+See also <a href="s_current-process_s.htm"><code>*current-process*</code></a>. 
+See <a href="../../multiprocessing.htm">multiprocessing.htm</a>
+for more information on multiprocessing.
+</p>
+
+<hr><p id="9"><small>Copyright (c) 1998-2010, Franz Inc. Oakland, CA., USA. All rights reserved.</small><br><small>Documentation for Allegro CL version 8.2. This page was not revised from the 8.1 page.</small><br>
+<small>Created 2010.1.21.</small>
+<br></p><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"></td><td align="left" bgcolor="#00FFFF"></td><td align="center" bgcolor="#00FFFF"><a href="../../contents.htm"><b>ToC</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../introduction.htm"><b>DocOverview</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../cgide.htm"><b>CGDoc</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../release-notes.htm"><b>RelNotes</b></a></td><td align="center" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../index.htm"><b>Index</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="../../introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/variables/system/s_current-thread_s.htm">8.1 version</a></td></tr></table></body></html>

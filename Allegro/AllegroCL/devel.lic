@@ -1,0 +1,158 @@
+;; BEGINNING OF FILE
+
+;; This text should be saved to a file named devel.lic
+;; in the Allegro directory.  Make sure the first line
+;; in the file is ``;; BEGINNING OF FILE'', and that
+;; there is no other text preceding the first
+;; semi-colon (;) on that line.  Make sure the last
+;; line in the file is ``;; END OF FILE''.
+
+;; This license file is for version 8.2 of Allegro
+;; CL.  It is not possible to use it with other
+;; versions of Allegro CL.
+
+;; This license is valid on any computer in your
+;; possession.
+
+;; This file contains the license necessary to execute
+;; Allegro CL.  Preceding the license there is a
+;; comment describing the contents of the encrypted
+;; block of text.  Included in the encrypted text is
+;; information identifying the licensee.
+
+;; Once your license expires, you can update your
+;; license and continue using Allegro CL by running
+;; the `newlicense' program.  On Windows, there is a
+;; menu item on the Start menu for running
+;; `newlicense'.   On both UNIX and Windows you can
+;; find the `newlicense' program in the Allegro CL
+;; directory.
+
+;; If you have questions or comments, please contact
+;; us at support@franz.com (+1 510-452-2000, Franz
+;; Inc., 2201 Broadway, Suite 715, Oakland, CA 94612,
+;; USA).
+;;
+;; License created on January 18, 2012, 11:25:00.
+
+;; 
+;; If your email address changes, please visit
+;; http://www.franz.com/lfs/emailupdate to notify
+;; Franz Inc. of your new email address and to get a
+;; new license file containing this new email address.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ACL version: 8.2
+;; ACL type: trial
+;; Architecture: <all>
+;; Licensed to: Allegro CL 8.2 Express user
+;; Email address: NA
+;; Expiration date: 2012-12-31 00:00:00
+;; AllegroCache # connections limit: 3
+;; AllegroCache # objects limit: 500000
+;; AllegroCache # commits limit: 100000
+;; AllegroCache # classes limit: 100
+;; Nag period: 536870911
+;; Features: enterprise-jlinker generate-application
+;;   runtime
+(:lisp
+ "bPfjUuq2w0OPNKRlUw+I6xXFO7mYJSjylnJwlKc7JSHMnfTcQWJg
+WBx6AUI4+2W4y/bgF2vRGNxTPUtSp949SFknXek/2AhO4N3M3v2v
+kjv3MAIR36MTeOYRq7u/MfEj3SL6Y8ed3EX0VYbbjIqJFg7wXjC8
++EW/e/io87yuN0OADY16G9b9rb6vMpUjQYIWYCfTD3zWTG7so1Cb
+0Mt41tF7Ob34HDi6/3iI4OQ4LFthmbqycNEdVugJcJBSXBUVuQVb
+kIavrscqD54u2trCfxKFQF+bzGv7tOCf68NFsE5pVxd3+hIW+Qfa
+ZvcgLLiDraX3Fh3Wsw9BokEXGoChB0jPYDQxV2DHFhqw2w7obWa+
+uRVt91TtXqqpOPjgrN43LGj2vpzXOQilNXWka11fP67ArJpnkxi6
+Z8Flumyw5Lsuwr6f9Wi7cijaDo6etj06hpT5Wsc/XIqlHMtWDP1Y
+zHm3gQe/ljpMCxx2gGYvpPQijwh0mQfy0wKRc6AHE2JHEg=="
+ "KCg6bGlzcC1mZWVkLXZlcnNpb24gMS4wKQogKDp0aXRsZSAiRnJh
+bnogSW5jLiA6OiBFeHByZXNzIikKICg6bGluayAiaHR0cDovL3d3
+dy5mcmFuei5jb20vc3VwcG9ydCIpCiAoOmRlc2NyaXB0aW9uCiAg
+IkZyZWUgRXhwcmVzcyBFZGl0aW9uIG5ld3MgZnJvbSBGcmFueiBJ
+bmMuIikKICg6bGFuZ3VhZ2UgImVuLVVTIikKICg6cHViLWRhdGUg
+IlRodSwgMTIgSmFuIDIwMTIgMTg6MDQ6MDAgR01UIikKICg6bGFz
+dC1idWlsZC1kYXRlICJUaHUsIDEyIEphbiAyMDEyIDE4OjA0OjAw
+IEdNVCIpCiAoOmdlbmVyYXRvciAiQWxsZWdybyBDTCBmZWVkIGdl
+bmVyYXRvciIpCiAoOndlYi1tYXN0ZXIgIndlYm1hc3RlckBmcmFu
+ei5jb20iKQogKDphdXRob3IgIkZyYW56IFN0YWZmIikgKDphdXRo
+b3ItZW1haWwgIkZyYW56IFN0YWZmIikKICg6aXRlbXMKICAoOml0
+ZW0KICAgKDp0aXRsZQogICAgIlByb2R1Y3QgVXBkYXRlcywgV2Vi
+Y2FzdHMsIE5ld3MgLSBGb2xsb3cgdXMgb24gVHdpdHRlciAtIEBG
+cmFuemluYyIpCiAgICg6bGluayAiaHR0cHM6Ly90d2l0dGVyLmNv
+bS9GcmFuemluYyIpCiAgICg6aWQgIjM2M2UyMzhlLTY4MmYtMWM5
+NC0xMjkxLTAwNDBmNGVmMjhjOSIpCiAgICg6ZGVzY3JpcHRpb24K
+ICAgICJSZWNlaXZlIHVwLXRvLWRhdGUgcHJvZHVjdCBhbm5vdW5j
+ZW1lbnRzIGFuZCBsZWFybg0KYWJvdXQgZWR1Y2F0aW9uYWwgd2Vi
+Y2FzdHMgaG9zdGVkIGJ5IEZyYW56IGFuZCBvdXIgdGVjaG5vbG9n
+eSBQYXJ0bmVycy4iKQogICAoOnB1Yi1kYXRlIDM1MzUzODAyNDAp
+KQogICg6aXRlbQogICAoOnRpdGxlCiAgICAiQWxsZWdyb0dyYXBo
+IERhdGFiYXNlIChOb1NRTCAtIEdyYXBoIERCKSAtIEZyZWUgRG93
+bmxvYWQiKQogICAoOmxpbmsKICAgICJodHRwOi8vd3d3LmZyYW56
+LmNvbS9kb3dubG9hZHMubGh0bWw/ZnJvbT1yc3MiKQogICAoOmlk
+ICIxODVjYmRjYy0zODcwLTFlMzQtMDE1Ny0wMDQwZjRlZjI4Yzki
+KQogICAoOmRlc2NyaXB0aW9uCiAgICAiTWV0YWRhdGEgYW5kIFNl
+bWFudGljIFRlY2hub2xvZ2llcyAoaS5lLiBXZWIgMy4wKSBhcmUN
+CmV4Y2l0aW5nIG5ldyB3YXlzIHRvIHJlcHJlc2VudCBhbmQgcmV0
+cmlldmUgeW91ciBrbm93bGVkZ2UuDQpGcmFueiBoYXMgZGV2ZWxv
+cGVkIGEgbmV3IHByb2R1Y3QgbGluZSBkZXNpZ25lZCB0byBmYWNp
+bGl0YXRlDQphZG9wdGlvbiBvZiB0aGVzZSB0ZWNobm9sb2dpZXMg
+YW5kIGF0IHRoZSBoZWFydCBvZiB0aGlzIHBhY2thZ2UNCmlzIEFs
+bGVncm9HcmFwaCwgdGhlIGluZHVzdHJ5J3MgbGVhZGluZyBSREYg
+ZGF0YWJhc2UgdGVjaG5vbG9neS4NCkxlYXJuIGhvdyBBbGxlZ3Jv
+R3JhcGggaGFzIGJlY29tZSB0aGUgaW5kdXN0cnkgYmVuY2htYXJr
+IGZvciBTdG9yYWdlLA0KUXVlcnlpbmcgYW5kIExvYWRpbmcgb2Yg
+UkRGIFRyaXBsZXMuIikKICAgKDpwdWItZGF0ZSAzNTM1MzgwMTgw
+KSkKICAoOml0ZW0gKDp0aXRsZSAiVXBncmFkZSB0byBTdHVkZW50
+IGZvciAkOTkiKQogICAoOmxpbmsKICAgICJodHRwOi8vd3d3LmZy
+YW56LmNvbS9kb3dubG9hZHMvc3R1ZGVudC5saHRtbD9mcm9tPXJz
+cyIpCiAgICg6aWQgIjA0MDEwMjYwLWEzNWUtYzVkNC1hNDU4LTAw
+NDBmNGVmMjhjOSIpCiAgICg6ZGVzY3JpcHRpb24KICAgICJUaGUg
+QWxsZWdybyBDTCA4LjIgU3R1ZGVudCBFZGl0aW9uIHdpdGgNCkFs
+bGVncm9DYWNoZSBpcyBkZXNpZ25lZCB0byBwcm92aWRlIGEgZnVs
+bCBmZWF0dXJlZCB2ZXJzaW9uDQpvZiBBbGxlZ3JvIENMIHRvIGNv
+bXBsaW1lbnQgdGhlIGNsYXNzcm9vbSBhbmQgbGFib3JhdG9yeSB1
+c2FnZQ0Kb2YgQWxsZWdybyBDTCBieSBQcm9mZXNzb3JzLiAgVGhl
+IFN0dWRlbnQgRWRpdGlvbiBwcm92aWRlcw0KZXZlcnl0aGluZyBh
+IHN0dWRlbnQgd2lsbCBuZWVkIHRvIHRydWx5IGV4cGVyaWVuY2Ug
+dGhlIHBvd2VyDQpvZiBBbGxlZ3JvIENMIGFuZCAgQWxsZWdyb0Nh
+Y2hlLiIpCiAgICg6cHViLWRhdGUgMzUzNTM4MDEyMCkpCiAgKDpp
+dGVtICg6dGl0bGUgIkZyZWUgTGlzcCBUcmFpbmluZyBWaWRlb3Mi
+KQogICAoOmxpbmsKICAgICJodHRwOi8vd3d3LmZyYW56LmNvbS9z
+ZXJ2aWNlcy9jbGFzc2VzLz9mcm9tPXJzcyIpCiAgICg6aWQgIjBk
+OWEwNzE0LTI2MDItZmVhNC0zMTQzLTAwNDBmNGVmMjhjOSIpCiAg
+ICg6ZGVzY3JpcHRpb24KICAgICJGcmFueiBoYXMgbWFkZSByZWNv
+cmRlZCB2ZXJzaW9ucyBvZiB0aGUgQWxsZWdybyANCkNlcnRpZmlj
+YXRpb24gUHJvZ3JhbSBhdmFpbGFibGUgYXMgZnJlZSBkb3dubG9h
+ZHMgdG8gd29yayB0aHJvdWdoDQphdCB5b3VyIG93biBwYWNlLiIp
+CiAgICg6cHViLWRhdGUgMzUzNTM4MDA2MCkpCiAgKDppdGVtCiAg
+ICg6dGl0bGUKICAgICJMZWFybiBhYm91dCBBbGxlZ3JvQ2FjaGUs
+IGEgaGlnaC1wZXJmb3JtYW5jZSBvYmplY3QgZGF0YWJhc2UiKQog
+ICAoOmxpbmsKICAgICJodHRwOi8vd3d3LmZyYW56LmNvbS9wcm9k
+dWN0cy9hbGxlZ3JvY2FjaGUvP2Zyb209cnNzIikKICAgKDppZCAi
+M2JlNjY0ODktMzUxOS0zNTg0LWUwNzgtMDA0MGY0ZWYyOGM5IikK
+ICAgKDpkZXNjcmlwdGlvbgogICAgIkFsbGVncm9DYWNoZSBpcyBh
+IGhpZ2gtcGVyZm9ybWFuY2UsIGR5bmFtaWMgb2JqZWN0IGNhY2hp
+bmcNCmRhdGFiYXNlIHN5c3RlbS4gSXQgYWxsb3dzIHByb2dyYW1t
+ZXJzIHRvIHdvcmsgZGlyZWN0bHkgd2l0aCBvYmplY3RzIGFzIGlm
+DQp0aGV5IHdlcmUgaW4gbWVtb3J5IHdoaWxlIGluIGZhY3QgdGhl
+IG9iamVjdCBkYXRhIGlzIGFsd2F5cyBzdG9yZWQNCnBlcnNpc3Rl
+bnRseS4iKQogICAoOnB1Yi1kYXRlIDM1MzUzODAwMDApKSkp")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ACL version: 8.2
+;; Architecture: <all>
+;; Licensed to: Allegro CL 8.2 Express user
+;; Email address: NA
+;; Expiration date: 2012-12-31 00:00:00
+;; AllegroGraph Personal # objects: 50 [million]
+(:allegrograph
+ "JyBwK0TOlNMxklA0rkfubiWfbgkh20sGX4yM1b8FSrzrYrx6wH1r
+sB0N/ohz1zvJnhk1PJpezMG+FXN0X+16yI/iet21YaD+p22bzEER
+mQ5SEqZulOfhsVxehDIEnYPkNSXWKU8go50WWQz0y7vSjRStoYEM
+YOuMBbgHZumLvEdUaJ1UShggAHlu0dj3l8iDpTPF9KL6Vv0PLaDE
+F1yeG5t+zR2go4UmLVdSDWyY0rJ8rATOa1+V8KPHMl4So7BuKJ4q
+IcxjxTIP3hzaXasBiXNt2J8m6Ss+j73Nh4lRvIO7bXS4ScrlLk9n
+wc7IK43ZI58ypgf3J1nk0nB9DK1UHxU=")
+
+;; END OF FILE

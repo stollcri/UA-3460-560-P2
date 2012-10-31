@@ -1,0 +1,112 @@
+<html><head><meta http-equiv="content-type" name="description" content="text/html; charset=UTF-8"> <title>:break</title><link rel="stylesheet" href="../acldoc-styles.css" type="text/css"></head><body><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"><b>Top-level Command</b></td><td align="left" bgcolor="#00FFFF"></td><td align="center" bgcolor="#00FFFF"><a href="../contents.htm"><b>ToC</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../introduction.htm"><b>DocOverview</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../cgide.htm"><b>CGDoc</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../release-notes.htm"><b>RelNotes</b></a></td><td align="center" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../index.htm"><b>Index</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="../introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/tpl-commands/break.htm">8.1 version</a></td></tr></table><h2 id="2">:break</h2>
+
+<p id="3"><b>Arguments: </b><i>
+</i> &amp;optional <i>mode</i><i>
+</i> &amp;rest <i>mode-values</i><i>
+</i></p>
+
+<p id="4">This command allows the user to add or delete instruction-level
+breakpoints and to print out information about the breakpoints
+currently in use. </p>
+
+<p id="5">Whether or not a breakpoint is effective (that is stops code
+execution when reached) depends on whether it is <em>installed</em> or
+<em>uninstalled</em>. An installed breakpoint is one which will cause
+normal execution to stop and the debugger entered if an attempt is
+made to execute the instruction at that location. An uninstalled
+breakpoint will not cause such an interruption of execution. Deleted
+breakpoints are always uninstalled but otherwise whether breakpoints
+are or are not installed depends on (as we said just above) whether
+ldb debugging mode is on, see <a href="ldb.htm"><b>:ldb</b></a>, or the code being evaluated is
+within the body of <a href="../operators/excl/with-breakpoints-installed.htm"><b>with-breakpoints-installed</b></a> form.</p>
+
+<p id="6">
+The situation is further complicated by the fact that when a
+breakpoint is hit and stops execution, the debugging mode changes from
+ldb to ldb-step and breakpoints are then uninstalled. See <a href="../debugging.htm#ldb-stepper-1">The Lisp DeBug (ldb)
+stepper</a> in <a href="../debugging.htm">debugging.htm</a> for information
+on this point.
+</p>
+
+<p id="7">Again, <a href="break.htm"><b>:break</b></a> adds or deletes
+breakpoints from the current breakpoint set. Its arguments are</p>
+
+<p id="8"><i>mode</i> can be </p>
+
+<ul>
+  <li id="9"><code>:add</code>, to add breakpoints. <i>mode-values</i> in that case should be one
+    or more breakpoint specifications (described just below). Any number of breakpoint
+    specifications can be specified. If none are specified, the command is a no-op, i.e. does
+    nothing.</li>
+  <li id="10"><code>:del</code>, to delete breakpoints. <i>mode-values</i> in that case should be
+    breakpoint specifications (described just below) for the breakpoints to be deleted (they
+    must have been previously added). Any number of breakpoint specifications can be
+    specified. If none are specified, the command is a no-op, i.e. does nothing.</li>
+  <li id="11"><code>nil</code>, to delete all breakpoints.</li>
+</ul>
+
+<p id="12">When called with no arguments, <a href="break.htm"><b>:break</b></a> prints out the current breakpoint
+set.</p>
+
+<p id="13">A breakpoint specification is made up of a particular pc (program
+counter, look at the output of <a href="../../ansicl/dictentr/disassem.htm"><b>disassemble</b></a>) offset from the beginning of a
+particular function. A single breakpoint can be specified by</p>
+
+<blockquote>
+  <pre id="14"><em>function-name</em> [<em>offset</em>]</pre>
+</blockquote>
+
+<p id="15">where <em>offset</em> defaults to 0. Multiple breakpoints can be
+specified by simply naming pairs:</p>
+
+<blockquote>
+  <pre id="16">foo 10 bar 20</pre>
+</blockquote>
+
+<p id="17">When multiple breakpoints are specified, the offsets are not
+optional. However, multiple breakpoints within the same function can
+be specified by leaving out all but the first function name; thus</p>
+
+<blockquote>
+  <pre id="18">foo 10 20 30</pre>
+</blockquote>
+
+<p id="19">is equivalent to specifying</p>
+
+<blockquote>
+  <pre id="20">foo 10 foo 20 foo 30</pre>
+</blockquote>
+
+<p id="21">If the pc offset is not at an exact instruction location, the
+instruction containing that location is selected. If the instruction
+or instructions around the desired location are not good stopping
+points for any reason, the next instruction that can be stopped at is
+selected. If instructions are skipped over, they are shown as being
+skipped.</p>
+
+<p id="22">For example, on an HP:</p>
+
+<pre id="23">user(1): :br comp::wfasl-string-symbol
+Breakpoint set beyond
+                 0: 37de0600 ldo 768(r30),r30
+                 4: 6bc239d9 stw r2,-788(0,r30) 
+                 8: 6bd13fe1 stw r17,-16(0,r30) 
+Adding #&lt;Function wfasl-string-symbol&gt;: 12
+                 12: b08037fb addit,&lt;&gt; -3,r4,r0     &quot;number of args&quot;
+user(2): </pre>
+
+<p id="24">And on an x86:</p>
+
+<pre id="25">user(1): :br car 5
+Adding #&lt;Function car&gt;: 4
+                 4: 83 ec 24 subl    esp,$36
+user(2): </pre>
+
+<p id="26">See <a href="../debugging.htm#ldb-stepper-1">The Lisp DeBug (ldb)
+stepper</a> in <a href="../debugging.htm">debugging.htm</a> for
+information on ldb stepping. See <a href="../top-level.htm">top-level.htm</a> for
+more information on top-level commands.</p>
+
+<hr><p id="27"><small>Copyright (c) 1998-2010, Franz Inc. Oakland, CA., USA. All rights reserved.</small><br><small>Documentation for Allegro CL version 8.2. This page was not revised from the 8.1 page.</small><br>
+<small>Created 2010.1.21.</small>
+<br></p><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"></td><td align="left" bgcolor="#00FFFF"></td><td align="center" bgcolor="#00FFFF"><a href="../contents.htm"><b>ToC</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../introduction.htm"><b>DocOverview</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../cgide.htm"><b>CGDoc</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../release-notes.htm"><b>RelNotes</b></a></td><td align="center" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../index.htm"><b>Index</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="../introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/tpl-commands/break.htm">8.1 version</a></td></tr></table></body></html>

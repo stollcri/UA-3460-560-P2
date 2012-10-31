@@ -1,0 +1,230 @@
+<html><head><meta http-equiv="content-type" name="description" content="text/html; charset=UTF-8"> <title>:trace</title><link rel="stylesheet" href="../acldoc-styles.css" type="text/css"></head><body><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"><b>Top-level Command</b></td><td align="left" bgcolor="#00FFFF"></td><td align="center" bgcolor="#00FFFF"><a href="../contents.htm"><b>ToC</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../introduction.htm"><b>DocOverview</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../cgide.htm"><b>CGDoc</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../release-notes.htm"><b>RelNotes</b></a></td><td align="center" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../index.htm"><b>Index</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="../introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/tpl-commands/trace.htm">8.1 version</a></td></tr></table><h2 id="2">:trace</h2>
+
+<p id="3"><b>Arguments: </b><i>
+</i> &amp;rest <i>function-or-option-list</i><i>
+</i></p>
+
+<p id="4">When called with no arguments, all the functions currently being
+traced are printed, otherwise the arguments to <a href="trace.htm"><b>:trace</b></a> are function names (symbols) or <a href="#valid options to :trace">option</a> lists. An option list
+starts with a function name, and the other elements of the list are
+options for tracing that particular function.  The options for one
+function do not affect the tracing of any other function. The options
+come in pairs, the first element of the pair being the option name
+(i.e., a keyword), and the second part being the option value. Missing
+options default to <code>nil</code>. Here are some valid calls to
+<a href="trace.htm"><b>:trace</b></a>: </p>
+
+<pre id="5">
+:trace foo
+:trace foo (bar :break-before t) baz
+:trace (baz :inside foo :break-before t)
+:trace 
+</pre>
+
+<p id="6">Note that the following is invalid: </p>
+
+<pre id="7">
+:trace foo :inside bar 
+</pre>
+
+<p id="8">You must enclose options in a list along with the function name and
+the option value.  If you enter the invalid case above, Lisp will
+complain that <code>:inside</code> does not have a function
+definition. </p>
+
+<p id="9">The minimal abbreviation of <a href="trace.htm"><b>:trace</b></a> is <strong>:tr</strong>.</p>
+
+<p id="10">
+See <a href="../top-level.htm">top-level.htm</a> for more information on top-level
+commands. See <a href="../debugging.htm">debugging.htm</a> for information on the
+debugger and examples of tracing.
+</p>
+
+<p id="11"><a name="valid options to :trace"><strong>valid
+options to :trace</strong></a></p>
+
+
+<table BORDER="1" CELLSPACING="1" CELLPADDING="7" WIDTH="638">
+  <tr>
+    <td WIDTH="33%" VALIGN="TOP"><b>Option</b></td>
+    <td WIDTH="33%" VALIGN="TOP"><b>Arguments</b></td>
+    <td WIDTH="33%" VALIGN="TOP"><b>Description</b></td>
+  </tr>
+  <tr>
+    <td WIDTH="33%" VALIGN="TOP"><code>:condition</code></td>
+    <td WIDTH="33%" VALIGN="TOP"><i>expr</i></td>
+    <td WIDTH="33%" VALIGN="TOP">Trace this function if <i>expr</i> 
+    evaluates to a true
+    value.</td>
+  </tr>
+  <tr>
+    <td WIDTH="33%" VALIGN="TOP"><code>:break-before</code></td>
+    <td WIDTH="33%" VALIGN="TOP"><i>val</i></td>
+    <td WIDTH="33%" VALIGN="TOP">The expression <i>val</i> is 
+    evaluated just before entering a
+    function. If <i>val</i> is <code>t</code>, 
+    then a new break level is entered. Otherwise, execution
+    continues. When used in combination with :inside 
+    and :not-inside, breaks only occur when the :inside 
+    and :not-inside conditions are satisfied.</td>
+  </tr>
+  <tr>
+    <td WIDTH="33%" VALIGN="TOP"><code>:break-after</code></td>
+    <td WIDTH="33%" VALIGN="TOP"><i>val</i></td>
+    <td WIDTH="33%" VALIGN="TOP">The expression <i>val</i> is 
+    evaluated just after exiting a
+    function. If <i>val</i> is <code>t</code>, then a new 
+    break level is entered. Otherwise, execution
+    continues. When used in combination with :inside 
+    and :not-inside, breaks only occur when the :inside 
+    and :not-inside conditions are satisfied.</td>
+  </tr>
+  <tr>
+    <td WIDTH="33%" VALIGN="TOP"><code>:break-all</code></td>
+    <td WIDTH="33%" VALIGN="TOP"><i>val</i></td>
+    <td WIDTH="33%" VALIGN="TOP">The expression <i>val</i> is 
+    evaluated just before entering a
+    function and just after exiting a function. If <i>val</i> 
+    is <code>t</code>, then a new break level is
+    entered. Otherwise, execution continues. When used in 
+    combination with :inside 
+    and :not-inside, breaks only occur when the :inside 
+    and :not-inside conditions are satisfied.</td>
+  </tr>
+  <tr>
+    <td WIDTH="33%" VALIGN="TOP"><code>:inside</code></td>
+    <td WIDTH="33%" VALIGN="TOP">func</td>
+    <td WIDTH="33%" VALIGN="TOP">Trace this function if Lisp is 
+    currently <i>inside</i> the
+    evaluation of the function <i>func</i>. 
+    <p id="12">
+    <i>func</i> may also be a list of functions, optionally starting with
+    the symbols <b>cl:and</b> or <b>cl:or</b>. If neither symbol or
+    <b>cl:and</b> starts the list (e.g. <code>(cl:and foo1 bar2)</code>
+    or <code>(foo1 bar2)</code>, tracing
+    is done when the function to be traced has been called
+    directly or indirectly by <b>all</b> the functions in the list
+    (by <b>foo1</b> and <b>bar2</b> in the example). If
+    <b>cl:or</b> starts the list (e.g. <code>(cl:or foo1 bar2)</code>)
+    tracing is done when the function to be traced has been called
+    directly or indirectly by <b>any</b> the functions in the list
+    (by <b>foo1</b> or <b>bar2</b> in the example).
+    </p>
+    <p id="13">
+    <code>:inside</code> works in combination with 
+    <code>:not-inside</code>, described next. Both must be
+    satisified for tracing to occur.
+    </p>
+    <p id="14">
+    For example, <code>(trace (deeper :inside deep))</code>
+    would trace the function <b>deeper</b> only when called from 
+    within a call to <b>deep</b>.
+    <code>(trace 
+    (deeper :inside deep :not-inside (cl:or foo1 bar2)))</code>
+    would trace the function <b>deeper</b> only when called from 
+    within a call to <b>deep</b> but not within a call to <b>foo1</b>
+    or <b>bar2</b>. See <a href="#inside-not-inside">Note on inside 
+    and not inside</a> for a fuller description of a call being
+    inside another.
+    </p>
+    </td>
+  </tr>
+  <tr>
+    <td WIDTH="33%" VALIGN="TOP"><code>:not-inside</code></td>
+    <td WIDTH="33%" VALIGN="TOP">func</td>
+    <td WIDTH="33%" VALIGN="TOP">Trace this function if Lisp is 
+    not currently <i>inside</i> the
+    evaluation of the function <i>func</i>. 
+    <p id="15">
+    <i>func</i> may also be a list of functions, optionally starting with
+    the symbols <b>cl:and</b> or <b>cl:or</b>. If neither symbol or
+    <b>cl:and</b> starts the list (e.g. <code>(cl:and foo1 bar2)</code>
+    or <code>(foo1 bar2)</code>, tracing
+    is done when the function to be traced has not been called
+    directly or indirectly by <b>all</b> the functions in the list
+    (by <b>foo1</b> and <b>bar2</b> in the example). If
+    <b>cl:or</b> starts the list (e.g. <code>(cl:or foo1 bar2)</code>)
+    tracing is done when the function to be traced has not been called
+    directly or indirectly by <b>any</b> the functions in the list
+    (by <b>foo1</b> or <b>bar2</b> in the example).
+    </p>
+    <p id="16">
+    <code>:not-inside</code> works in combination with 
+    <code>:inside</code>, described above. Both must be
+    satisified for tracing to occur.
+    </p>
+    <p id="17">
+    For example, <code>(trace (deeper :not-inside deep))</code>
+    would trace the function <b>deeper</b> except when called from 
+    within a call to <b>deep</b>.
+    <code>(trace 
+    (deeper :not-inside deep :inside (cl:or foo1 bar2)))</code>
+    would trace the function <b>deeper</b> except when called from 
+    within a call to <b>deep</b> and within a call to <b>foo1</b>
+    or <b>bar2</b>. See <a href="#inside-not-inside">Note on inside 
+    and not inside</a> for a fuller description of a call being
+    inside another.
+    </p>
+    </td>
+  </tr>
+  <tr>
+    <td WIDTH="33%" VALIGN="TOP"><code>:print-before</code></td>
+    <td WIDTH="33%" VALIGN="TOP"><i>expr</i></td>
+    <td WIDTH="33%" VALIGN="TOP"><i>expr</i> should either be a single 
+    object or a list of
+    objects which will be evaluated. The results will be printed 
+    before entering the function.</td>
+  </tr>
+  <tr>
+    <td WIDTH="33%" VALIGN="TOP"><code>:print-after</code></td>
+    <td WIDTH="33%" VALIGN="TOP"><i>expr</i></td>
+    <td WIDTH="33%" VALIGN="TOP"><i>expr</i> should either be a single 
+    object or a list of
+    objects which will be evaluated. The results will be printed 
+    after leaving the function.</td>
+  </tr>
+  <tr>
+    <td WIDTH="33%" VALIGN="TOP"><code>:print-all</code></td>
+    <td WIDTH="33%" VALIGN="TOP"><i>expr</i></td>
+    <td WIDTH="33%" VALIGN="TOP"><i>expr</i> should either be a single 
+    object or a list of
+    objects which will be evaluated. The results will be printed 
+    before entering and after
+    leaving the function.</td>
+  </tr>
+</table>
+
+<h3 id="18"><a name="inside-not-inside">Note on inside and not inside</a></h3>
+
+<p id="19">
+A call to function <b>foo</b> is <i>inside</i> a call to function
+<b>bar</b> if <b>bar</b> appears on the stack when <b>foo</b> is
+called. <b>bar</b> can call <b>foo</b> directly, meaning there is an
+explicit call to <b>foo</b> in the code defining <b>bar</b>, or
+indirectly, meaning <b>bar</b> calls another function which (perhaps
+calls more itermediate function) which calls <b>foo</b> directly.
+</p>
+<p id="20">
+There are a few special cases. One is caused by tail-merging. Thus,
+if <b>bar</b> calls <b>baz</b> which does a tail-merged call to
+<b>foo</b>, then <b>foo</b> is considered inside <b>bar</b> but not
+inside <b>baz</b>.
+</p>
+<p id="21">
+The other special case is generic functions. If a method is on the
+stack, its generic function is also considered to be on the stack,
+even though it never will be seen there (meaning you can specify the
+generic function rather than the specific method). Thus the following
+all work for tracing <b>foo</b> inside a call to <a href="../operators/excl/device-read.htm"><b>device-read</b></a> called on a
+<code>terminal-simple-stream</code>, but the first will
+catch calls to <b>foo</b> inside any <a href="../operators/excl/device-read.htm"><b>device-read</b></a> method.
+</p>
+<pre id="22">
+:trace (foo :inside device-read)
+:trace (foo :inside #'(method device-read (terminal-simple-stream t t t t)))
+:trace (foo :inside ((method device-read (terminal-simple-stream t t t t))))
+</pre>
+
+<hr><p id="23"><small>Copyright (c) 1998-2010, Franz Inc. Oakland, CA., USA. All rights reserved.</small><br><small>Documentation for Allegro CL version 8.2. This page was not revised from the 8.1 page.</small><br>
+<small>Created 2010.1.21.</small>
+<br></p><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"></td><td align="left" bgcolor="#00FFFF"></td><td align="center" bgcolor="#00FFFF"><a href="../contents.htm"><b>ToC</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../introduction.htm"><b>DocOverview</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../cgide.htm"><b>CGDoc</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../release-notes.htm"><b>RelNotes</b></a></td><td align="center" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../index.htm"><b>Index</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="../introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/tpl-commands/trace.htm">8.1 version</a></td></tr></table></body></html>

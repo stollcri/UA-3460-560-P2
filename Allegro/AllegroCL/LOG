@@ -1,0 +1,2020 @@
+The following patches are now available. See sys:update-allegro
+for more information on downloading and installing patches.
+
+There are currently 161 patches (117 unique).
+There are 1 Emacs-Lisp interface patches.
+
+-------------------------------------------------------------------------------
+acache patch acache-2.1.19
+Date Posted: Fri Jan 13 10:40:33 PST 2012
+Patch names: code/acache-2.1.19.fasl (version 2119)
+Description: create-expression-cursor has been documented to return
+  nil if there are no values to return. However there was a problem
+  where an error was signalled inside the server instead. This patch
+  corrects the problem.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+ide patch pil004
+Date Posted: Tue Dec 20 16:46:45 PST 2011
+Patch names: update/pil004.001
+Description: There is an unsolved bug where for some users on Windows
+  7 the IDE can write to its options file a screen location for the
+  main IDE window that's shifted completely off of the screen, and
+  then the IDE is not seen at all when restarting it. This patch
+  fixes things back up by forcing the main IDE window back onto the
+  screen when it is restarted.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch net-xml-generator
+Date Posted: Tue Dec 20 16:46:45 PST 2011
+Patch names: code/net-xml-generator.001
+Description: Any computed atribute value that evaluates to nil
+  suppresses the entire atribute-value pair, rather than generating
+  foo="NIL". All occurrences of the`>' char that the module sees are
+  now escaped. This addresses a nonconformance when the CDATA-ending
+  string "]]>" appears elsewhere, in element content or in an
+  attribute value.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base-lisp patch pia015
+Date Posted: Tue Dec 20 11:11:32 PST 2011
+Patch names: update/pia015.001
+Description: Previously, when a file was loaded with -L the first
+  line was skipped if it started with ## for the sake of #! scripts
+  (as in #!/bin/sh on unix). This fix disables this behavior, use -#!
+  for this purpose.
+Impact: recommended
+Other info: Automated scripts may fail once this patch is installed,
+  if it relies on the prior behavior. Please check for this.
+
+-------------------------------------------------------------------------------
+shared-library patch acl8218 ...
+Date Posted: Tue Dec 20 11:11:32 PST 2011
+Patch names: acl8218.dll (version 570), acl8218.lib, acl8218.pdb,
+  acli8218.dll, acli8218.lib, acli8218.pdb, libacli8218.so,
+  libacl8218.so, libacli8218.dylib, libacl8218.dylib
+Description: Stack usage of ELF parsing code was proportional to the
+  number of symbols which made the lisp run out of stack if lots of
+  big shared libraries were loaded. Allocate the necessary data
+  structures in malloc space instead.
+Impact: recommended
+Other info: This patch is released on all platforms, but only affects
+  linux86, linuxamd64.64, freebsd, solaris, solaris, and solaris.64.
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  solarisamd64.64lisp_build_357          lisp_build_358
+  linuxamd64.64lisp_build_410          lisp_build_411
+  aix          lisp_build_123          lisp_build_124
+  aix.64       lisp_build_343          lisp_build_344
+  freebsd      lisp_build_396          lisp_build_397
+  linux86      lisp_build_450          lisp_build_451
+  macosx86     lisp_build_439          lisp_build_440
+  macosx86-64.64lisp_build_375          lisp_build_376
+  solaris      lisp_build_330          lisp_build_331
+  solaris.64   lisp_build_328          lisp_build_329
+  windows      lisp_build_136          lisp_build_137
+  windows.64   lisp_build_103          lisp_build_104
+
+-------------------------------------------------------------------------------
+acache patch acache-2.1.18
+Date Posted: Tue Dec  6 10:29:53 PST 2011
+Patch names: code/acache-2.1.18.fasl (version 2118)
+Description: Make AllegroCache no longer open files in the database
+  directory for input and output if the database was opened with
+  :read-only t.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+shared-library patch acl8218 ... for mswindows only
+Date Posted: Thu Nov  3 10:28:08 PDT 2011
+Patch names: acl8218.dll (version 131), acl8218.lib, acl8218.pdb,
+  acli8218.dll, acli8218.lib, acli8218.pdb
+Description: reap-os-subprocess returns the correct status and
+  process id on windows even if there are still unfinished
+  subprocesses that were started earlier.
+Impact: recommended
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  windows      lisp_build_131          lisp_build_132
+  windows.64   lisp_build_98           lisp_build_99
+
+-------------------------------------------------------------------------------
+base patch asdf
+Date Posted: Thu Oct 20 11:52:47 PDT 2011
+Patch names: code/asdf.003
+Description: Update to ASDF 2.017.21.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+smputil patch smputil
+Date Posted: Mon Oct 10 10:53:01 PDT 2011
+Patch names: cdoe/smputil.003
+Description:
+  This patch implements condition-variable functions for ACL
+  8.2 based on the POSIX definition of condition variables. The
+  new functions are:
+  
+  `make-condition-variable' (&key name)
+  
+  Create a condition-variable instance
+  
+  `condition-variable-signal' (condvar)
+  
+  Release exactly one process waiting on this
+  condition-variable instance. Returns nil if none waiting.
+  
+  `condition-variable-broadcast' (condvar)
+  
+  Release all the processes waiting on this
+  condition-variable instance. Returns nil if none waiting.
+  
+  `condition-variable-wait' (condvar lock &key timeout whostate)
+  
+  The lock should be owned by the calling process. The lock
+  is released during the wait and re-acquired before returning 
+  to the caller. Returns nil on timeout.
+  
+  Full descriptions will be added to the online documentation of
+  the smputil module.
+  
+  The macro `with-sharable-lock' is also included in this
+  patch to provide access to sharable locks with more control
+  than `with-shared-lock' and `with-exclusive-lock' allow.
+  
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch uri
+Date Posted: Mon Sep 26 10:51:55 PDT 2011
+Patch names: uri/uri.002
+Description: parse-uri can now process URIs that have ':' characters
+  in their opaque-parts, for example
+  &lt;tag:govshare.info,2005:rdf/census/&gt;.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch inflate
+Date Posted: Wed Sep 21 11:45:07 PDT 2011
+Patch names: code/inflate.003
+Description:
+  A small overhaul to how headers and trailers are handled in
+  inflate-streams. This patch makes the following changes to
+  inflate-streams:
+  
+  Add a :compression argument to inflate-streams that roughly
+  mirrors the same keyword argument in deflate-streams.
+  Acceptable values are: 
+  * :gzip - (default) Automatically read past gzip 
+    header/trailer on stream before/after inflating data. 
+  * :zlib - Automatically read past zlib header/trailer 
+    on stream before/after inflating data. 
+  * :deflate - compressed stream has no header/trailer, only
+    DEFLATE blocks. 
+  * (header-fn trailer-fn) - Instead of the built-in methods,
+    users may specify their own functions for skipping past
+    headers and trailers wrapping the DEFLATE stream. This can 
+    be used to support less common encoding methods, such as
+    zip or pkzip, etc. The inflate module does not capture any
+    information from header and trailers, so the custom 
+    functions can also be used to capture this information if
+    needed. The function must accept a single argument, which is
+    the input-handle of the inflate-stream. It should return nil
+    or the number of bytes read. The header-fn will be called at
+    device-open time before any DEFLATE blocks are read. The
+    trailer-fn will be called immediately after the final 
+    DEFLATE block is read. 
+  * nil - This is equivalent to the :deflate option
+  
+  The :skip-gzip-header keyword argument to inflate-streams is 
+  deprecated and will be quietly ignored. This is necessary to
+  maintain backward compatibility with compression support in
+  AllegroServe.
+  
+  The utility functions skip-gzip-trailer, skip-zlib-header, and
+  skip-zlib-trailer are now exported from the :util.zip package.
+  
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch deflate
+Date Posted: Wed Sep 21 11:45:07 PDT 2011
+Patch names: code/deflate.003
+Description:
+  Clarifies and expands the :compression arguments acceptable 
+  for deflate-streams.
+  
+  Before this patch, acceptable args were :gzip, which added
+  gzip-style header and trailer to the compression stream, and
+  :deflate, which somewhat confusingly added a zlib style header
+  and trailer to the stream.
+  
+  With this patch, the arguments can now be :gzip or :zlib, 
+  which will create a compressed stream with the appropriate
+  headers and trailers added, or :deflate, which will add no
+  headers.
+  
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base-lisp patch pia014
+Date Posted: Thu Sep  8 12:55:13 PDT 2011
+Patch names: update/pia014.001
+Description: <patch-doc>
+<p>The nesting behavior of #- not well defined.  This patch changes
+  the
+behavior of Allegro CL when *sharp-plus-de-facto-standard-compatible*
+is non-nil, to be internally consistent.  For example:</p>
+<pre>
+  (list #+foo #+foo 'foo 'bar 'baz) => (baz)
+  (push :foo *features*)
+  (list #-foo #-foo 'foo 'bar 'baz) => (baz) ;; instead of (bar baz)
+</pre>
+</patch-doc>
+
+Impact: recommended
+
+-------------------------------------------------------------------------------
+aserve patch aserve
+Date Posted: Fri Sep  2 13:38:54 PDT 2011
+Patch names: code/aserve.011
+Description: If multiple requests are sent through a socket when
+  using keep-alive, log entries for each response report the total
+  bytes written out on the stream rather than the actual bytes sent
+  for just the response indicated in the log entry.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch asdf
+Date Posted: Thu Sep  1 11:32:35 PDT 2011
+Patch names: code/asdf.002
+Description: Update to ASDF 2.017.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+ssl patch ssl
+Date Posted: Wed Aug 31 13:07:08 PDT 2011
+Patch names: code/ssl.002
+Description: Fixes an initialization bug in the SSL module that
+  prevented it from working across dumplisps.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch proc2common
+Date Posted: Thu Aug 25 14:50:15 PDT 2011
+Patch names: code/proc2common.003
+Description: with-process-lock was erroneously using the constant
+  "Lock" as its default whostate. With this patch, the default is to
+  use the lock name for the whostate.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+compiler patch pib009 for x86-64 only
+Date Posted: Wed Aug 24 14:46:19 PDT 2011
+Patch names: update/pib009.001
+Description: Fixes a peephole optimizer bug in which a label which is
+  called out in a jump-table case form is not properly forwarded when
+  its target is itself a branch and the branch has been "tensioned".
+  The situation is hard to reproduce, but the failure is a compaint
+  by the assembler about nil not being an appropriate value for a
+  numeric operation.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+acache patch acache-2.1.17
+Date Posted: Tue Aug 23 15:57:43 PDT 2011
+Patch names: code/acache-2.1.17.fasl (version 2117)
+Description: AllegroCache can now correctly close read-only
+  databases, and can bind to an arbitrary internet or local address,
+  by providing the :address keyword argument to start-server. To bind
+  to a local (unix domain) socket, pass a path name object instead of
+  an internet address.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+clim patch pij005 for mswindows only
+Date Posted: Mon Aug 22 20:32:46 PDT 2011
+Patch names: update/pij005.001
+Description: The routine responsible for drawing buttons with icons
+  as their labels had a flaw that caused it to fail drawing on 64-bit
+  Windows. This patch changes it to be 64-bit safe.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+smputil patch smputil
+Date Posted: Wed Aug 10 14:40:44 PDT 2011
+Patch names: code/smputil.002
+Description:
+  When a sharable-lock instance was used recursively in
+  exclusive mode, an array index error was signalled. This patch
+  avoids the error. The patch also corrects an error in
+  make-sharable-lock; the max-shared argument now defaults to 20
+  as stated in the documentation.
+  
+  The recursive-p argument to make-sharable-lock is extended and
+  the locking functions and macros accept a :recursive-p
+  keyword argument that overrides the specification in the lock.
+  The argument may be t, nil or a list of the keywords
+  :exclusive, :shared, :upgrade, and :downgrade. The value t is
+  equivalent to (:exclusive, :shared). Read the updated on-line
+  documentation for more details.
+  
+Impact: recommended
+
+-------------------------------------------------------------------------------
+aserve patch aserve
+Date Posted: Fri Jul 29 17:36:26 PDT 2011
+Patch names: code/aserve.010
+Description: AllegroServe 1.3.10: fix buffer boundary error in
+  unchunking-streams.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch inflate
+Date Posted: Fri Jul 29 16:32:12 PDT 2011
+Patch names: code/inflate.002
+Description: Improve performance of inflate streams.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base-lisp patch pia013 for solarisamd64.64 only
+Date Posted: Wed Jul 27 13:39:16 PDT 2011
+Patch names: update/pia013.002
+Description: This patch makes sure that ensure-directories-exist can
+  be used from multiple processes on the same pathname.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+shared-library patch libacl8218.dylib ... for macosx86 only
+Date Posted: Wed Jul 20 11:54:57 PDT 2011
+Patch names: libacl8218.dylib, libacli8218.dylib, libacli8218t.dylib
+Description:
+  Update Allegro CL to work on upcoming release of Mac OS X 
+  Lion.
+  
+  IMPORTANT: If you upgrade to Lion prior to installing this
+  patch, Allegro CL will not start. You will need to manually
+  download the following patches and copy them into your `Allegro
+  directory' in order to get it working again.
+  
+  
+  * Express Edition:
+    Download libacli8218t.dylib
+    (http://www.franz.com/ftp/pub/patches/8.2/macosx86/libacli8218t.dylib)
+  
+  * Non-Express macosx86:
+    Download libacl8218.dylib
+    (http://www.franz.com/ftp/pub/patches/8.2/macosx86/libacl8218.dylib)
+    and libacli8218.dylib
+    (http://www.franz.com/ftp/pub/patches/8.2/macosx86/libacli8218.dylib)
+  
+  * Non-Express macosx86-64.64:
+    Download libacl8218.dylib
+    (http://www.franz.com/ftp/pub/patches/8.2/macosx86-64.64/libacl8218.dylib)
+    and libacli8218.dylib
+    (http://www.franz.com/ftp/pub/patches/8.2/macosx86-64.64/libacli8218.dylib)
+Impact: recommended
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  macosx86     lisp_build_395          lisp_build_396
+  macosx86-64.64lisp_build_336          lisp_build_337
+  macosx86-trialN/A                     lisp_build_417
+
+-------------------------------------------------------------------------------
+binaries patch alisp.exe ... for mswindows only
+Date Posted: Wed Jul 20 11:54:57 PDT 2011
+Patch names: alisp.exe, allegro-ansi.exe, mlisp.exe, update.exe,
+  alisp8.exe, allegro.exe, mlisp8.exe
+Description: Fix update.exe 'lisp is running' check.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+cg9.0 patch * (version 3) ...
+Date Posted: Wed Jul 20 11:54:57 PDT 2011
+Patch names: code90/* (version 3), update.sh, update.cl
+Description: This update mostly enhances the graph-layout and
+  node-picture modules to support our Gruff product.  It also
+  contains a process-lock fix that could have led to hangs or a
+  failure to exit the IDE. Other small fixes involve calling
+  load-file in a proces other than the one that created the window,
+  resizing windows that contain split-bar widgets, grid-widgets
+  breaking if resized to a negative size, and a more helpful property
+  checker in the inspector for the chart-objects property of a
+  chart-widget.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base-lisp patch pia013
+Date Posted: Mon Jul 18 10:37:56 PDT 2011
+Patch names: update/pia013.001
+Description: This patch makes sure that ensure-directories-exist can
+  be used from multiple processes on the same pathname.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+acache patch acache-2.1.16
+Date Posted: Mon Jul 18 10:37:56 PDT 2011
+Patch names: code/acache-2.1.16.fasl (version 2116)
+Description: AllegroCache now correctly rolls back changes to
+  instances of user-defined ac-map subclasses.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+ssl patch aclssl.dll ...
+Date Posted: Wed Jun  1 11:38:58 PDT 2011
+Patch names: aclssl.dll, aclissl.dll, aclssl.so, aclissl.so,
+  openssl-1.0.0d.zip, vcredist_x86.exe, vcredist_x64.exe,
+  aclssl-readme.txt, aclssl-openssl-version.txt
+Description: Re-release the ssl module to be compatible with version
+  1.0.0d of the openssl libraries.
+Impact: recommended
+Other info: Please read aclssl-readme.txt for installation
+  instructions. This patch should be backward compatible with recent
+  prior versions. Specifically, openssl-0.9.8e continues to work with
+  this patch.
+
+-------------------------------------------------------------------------------
+cg9.0 patch * (version 2) ...
+Date Posted: Wed Jun  1 11:38:58 PDT 2011
+Patch names: code90/* (version 2), update.sh, update.cl
+Description: The Editor tab of the Options dialog in the IDE has two
+  additional options for UTF8 support, especially for reading
+  pre-existing UTF8 files that do not contain the UTF8 byte order
+  marker. Also, a CG bug is fixed for using a mouse cursor that's
+  made from a CG pixmap, specific to Windows 7 when the Win7 option
+  to draw text and other things larger has been selected.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+aserve patch aserve
+Date Posted: Wed Jun  1 11:38:58 PDT 2011
+Patch names: code/aserve.009
+Description: Optimize streams usage in AllegroServe.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base-lisp patch regexp2
+Date Posted: Thu May 19 19:20:08 PDT 2011
+Patch names: code/regexp2.001
+Description: When a pattern ended with a zero-width assertions such
+  as the end-of-string '$', immediately preceded by a non-simple
+  grouping, the regexp engine made the match fail even if the input
+  string conformed the pattern.  This bug is now fixed.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+jlinker patch jlinker ...
+Date Posted: Thu May 19 19:20:08 PDT 2011
+Patch names: code/jlinker.003, code/jlinkent.003, update/pin001.003
+Description: Reverts to original jlinker module, as released with
+  Allegro CL 8.2. Jlinker patches as published after the Allegro CL
+  8.2 release introduced what were considered to be small API
+  incompatibilities that unfortunately had the potential to cause
+  problems for distributed client/server applications that made use
+  of the module. As a result, we are reverting back to the original
+  version and opting to delay the improved jlinker patch until our
+  next software release.
+Impact: recommended
+Other info: If you are intersted in using the patched jlinker module
+  in Allegro CL 8.2, please contact us at support@franz.com.
+
+-------------------------------------------------------------------------------
+aserve patch aserve
+Date Posted: Thu May 19 19:20:08 PDT 2011
+Patch names: code/aserve.008
+Description: If the string-output-stream strategy was used there
+  could be an extraneous call to force-output to *standard-output*.
+  This would cause an error in rare cases where one ran aserve with
+  standard-output closed.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+cg9.0 patch * ...
+Date Posted: Thu Apr 28 10:07:24 PDT 2011
+Patch names: code90/*, update.sh, update.cl, require-search-list.txt
+Description:
+  This is a preview of the ACL 9.0 CG and IDE running on ACL 
+  8.2. The main use is to test the new Unicode support. To use
+  it, you must:
+  
+  
+  * Rename require-search-list.txt to require-search-list.cl. 
+  * Run update.exe (Windows) or update.sh (all other). This will
+  rebuild your `allegro' and `allegro-ansi' images to use the 
+  new CG/IDE.
+  
+  The Unicode support allows you to specify any lisp string
+  (which is always two-byte Unicode in the 16-bit version of 
+  ACL) as the value of any widget or menu-item or title-bar and
+  so on, or when drawing on windows, and any characters that the
+  font contains should be drawn correctly. This usually allows
+  using Asian or European scripts without specifying a 
+  particular font, and never requires rebooting Windows with a
+  particular locale.
+  
+  There is also support in the IDE editor for saving files using
+  either the default external format (such as Latin1), or UTF8,
+  or two-byte Unicode. See the new options on the right side of
+  the Editor tab of the `Tools | Options dialog'.
+  
+  This release also includes all of the other CG and IDE
+  enhancements that have been made for the 9.0 release of ACL.
+  
+Impact: experimental-minimal
+Other info: This patch requires specific changes by the user in order
+  for the new CG to be used. This patch should otherwise be safe to
+  download.
+
+-------------------------------------------------------------------------------
+jlinker patch jlinker ...
+Date Posted: Fri Apr 22 11:35:08 PDT 2011
+Patch names: code/jlinker.002, code/jlinkent.002, jlinker/jlinker.jar
+Description:
+  This patch simplifies the jlinker API and protocol and fixes 
+  an incompatibility in the API that was introduced by the .001
+  version of this patch. The Lisp/Java connection now uses a
+  single listening socket port.
+  
+  See the Post-8.2 release notes section
+  (http://www.franz.com/support/documentation/8.2/doc/release-notes.htm#post82-info-1)
+  for specific information on the incompatible changes.
+  
+Impact: recommended
+Other info: This patch requires an update of both the Lisp and Java
+  parts of any application that uses it. Care is recommended if
+  adding this patch near- or post-release.
+
+-------------------------------------------------------------------------------
+acache patch acache-2.1.15.fasl (version 00)
+Date Posted: Wed Apr 20 14:00:29 PDT 2011
+Patch names: code/acache-2.1.15.fasl (version 00)
+Description: Preserve :type and :documentation for persistent classes
+  and slots.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+aserve patch aserve
+Date Posted: Wed Apr 20 14:00:29 PDT 2011
+Patch names: code/aserve.007
+Description: Faster aserve worker dispatch and default actions in
+  webactions.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch proc2base ...
+Date Posted: Wed Apr 13 10:36:30 PDT 2011
+Patch names: code/proc2base.001, code/proc2common.002
+Description: Allows 8.2 lisps to use the :wait time option of
+  mp:dequeue, completely compatible with the 9.0 version of
+  mp:dequeue. As a side-effect, makes the :whostate argement to
+  mp:dequeue work.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+gtk patch loadgtk20.cl ...
+Date Posted: Tue Apr  5 11:20:27 PDT 2011
+Patch names: gtk/loadgtk20.cl, gtk/gtk20-lib.dylib, gtk/gtk20-fw.dylib
+Description: Let GTK on the mac use (32 / 64-bit) Frameworks
+Impact: recommended
+
+-------------------------------------------------------------------------------
+jlinker patch jlinker ...
+Date Posted: Tue Apr  5 11:20:27 PDT 2011
+Patch names: code/jlinker.001, code/jlinkent.001, jlinker/jlinker.jar
+Description:
+  This patch simplifies the jlinker API and protocol and
+  introduces a small but visible incompatibility in the API. The
+  Lisp/Java connection now uses a single listening socket port.
+  
+  See the Post-8.2 release notes section
+  (http://www.franz.com/support/documentation/8.2/doc/release-notes.htm#post82-info-1)
+  for specific information on the incompatible changes.
+  
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch random
+Date Posted: Fri Apr  1 16:56:29 PDT 2011
+Patch names: code/random.001
+Description: Fixes a bug with the high-speed compiled version of
+  (random 1.0d0) which was never returning any values greater than
+  0.5d0.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base-lisp patch pia012
+Date Posted: Fri Apr  1 16:56:29 PDT 2011
+Patch names: update/pia012.001
+Description: Fix file name size limit in
+  symbolic-link-p/excl.osi:readlink.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch clx ...
+Date Posted: Fri Apr  1 16:56:29 PDT 2011
+Patch names: code/clx.001, update/pih001.001
+Description: XCW and CLX modules could not handle launchd DISPLAY
+  settings, and were thus unable to open X displays on macosx
+  platforms using this configuration. This patch corrects the problem.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+smputil patch smputil
+Date Posted: Fri Apr  1 16:56:29 PDT 2011
+Patch names: code/smputil.001
+Description: It was possible for a barrier to be discounted twice if
+  discount-on-timeout and discount-on-abort were both specified as
+  non-nil. The patch implements correct discounting in all
+cases.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+compiler patch pib008
+Date Posted: Fri Mar 18 17:23:01 PDT 2011
+Patch names: update/pib008.001
+Description: Fixes a register allocation problem for very esoteric
+  mulitiple-value-bind compilation.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch deflate
+Date Posted: Fri Mar 18 17:23:01 PDT 2011
+Patch names: code/deflate.002
+Description: Fix memory leak.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+aserve patch aserve
+Date Posted: Fri Mar 18 09:41:03 PDT 2011
+Patch names: code/aserve.006
+Description: AllegroServe v1.3.4. Fix prepend-headers so that it
+  works on windows
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch deflate
+Date Posted: Fri Mar 18 09:41:03 PDT 2011
+Patch names: code/deflate.001
+Description: Search for and load the correct zlib shared library when
+  loading the deflate module.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch aserve
+Date Posted: Fri Mar 18 09:41:03 PDT 2011
+Patch names: code/aserve.006
+Description: When AllegroServe is first loaded a check is made for
+  the zlib compression library. If it is available, then the server
+  will be capable of compressing responses. If not, a note is
+  displayed indicating the library was not found. This patch attempts
+  to make it clear that AllegroServe will function normally whether
+  zlib is loaded or not.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+aserve patch aserve
+Date Posted: Fri Mar 11 10:56:27 PST 2011
+Patch names: code/aserve.005
+Description:
+  An update to AllegroServe 1.3.3. See the release notes
+  (http://wwwtest.franz.com/support/documentation/8.2/doc/release-notes.htm#post82-info-1)
+  for specific information on the changes. Impact: recommended
+Other info: This patch utilizes, but does not require, the gzip
+  streams added by the recently published inflate and deflate patches.
+
+-------------------------------------------------------------------------------
+base patch deflate.fasl (version 0) ...
+Date Posted: Fri Mar 11 10:56:27 PST 2011
+Patch names: code/deflate.fasl (version 0), code/inflate.001
+Description: Impelement gzip inflate and deflate streams.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+acache patch acache-2.1.14.fasl (version 0)
+Date Posted: Tue Feb 22 16:31:32 PST 2011
+Patch names: code/acache-2.1.14.fasl (version 0)
+Description: Previously, AllegroCache signaled a non-simple error
+  when connection to the AllegroCache server broke down during a
+  request. Now, AllegroCache will signal a
+  network-communication-error condition. Also, prevent a "No
+  applicable method" error when creating class cursors for classes
+  that had only uncommitted instances.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+prolog patch prolog
+Date Posted: Tue Feb 22 16:31:32 PST 2011
+Patch names: code/prolog.001
+Description: Optimize var/1 and fix a bug with nested conditionals.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+mysql patch mysql
+Date Posted: Tue Feb 15 17:40:00 PST 2011
+Patch names: code/mysql.002
+Description:
+  Adds a :client-flags keyword argument to dbi.mysql:connect.
+  
+  This allows the user to request certain client behavior at
+  connect time. The value of this keyword arg should be a
+  logior'd set of one or more exported client flags. The
+  following flags are exported from the dbi.mysql package for
+  use:
+  
+  
+  * `CLIENT_FOUND_ROWS': Return found instead of affected rows 
+  * `CLIENT_NO_SCHEMA': Don't allow db.table.column syntax in
+    queries 
+  * `CLIENT_IGNORE_SPACE': Ignore whitespace between function
+    name and '(' 
+  * `CLIENT_INTERACTIVE': client is interactive. The server sets
+    wait_timeout to interactive_timeout. The following flags are
+  also supported, and are set by the mysql client by default:
+  
+  
+  * `CLIENT_LONG_PASSWORD': client supports post MySQL 4.1
+    password format 
+  * `CLIENT_LONG_FLAG': client will get all column flags 
+  * `CLIENT_CONNECT_WITH_DB': Can specify a database at connect
+    time. 
+  * `CLIENT_LOCAL_FILES': client can use LOAD DATA LOCAL 
+  * `CLIENT_PROTOCOL_41': client speaks mysql 4.1 protocol 
+  * `CLIENT_TRANSACTIONS': client knows about transactions 
+  * `CLIENT_SECURE_CONNECTION': client supports 4.1
+    authentication. Impact: minor
+
+-------------------------------------------------------------------------------
+mysql patch mysql
+Date Posted: Fri Jan 28 16:38:23 PST 2011
+Patch names: code/mysql.001
+Description:
+  Adds two exported functions:
+  
+  `dbi.mysql:change-user' (&key (db *mysql*) (user
+  (sys:user-name)) password database)
+  
+  Equivalent to mysql_change_user() in the mysql client
+  library. Allows for the resetting of an existing connection
+  without the need to disconnect and re-connect.
+  
+  `dbi.mysql:ping' ()
+  
+  Equivalent to mysql_ping() in the mysql client library. Checks
+  if the connection to the server is still working.
+  
+Impact: recommended
+
+-------------------------------------------------------------------------------
+clim-mega patch climxm ... for macosx86 only
+Date Posted: Tue Jan 18 15:23:31 PST 2011
+Patch names: code/climxm.002, code/clim-debug.002,
+  code/clim-debugwnn.002, code/climdemo.002, code/clim-debugxm.002,
+  code/climg.002, code/climhpgl.002, code/climps.002, code/climwnn.002
+Description: CLIM would look for required Motif and X11 libraries
+  only in /opt/local/lib/. Now, it will search for Motif in
+  /opt/local/lib/, /usr/local/lib/, /usr/X11R6/lib/ and /usr/X11/lib/.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+shared-library patch acl8218 ...
+Date Posted: Wed Dec 29 12:46:56 PST 2010
+Patch names: acl8218.dll (version 592), acl8218.lib, acl8218.pdb,
+  acli8218.dll, acli8218.lib, acli8218.pdb, libacli8218.so,
+  libacl8218.so, libacli8218.dylib, libacl8218.dylib, acli8218t.dll,
+  libacli8218t.so
+Description: Patch Allegro CL 8.2 to run on the Intel i7 with F14
+  kernel. If installing a new distribution on this platform, there is
+  a good chance that lisp will crash during a run of
+  sys:update-allegro, resulting in a failure to retrieve this patch.
+  If this happens, you will need to download patches manually. To
+  manually download this patch, visit
+  ftp://ftp.franz.com/pub/patches/8.2/. Change into the directory
+  specific to your architecture and download the shared library files
+  shown in the patch listing that are available. If running the
+  Express Edition, only acli8218t.dll (.lib and .pdb) or
+  libacli8218t.so are needed. The files should be saved into the root
+  directory of your Allegro CL installation.
+Impact: recommended
+Other info: Please read full log entry for instructions on manually
+  installing these patches if sys:update-allegro errors before
+  completing.
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  solarisamd64.64lisp_build_279          lisp_build_280
+  linuxamd64.64lisp_build_302          lisp_build_303
+  aix          lisp_build_47           lisp_build_48
+  aix.64       lisp_build_267          lisp_build_268
+  freebsd      lisp_build_309          lisp_build_310
+  linux86      lisp_build_326          lisp_build_327
+  macosx86     lisp_build_323          lisp_build_324
+  macosx86-64.64lisp_build_267          lisp_build_268
+  solaris      lisp_build_253          lisp_build_254
+  solaris.64   lisp_build_252          lisp_build_253
+  windows      lisp_build_592          lisp_build_593
+  windows.64   lisp_build_428          lisp_build_429
+  freebsd-trialN/A                     lisp_build_311
+  linux86-trialN/A                     lisp_build_328
+  macosx86-trialN/A                     lisp_build_325
+  windows-trialN/A                     lisp_build_594
+
+-------------------------------------------------------------------------------
+base patch compftype
+Date Posted: Thu Dec 16 15:25:06 PST 2010
+Patch names: code/compftype.001
+Description: Fixes a bug when ff:aligned-to-address is called with a
+  value of 0 - a bignum that looks like 0 was being returned, rather
+  than (the fixnum 0).
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph3 patch pio019
+Date Posted: Tue Dec 14 19:17:20 PST 2010
+Patch names: update/agraph/3.3/pio019.001
+Description: A Prolog select query that used the same UPI-map
+  multiple times could incorrectly share its resources leading to an
+  error. This patch corrects this situation.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+unix-shared-library patch nil for non-mswindows only
+Date Posted: Mon Dec  6 16:41:31 PST 2010
+Patch names: examples/unix-shared-library/
+Description:
+  Release the unix-shared-library example for all supported
+  platforms. Use of this example code is documented here
+  (http://www.franz.com/support/documentation/current/doc/unix-shared-library.htm)
+Impact: recommended
+
+-------------------------------------------------------------------------------
+smputil patch smputil.fasl (version 0)
+Date Posted: Mon Dec  6 09:57:13 PST 2010
+Patch names: code/smputil.fasl (version 0)
+Description: This patch extends the Lisp API with sharable-lock and
+  barrier implementation, and possibly other functions and macros to
+  facilitate multi-threaded programming. The macros and functions
+  implement facilities that will be most useful in an SMP
+  environment, but will function correctly in in ACL 8.2 and allow
+  applications to be prepared for SMP.
+Impact: recommended
+Other info: (require :smputil) will load this module once the patch
+  has been installed.
+
+-------------------------------------------------------------------------------
+agraph3 patch pio018
+Date Posted: Mon Dec  6 09:57:13 PST 2010
+Patch names: update/agraph/3.3/pio018.001
+Description: The code for add-triple was not correctly resetting a
+  shared resource which could sometimes lead to incorrect data being
+  added. The situation could occur only when type-mapping was being
+  used and if add-triple was being called with UPI arguments.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+shared-library patch acl8218 ...
+Date Posted: Fri Dec  3 15:19:11 PST 2010
+Patch names: acl8218.dll (version 587), acl8218.lib, acl8218.pdb,
+  acli8218.dll, acli8218.lib, acli8218.pdb, libacli8218.so,
+  libacl8218.so, libacli8218.dylib, libacl8218.dylib
+Description: Fix buffer overflows in filesystem related OS interface.
+  Also exports fld_pow and fld_exp, among other routines from the
+  math library.
+Impact: recommended
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  solarisamd64.64lisp_build_268          lisp_build_269
+  linuxamd64.64lisp_build_293          lisp_build_294
+  aix          lisp_build_41           lisp_build_42
+  aix.64       lisp_build_262          lisp_build_263
+  freebsd      lisp_build_299          lisp_build_300
+  linux86      lisp_build_312          lisp_build_313
+  macosx86     lisp_build_311          lisp_build_312
+  macosx86-64.64lisp_build_256          lisp_build_257
+  solaris      lisp_build_244          lisp_build_245
+  solaris.64   lisp_build_243          lisp_build_244
+  windows      lisp_build_586          lisp_build_587
+  windows.64   lisp_build_423          lisp_build_424
+  freebsd-trialN/A                     lisp_build_301
+  linux86-trialN/A                     lisp_build_314
+  macosx86-trialN/A                     lisp_build_313
+  windows-trialN/A                     lisp_build_588
+
+-------------------------------------------------------------------------------
+compiler patch pib007 for aix.64 only
+Date Posted: Fri Dec  3 15:19:11 PST 2010
+Patch names: update/pib007.001
+Description: Fixes a bug in the 64-bit AIX lisp where certain ranges
+  of constants are compiled for incorrect results, due to the
+  differences in behaviors in equivalent instructions in 32-bit mode
+  and 64-bit mode.
+Impact: recommended
+Other info: Affected code must be recompiled after patch installation
+  in order for the fix to take effect.
+
+-------------------------------------------------------------------------------
+shared-library patch acl8218 ...
+Date Posted: Fri Nov 19 09:12:40 PST 2010
+Patch names: acl8218.dll (version 578), acl8218.lib, acl8218.pdb,
+  acli8218.dll, acli8218.lib, acli8218.pdb
+Description: Fix handle leak on Windows with process creation.
+Impact: recommended
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  windows      lisp_build_578          lisp_build_579
+  windows.64   lisp_build_416          lisp_build_417
+
+-------------------------------------------------------------------------------
+base patch asdf ...
+Date Posted: Tue Nov 16 16:01:31 PST 2010
+Patch names: code/asdf.001, code/asdf.readme
+Description: Upgrade ASDF from v1 to v2.010.5.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+xml-rpc patch xml-rpc
+Date Posted: Tue Nov 16 16:01:31 PST 2010
+Patch names: code/xml-rpc.001
+Description:
+  This patch updates the xml-rpc module with several bug
+  fixes and several minor improvements. The new features are
+  described in more detail in the updated documentation file
+  in examples/xml-rpc/xml-rpc.txt.
+  
+  
+  * Apply aserve default external-format to messages. 
+  * Allow conversions between base64 and USB8 array. 
+  * Convert time values in time-zone 0 (UTC). 
+  * Allow additional args to pass on to do-http-request. 
+  * Use case-sensitive test in xml-rpc-slot-value and add 
+    error-p arg. 
+  * Allow class initargs in make-xml-rpc-server. 
+  * Decode xml-rpc-fault instance signalled by method body. Impact:
+                                                            recommended
+
+-------------------------------------------------------------------------------
+sax patch sax
+Date Posted: Tue Nov 16 16:01:31 PST 2010
+Patch names: code/sax.001
+Description: When a default namespace was declared in an element, and
+  an identical element occured within the body, the namespace context
+  was ended prematurely, and the outer end tag caused the error
+  signal.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+compiler patch pib006
+Date Posted: Mon Nov  8 14:13:04 PST 2010
+Patch names: update/pib006.002
+Description: Further corrects dotimes operation to not assume that
+  normalized type declarations are compound; some type declarations
+  were causing the compiler to fail because it was assuming the type
+  declaration was in compound (i.e. list) form.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch uri
+Date Posted: Mon Nov  8 13:43:44 PST 2010
+Patch names: uri/uri.001
+Description: parse-uri has a new keyword argument,
+  canonicalize-schemes, which can be used to control which schemes
+  get canonicalization and have their trailing slash (/) removed:
+Impact: recommended
+
+-------------------------------------------------------------------------------
+jlinker patch pin001
+Date Posted: Wed Oct 27 12:19:34 PDT 2010
+Patch names: update/pin001.001
+Description: Corrects a typo that causes an ecase to fail.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+compiler patch pib006
+Date Posted: Wed Oct 27 12:19:34 PDT 2010
+Patch names: update/pib006.001
+Description: Fixes bugs in both dolist and dotimes regarding the
+  checking of type declarations; the
+  comp:verify-type-declarations-switch has brought out incorrect
+  assumptions in type declarations, some of which are built into our
+  macroexpansions, and some of which are reasonable declarations on
+  loop variables that a user might provide. For example, a dolist
+  variable might reasonably be declared as a type simple-vector if
+  all of the elements of the list are simple-vectors, but since the
+  spec requires that the loop variable be bound to nil as the result
+  form is run, the type-checking calls the binding out as an error.
+  In dotimes, the loop variable is always non-negative, and the loop
+  will never run if the termination value is negative, but there will
+  be an error if type-checking is enabled. This patch fixes these
+  unreasonable errors.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+aserve patch aserve
+Date Posted: Wed Oct 20 11:39:03 PDT 2010
+Patch names: code/aserve.004
+Description: If the http client asks for a 100-continue response from
+  AllegroServe via an Expect header, AllegroServe will send such a
+  response.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base-lisp patch pia011
+Date Posted: Thu Oct 14 12:56:05 PDT 2010
+Patch names: update/pia011.001
+Description: Fixes a bug in the function spec handler for method
+  whenever a trace like (trace ((method frob (symbol)) :break-before
+  t)) is done.  The function-spec handler was trying to parse the
+  (:break-before t) as a function, which was obviously wrong.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+clim patch pij004
+Date Posted: Thu Oct 14 12:56:05 PDT 2010
+Patch names: update/pij004.001
+Description: This patch fixes a duplicate transformation error in
+  draw-oval* and draw-oval that would manifest when drawing ovals
+  inside a with-room-for-graphics (:first-quadrant t) form.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+shared-libary patch acl8218 ...
+Date Posted: Thu Oct 14 12:11:53 PDT 2010
+Patch names: acl8218.dll (version 570), acl8218.lib, acl8218.pdb,
+  acli8218.dll, acli8218.lib, acli8218.pdb, libacli8218.so,
+  libacl8218.so, libacli8218.dylib, libacl8218.dylib
+Description: On Linux, make general, low-level optimizations of the
+  ACL shared library. On AIX, remove support for AIX versions prior
+  to 5.3, which is the oldest supported version of AIX.
+Impact: recommended
+Other info: Much testing has been performed on this shared library
+  patch, but if you are near a release of your software be sure to
+  fully test if you plan on including it.
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  solarisamd64.64lisp_build_247          lisp_build_248
+  linuxamd64.64lisp_build_284          lisp_build_285
+  aix          lisp_build_32           lisp_build_33
+  aix.64       lisp_build_253          lisp_build_254
+  freebsd      lisp_build_287          lisp_build_288
+  linux86      lisp_build_300          lisp_build_301
+  macosx86     lisp_build_297          lisp_build_298
+  macosx86-64.64lisp_build_245          lisp_build_246
+  solaris      lisp_build_234          lisp_build_235
+  solaris.64   lisp_build_234          lisp_build_235
+  windows      lisp_build_570          lisp_build_571
+  windows.64   lisp_build_409          lisp_build_410
+
+-------------------------------------------------------------------------------
+aserve patch aserve
+Date Posted: Thu Oct 14 12:11:53 PDT 2010
+Patch names: code/aserve.003
+Description: A new logging method is now called enabling one to write
+  a specialized method for each class of server.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base-lisp patch pia010
+Date Posted: Wed Sep 29 10:10:35 PDT 2010
+Patch names: update/pia010.001
+Description: excl::in-case-mode is exported and documented, which
+  allows some
+classes of programs written for Ansi case mode to be loaded and run in
+a modern lisp, and vice versa.
+Impact: minor
+Other info: No impact if not used. See the documentation for
+  instructions and caveats.
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio017
+Date Posted: Tue Sep  7 14:52:53 PDT 2010
+Patch names: update/agraph/3.3/pio017.001
+Description: Under some conditions the index chunk tracking code
+  could enter a deadlock. This is fixed.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch defftype
+Date Posted: Wed Sep  1 12:48:39 PDT 2010
+Patch names: code/defftype.001
+Description: Fixes a bug when ff:aligned-to-address is called with a
+  value of 0 - a bignum that looks like 0 was being returned, rather
+  than (the fixnum 0).
+Impact: recommended
+
+-------------------------------------------------------------------------------
+cg patch cg-text-edit-pane-file-io
+Date Posted: Mon Aug 30 16:02:33 PDT 2010
+Patch names: code/cg-text-edit-pane-file-io.001
+Description: When loading a text file into a text-edit-pane on GTK,
+  CG was stripping out any CR characters to convert from DOS CR/LF's
+  to single LF's for Unix/GTK. That's out-of-date for the newer Mac
+  platform, where the user may edit a file that contains native
+  single-CR newlines. This patch uses the :anynl eol-convention to
+  handle all three kinds of newlines, even in the same file.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio016
+Date Posted: Mon Aug 30 11:35:10 PDT 2010
+Patch names: update/agraph/3.3/pio016.001
+Description: The N-Triples serializer could fail to correctly escape
+  backslashes which could produce invalid N-Triples files.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+aodbc-v2 patch aodbc-v2
+Date Posted: Fri Aug 20 11:44:40 PDT 2010
+Patch names: code/aodbc-v2.001
+Description: Fix the foreign type specification for all handles types
+  (hstmt, henv, hdbc). These were incorrectly specified for
+  non-windows 64-bit platforms as 'int'. The result was a non-working
+  interface on 64-bit platforms. On the macosx86-64.64 platform in
+  particular, the lisp process would hang unrecoverably. This patch
+  corrects the problem.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio015
+Date Posted: Fri Aug 20 10:54:23 PDT 2010
+Patch names: update/agraph/3.3/pio015.001
+Description: The Prolog select query language was ignoring the
+  :use-planner option meaning that it was impossible to turn off all
+  planning for queries. This patch corrects the problem.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio014
+Date Posted: Fri Aug 20 10:54:23 PDT 2010
+Patch names: update/agraph/3.3/pio014.001
+Description: In some situations (especially when simultaneously
+  adding, querying and indexing), cursors could fail to manage their
+  indices which could result in index chunks being dropped
+  prematurely. This patch fixes the problem.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+clim-mega patch climxm ...
+Date Posted: Mon Aug 16 11:31:03 PDT 2010
+Patch names: code/climxm.001, code/climnt.001, code/clim-debug.001,
+  code/clim-debugwnn.001, code/climdemo.001, code/clim-debugxm.001,
+  code/climg.001, code/climhpgl.001, code/climps.001, code/climwnn.001
+Description: Changes in the way Allegro CL 8.2 loads a user's
+  clinit.cl file prevented CLIM from loading cleanly. With this
+  patch, loading CLIM on startup by using (require :climxm) or
+  (require :climnt) in your clinit.cl file will work again.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+elmdll patch pia009 ... for mswindows only
+Date Posted: Fri Aug 13 14:02:41 PDT 2010
+Patch names: update/pia009.001, elm8218.dll, elm8218.lib,
+  elmi8218.dll, elmi218.lib
+Description: When running generate-application lisp is looking for
+  elmi8213.dll instead of elmi8218.dll. This happens when generating
+  :application-type :ole-in-proc-server.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch sock ...
+Date Posted: Fri Aug 13 09:29:56 PDT 2010
+Patch names: code/sock.003, acl8218.dll (version 528), acl8218.lib,
+  acl8218.pdb, acli8218.dll, acli8218.lib, acli8218.pdb,
+  libacli8218.so, libacl8218.so, libacli8218.dylib, libacl8218.dylib
+Description: :max and nil are now allowable values for the :backlog
+  keyword argument to make-socket for passive sockets. nil will be
+  translated to 5 and :max will be translated to SOMAXCONN (A
+  system-dependent maximum). Linux is treated as a special case and
+  if /proc/sys/net/core/somaxconn is readable, the value found there
+  is used.
+Impact: recommended
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  solarisamd64.64lisp_build_234          lisp_build_235
+  linuxamd64.64lisp_build_248          lisp_build_249
+  aix          lisp_build_12           lisp_build_13
+  aix.64       lisp_build_235          lisp_build_236
+  freebsd      lisp_build_276          lisp_build_277
+  linux86      lisp_build_282          lisp_build_283
+  macosx86     lisp_build_286          lisp_build_287
+  macosx86-64.64lisp_build_234          lisp_build_235
+  solaris      lisp_build_223          lisp_build_224
+  solaris.64   lisp_build_223          lisp_build_224
+  windows      lisp_build_528          lisp_build_529
+  windows.64   lisp_build_365          lisp_build_366
+
+-------------------------------------------------------------------------------
+aserve patch aserve
+Date Posted: Fri Aug 13 09:29:56 PDT 2010
+Patch names: code/aserve.002
+Description: Obey keep-alive requests for PUT and POST requests.
+  Aserve version 1.2.68.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch shell
+Date Posted: Fri Aug 13 09:29:56 PDT 2010
+Patch names: code/shell.001
+Description: Add compiler macro for excl.shell:=~.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+ssl patch ssl ...
+Date Posted: Wed Jul 28 10:33:36 PDT 2010
+Patch names: code/ssl.001, code/digest.001, code/sha1.001,
+  code/misc.001, sys/startup.fasl (version 0), aclssl.so, aclissl.so
+Description:
+  New message digest API and existing sha1-* API now use
+  OpenSSL library.
+  
+  All of the new functions require :ssl.
+  
+  The sha1-* functions were swapped for the new implementation
+  and are upward compatible. The md2-*, md4-*, sha256-*, 
+  sha512-* and rmd160-* functions are new.
+  
+  The md5-* functions are unchanged.
+  
+Impact: recommended
+
+-------------------------------------------------------------------------------
+shared-libary patch acl8218 ...
+Date Posted: Tue Jul 20 10:22:06 PDT 2010
+Patch names: acl8218.dll (version 505), acl8218.lib, acl8218.pdb,
+  acli8218.dll, acli8218.lib, acli8218.pdb, libacli8218.so,
+  libacl8218.so, libacli8218.dylib, libacl8218.dylib
+Description: Allegro CL 8.2 revamps the way symbols are accessed in
+  order to make global-symbol-value atomically updatable. An internal
+  structure sometimes infiltrates into Lisp code when
+  unbound-variable error is invoked, and this patch fixes that.
+Impact: minor
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  solarisamd64.64lisp_build_220          lisp_build_221
+  linuxamd64.64lisp_build_235          lisp_build_236
+  aix.64       lisp_build_222          lisp_build_223
+  freebsd      lisp_build_263          lisp_build_264
+  linux86      lisp_build_269          lisp_build_270
+  macosx86     lisp_build_273          lisp_build_274
+  macosx86-64.64lisp_build_225          lisp_build_226
+  solaris      lisp_build_210          lisp_build_211
+  solaris.64   lisp_build_210          lisp_build_211
+  windows      lisp_build_505          lisp_build_506
+  windows.64   lisp_build_340          lisp_build_341
+
+-------------------------------------------------------------------------------
+cg patch cg-menu for gtk only
+Date Posted: Thu Jul 15 19:09:33 PDT 2010
+Patch names: code/cg-menu.002
+Description: Sometimes a pop-up menu could fail to appear if invoked
+  just after certain other activity such as a modal dialog. This
+  could also leave things in a confused state. This patch provides a
+  simple fix for this bad bug.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+aserve patch aserve
+Date Posted: Fri Jul  9 13:53:53 PDT 2010
+Patch names: code/aserve.001
+Description:
+  The :keep-alive argument to do-http-request will now
+  cause do-http-request to return a fifth value: a socket
+  connected to the server. That fifth value will be nil if the
+  server refuses to keep the connection with the client open.
+  Even if the server agrees to keep the connection alive it will
+  close it after some period of inactivity.
+  
+  do-http-request takes a :connection argument which is how the
+  socket returned by do-http-request should be passed to the
+  next do-http-request call. It is ok if the value of the
+  :connection argument is nil or closed socket. do-http-request
+  will notice that the socket is unusable and will create a new
+  one.
+  
+Impact: recommended
+
+-------------------------------------------------------------------------------
+clim patch pij003
+Date Posted: Wed Jul  7 09:28:57 PDT 2010
+Patch names: update/pij003.001
+Description: When using Alt-Tab to switch back to a CLIM application,
+  it would occasionallly appear to hang. This patch properly restores
+  the modifier state and properly restores input sensitivity.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch proc2common ...
+Date Posted: Wed Jul  7 09:11:43 PDT 2010
+Patch names: code/proc2common.001, code/proc2-s.001
+Description: Extend queue class with initial-contents and
+  queue-length.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch lldb
+Date Posted: Tue Jul  6 11:39:01 PDT 2010
+Patch names: code/lldb.002
+Description: Fixes a bug which occurs when speed is 3
+  (source-debugging is turned on) in which a stack overflow can occur.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+shared-library patch acl8218 ... for windows.64 only
+Date Posted: Fri Jul  2 17:45:31 PDT 2010
+Patch names: acl8218.dll (version 330), acl8218.lib, acl8218.pdb,
+  acli8218.dll, acli8218.lib, acli8218.pdb
+Description: Fix console-close callback.
+Impact: recommended
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  windows.64   lisp_build_330          lisp_build_331
+
+-------------------------------------------------------------------------------
+shared-library patch libacli8218.so ... for amd64.64 only
+Date Posted: Fri Jul  2 17:45:31 PDT 2010
+Patch names: libacli8218.so, libacl8218.so, libacli8218.dylib,
+  libacl8218.dylib
+Description: Fixes a bug in the profiler for certain architectures
+  where a hit on a non-lisp thread can cause a SEGV and the death of
+  the lisp.
+Impact: recommended
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  solarisamd64.64lisp_build_210          lisp_build_211
+  linuxamd64.64lisp_build_225          lisp_build_226
+  macosx86-64.64lisp_build_217          lisp_build_218
+
+-------------------------------------------------------------------------------
+ide patch ide-editor
+Date Posted: Mon Jun 21 16:54:11 PDT 2010
+Patch names: code/ide-editor.001
+Description: On some machines, the IDE's source code editor will
+  often erroneously show a dialog claiming that the file being edited
+  has changed since the editor last read or saved the file, offering
+  to update the buffer to match the file. This patch avoids the
+  problem by making sure that the cached date-time is not earlier
+  than the file-write-date even when the latter is later than what
+  get-universal-time returns.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio013
+Date Posted: Mon Jun 21 16:54:11 PDT 2010
+Patch names: update/agraph/3.3/pio013.001
+Description: Querying a federated-triple-stores with SPARQL could
+  signal an error. This has been corrected.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base-lisp patch pia008
+Date Posted: Thu Jun  3 11:03:52 PDT 2010
+Patch names: update/pia008.001
+Description: Fixes a bug in external-format file inclusion where the
+  correct external-format file is not found because of case issues.
+  For example, requiring either "ef-jis" or "EF-JIS" both work, but
+  "ef-JIS") does not. This causes setting an ACL_LOCALE of japan.JIS
+  to fail to find the JIS external-format. This patch fixes that bug.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch sock
+Date Posted: Tue Jun  1 20:11:00 PDT 2010
+Patch names: code/sock.002
+Description: Internal fixes to the socket module.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+cg patch pik003
+Date Posted: Thu May 27 11:47:59 PDT 2010
+Patch names: update/pik003.001
+Description: On GTK you could drag the bottom edge of a child window
+  upward to resize it by no more than the distance between the
+  window's top edge and the parent window's interior top edge. This
+  was a simple logic bug in the code that constrains the movement to
+  prevent moving the title-bar out of view.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+cg patch cg-file-dialog
+Date Posted: Thu May 27 11:47:59 PDT 2010
+Patch names: code/cg-file-dialog.001
+Description: If you open a project on GTK, and that project has a
+  child project whose directory has been moved, then a break happened
+  if you elect the option to use the file dialog to locate the
+  missing child project. More generally, the file-selection dialog
+  broke on GTK when passed an initial-directory argument which is a
+  non-existing directory.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+cg patch cg-tab-control ...
+Date Posted: Thu May 27 11:47:59 PDT 2010
+Patch names: code/cg-tab-control.001, update/pik002.001
+Description: When a dialog is given a custom background color on GTK,
+  then any tab-control and regular button widgets that are placed
+  onto it will get that same background color instead of the default
+  one, assuming
+that you leave the background-color property of those widget set to
+  t, as it is by default.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio012
+Date Posted: Thu May 27 11:47:59 PDT 2010
+Patch names: update/agraph/3.3/pio012.001
+Description: Revise 'Unknown triple store' error message to be more
+  informative.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+shared-libary patch pia004 ...
+Date Posted: Tue May 18 15:48:39 PDT 2010
+Patch names: update/pia004.001, acl8218.dll (version 490),
+  acl8218.lib, acl8218.pdb, acli8218.dll, acli8218.lib, acli8218.pdb,
+  libacli8218.so, libacl8218.so, libacli8218.dylib, libacl8218.dylib
+Description: Fixes bugs in the fasl reader which cause the
+  undocumented excl::in-case-mode macro to fail in some circumstances.
+Impact: minor
+Other info: This is an unexported and undocumented routine.
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  solarisamd64.64lisp_build_202          lisp_build_203
+  linuxamd64.64lisp_build_217          lisp_build_218
+  aix          lisp_build_196          lisp_build_197
+  aix.64       lisp_build_208          lisp_build_209
+  freebsd      lisp_build_248          lisp_build_249
+  linux86      lisp_build_254          lisp_build_255
+  macosx86     lisp_build_260          lisp_build_261
+  macosx86-64.64lisp_build_211          lisp_build_212
+  solaris      lisp_build_196          lisp_build_197
+  solaris.64   lisp_build_196          lisp_build_197
+  windows      lisp_build_490          lisp_build_491
+  windows.64   lisp_build_321          lisp_build_322
+  freebsd-trialN/A                     lisp_build_250
+  linux86-trialN/A                     lisp_build_256
+  macosx86-trialN/A                     lisp_build_262
+  windows-trialN/A                     lisp_build_492
+
+-------------------------------------------------------------------------------
+base-lisp patch pia007
+Date Posted: Tue May 18 15:48:39 PDT 2010
+Patch names: update/pia007.001
+Description: Fixes a bug when safety is 2 or 3, where
+  with-underlying-simple-vector sometimes errors on an attempt to
+  bind the lengh variable to nil.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base-lisp patch pia006
+Date Posted: Tue May 18 15:48:39 PDT 2010
+Patch names: update/pia006.001
+Description: Fixes overflows of negative floats to their negative
+  infinities rather than their positive infinities.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch streamc ...
+Date Posted: Tue May 18 15:48:39 PDT 2010
+Patch names: code/streamc.002, update/pia005.001
+Description: Fixes many inconsistencies between functions in
+  streamd.fasl (always loaded into the lisp) and the streamc module,
+  which is loaded either explicitly or when gray streams are
+  required. Over the years, the fixes to streamd have not been
+  matched to fixes in streamc, so some simple-streams bugs which were
+  fixed will seem to reappear when streamc is loaded.  The
+  streamc.002 patch reconciles these differences.  There is also one
+  inconsistency where a fix in streamc was not reflected in streamd,
+  and that is taken care of by the regular patch.
+Impact: recommended
+Other info: For users for whom the streamc module is never loaded
+  (check the *modules* list) there should be no impact. For users of
+  gray streams, there may be some places where the bad behaviors are
+  expected; test your apps after loading this patch if you are close
+  to a release.
+
+-------------------------------------------------------------------------------
+ec2 patch ec2
+Date Posted: Tue May 18 13:41:32 PDT 2010
+Patch names: code/ec2.002
+Description:
+  A major update to the ec2 module, that includes some
+  incompatible changes. Please see the update release notes
+  (http://www.franz.com/support/documentation/8.2/doc/ec2.htm#ec2-intro-1)
+  for more information.
+  
+Impact: recommended
+Other info: Contains incompatible changes from prior versions. Please
+  see the link in this LOG entry for the updated release notes.
+
+-------------------------------------------------------------------------------
+shared-library patch pia004 ... for non-windows only
+Date Posted: Wed May 12 14:55:56 PDT 2010
+Patch names: update/pia004.001, acl8218.dll (version 484),
+  acl8218.lib, acl8218.pdb, acli8218.dll, acli8218.lib, acli8218.pdb,
+  libacli8218.so, libacl8218.so, libacli8218.dylib, libacl8218.dylib
+Description: Defines a time macro which reports major and minor page
+  faults, along with page faults associated with garbage-collections.
+  For backward compatibility, the name of the macro is excl::newtime,
+  and that will be changed to cl:time in the next release. The
+  excl::newtime macro works the same as the time macro except for
+  this new output.
+Impact: recommended
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  solarisamd64.64lisp_build_197          lisp_build_198
+  linuxamd64.64lisp_build_212          lisp_build_213
+  aix          lisp_build_191          lisp_build_192
+  aix.64       lisp_build_203          lisp_build_204
+  freebsd      lisp_build_242          lisp_build_243
+  linux86      lisp_build_248          lisp_build_249
+  macosx86     lisp_build_254          lisp_build_255
+  macosx86-64.64lisp_build_206          lisp_build_207
+  solaris      lisp_build_191          lisp_build_192
+  solaris.64   lisp_build_191          lisp_build_192
+  windows      lisp_build_484          lisp_build_485
+  windows.64   lisp_build_316          lisp_build_317
+  freebsd-trialN/A                     lisp_build_244
+  linux86-trialN/A                     lisp_build_250
+  macosx86-trialN/A                     lisp_build_256
+  windows-trialN/A                     lisp_build_486
+
+-------------------------------------------------------------------------------
+base patch streamc ...
+Date Posted: Wed Apr 28 11:06:27 PDT 2010
+Patch names: code/streamc.001, update/pia003.001
+Description: In 8.2, a bug was introduced where read-vector would
+  return the :start value rather than start+number-of-bytes-read,
+  thus making it look like an eof had occurred. This was occurring on
+  both single-channel and dual-channel streams.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio011
+Date Posted: Wed Apr 28 10:57:47 PDT 2010
+Patch names: update/pio011.001
+Description: If a triple-store was opened read-only, SPARQL queries
+  involving string literals could sometimes signal a UPI not found in
+  string dictionary error. This patches corrects this behavior.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio009
+Date Posted: Tue Apr 27 10:25:51 PDT 2010
+Patch names: update/pio009.001
+Description: Implement find-unique-upis-for-column for
+  remote-triple-stores. This corrects a problem with
+  remote-triple-stores not supporting SPARQL queries that iterate
+  over all of the graphs in a store.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio008
+Date Posted: Tue Apr 27 10:25:51 PDT 2010
+Patch names: update/pio008.001
+Description: Ensure that queries find triples added while they are
+  running.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio010
+Date Posted: Tue Apr 27 10:25:51 PDT 2010
+Patch names: update/agraph/3.3/pio010.001
+Description: Make remote-triple-stores work better with some SPARQL
+  queries.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+compiler patch pib005
+Date Posted: Tue Apr 27 10:25:51 PDT 2010
+Patch names: update/pib005.001
+Description: Fixes a bug in register usage on all 32-bit x86
+  architectures where a return from a catch (usually in a cloure,
+  when applicable) will trash a register and return a bogus value.
+Impact: recommended
+Other info: Only affects 32-bit x86 architectures. Code exhibiting
+  the problem must be recompiled with this patch in place in order
+  for it to be corrected.
+
+-------------------------------------------------------------------------------
+shared-library patch acl8218 ...
+Date Posted: Thu Apr  8 11:12:26 PDT 2010
+Patch names: acl8218.dll (version 473), acl8218.lib, acl8218.pdb,
+  acli8218.dll, acli8218.lib, acli8218.pdb, libacli8218.so,
+  libacl8218.so, libacli8218.dylib, libacl8218.dylib
+Description: Fixes a bug in the immediate-args implementation for
+  64-bit lisps. If you do not know what immediate-args is, ask us at
+  support@franz.com.
+Impact: recommended
+Other info: If your Express Edition lisp won't start due to running
+  update.sh, some preliminary action is required. If
+  allegro-expressorig.dxl exists, move it to allegro-express.dxl,
+  start alisp, run sys:update-allegro, exit, and then run
+  update.exe/update.sh
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  solarisamd64.64lisp_build_186          lisp_build_187
+  linuxamd64.64lisp_build_201          lisp_build_202
+  aix          lisp_build_180          lisp_build_181
+  aix.64       lisp_build_192          lisp_build_193
+  freebsd      lisp_build_231          lisp_build_232
+  linux86      lisp_build_237          lisp_build_238
+  macosx86     lisp_build_243          lisp_build_244
+  macosx86-64.64lisp_build_195          lisp_build_196
+  solaris      lisp_build_180          lisp_build_181
+  solaris.64   lisp_build_180          lisp_build_181
+  windows      lisp_build_473          lisp_build_474
+  windows.64   lisp_build_305          lisp_build_306
+
+-------------------------------------------------------------------------------
+acldns patch acldns
+Date Posted: Thu Apr  8 11:12:26 PDT 2010
+Patch names: code/acldns.001
+Description: Add a cached AAAA record for localhost for acldns mode
+  lookups.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+compiler patch pib004
+Date Posted: Thu Apr  8 11:12:26 PDT 2010
+Patch names: update/pib004.001
+Description: Fixes a problem on Sparc and AIX platforms where under
+  high debug, generation of source level debug info is attempted, but
+  the info is incomplete because the platforms have not yet had
+  source debugging fully implemented. A warning will be given the
+  first time high debug is seen per lisp session. An internal
+  variable comp::*sparc-aix-warn* which starts with a true value may
+  be set to nil to inhibit the warning from ever being generated.
+Impact: minor
+Other info: Recommended for sparc and aix users.
+
+-------------------------------------------------------------------------------
+aclrpc patch pim001
+Date Posted: Wed Apr  7 14:08:48 PDT 2010
+Patch names: update/pim001.001
+Description: Under some circumstances, it was possible for an aclrpc
+  process to remain hung in a write to a socket for which the
+  destination no longer existed. This patch adds a :write-timeout
+  argument to make-rpc-server and make-rpc-client. When a positive
+  value is specified, write operations that take longer than that
+  number of seconds are terminated with a timeout. The default is nil
+  for compatibility with previous versions.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+ide patch ide-project ...
+Date Posted: Thu Apr  1 10:09:34 PDT 2010
+Patch names: code/ide-project.001, update/pil003.001
+Description: In the Express version of the IDE, a new warning dialog
+  will appear at IDE startup time when it is near the time when the
+  license needs to be renewed for uninterrupted use.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+ide patch pil002
+Date Posted: Thu Apr  1 10:09:34 PDT 2010
+Patch names: update/pil002.001
+Description: When using Search | Complete Symbol in the IDE, it could
+  break in certain cases when trying to complete a symbol from a
+  child package, such as :dbi.mysql. In some cases, the Complete
+  Symbol check would then try to check whether the symbol is exported
+  from the parent package, e.g :dbi. If the module for that parent
+  package is not available when an attempt is made to autoload it, an
+  error could result.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+ide patch pil001 for gtk only
+Date Posted: Thu Apr  1 10:09:34 PDT 2010
+Patch names: update/pil001.001
+Description: On GTK platforms (Linux and Mac OS X), if you do a
+  string search in the IDE's editor and then immediately do a string
+  replace on the same string, the first replace that's done will be
+  the next match after the currently selected one, rather than the
+  already selected one.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+cg patch cg-menu for mswindows only
+Date Posted: Thu Apr  1 10:09:34 PDT 2010
+Patch names: code/cg-menu.001
+Description: On Windows, a child window that has a menu-bar would
+  misposition widgets on tab-controls that are not on the initially
+  selected tab.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+cg patch pik001 for gtk only
+Date Posted: Thu Apr  1 10:09:34 PDT 2010
+Patch names: update/pik001.001
+Description: On the GTK platforms (Linux and Mac OS X), setting the
+  pop-up property of a form window in a project to true led to the
+  form window itself being recreated as a top-level window when
+  re-opening the project. This made it difficult to edit the form
+  window further in the IDE.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+compiler patch pib003
+Date Posted: Wed Mar 31 13:34:29 PDT 2010
+Patch names: update/pib003.001
+Description: Fixes an esoteric register allocation bug which leaves
+  the compiler with "No from-creg to move ...", usually to an :iparam
+  (input parameter) location. The fix also removes many "register
+  reassigned to frame" warnings, which were caused by the same
+  mismanagement of input parameters to a function.
+Impact: recommended
+Other info: Possible destabilization of the lisp. Full tests have
+  been run, but avoid loading if close to a product release.
+  Recompiling of affected code is necessary.
+
+-------------------------------------------------------------------------------
+base patch sock
+Date Posted: Tue Mar 30 14:21:36 PDT 2010
+Patch names: code/sock.001
+Description: When peforming dns lookups in :clib mode via
+  socket:lookup-hostname, the mechanism for caching lookups did not
+  distinguish between A record and AAAA record requests. As a result,
+  it would be possible to get an ipv4 address returned when
+  requesting an ipv6 address. This patch corrects the problem.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+eli patch fi-xemacs.el ...
+Date Posted: Tue Mar 30 14:21:36 PDT 2010
+Patch names: eli/fi-xemacs.el, xeli/fi-xemacs.elc
+Description: Corrects an error when using
+  fi:compile-changed-definitions in Xemacs version 21.4 or older. A
+  function not fboundp error could be triggered due to
+  replace-regexp-in-string not being defined.
+Impact: recommended
+Other info: Affects Xemacs only. You may need to run 'M-x
+  byte-compile-file (<Allegro directory>/xeli/fi-xemacs.el)' from
+  your Xemacs, and then restart it in order to apply this patch.
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio007
+Date Posted: Tue Mar 30 14:21:36 PDT 2010
+Patch names: update/agraph/3.3/pio007.001
+Description: A bug in the Sesame XML transaction document parser
+  caused text to be partially reversed when XML entities were present
+  ("A&amp;B" would become "B&A"). This is now fixed.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch update.fasl (version 2)
+Date Posted: Thu Mar 18 12:42:56 PDT 2010
+Patch names: code/update.fasl (version 2)
+Description: On windows, file times are stored as local to the
+  current time zone, potentially invalidating the cache of downloaded
+  patches when changing time zones or crossing dst boundaries. This
+  patch accounts for this possibility and prevents unnecessarily
+  re-downloading patches that have already been fetched.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base-lisp patch pia002
+Date Posted: Thu Mar 18 14:46:45 PDT 2010
+Patch names: update/pia002.001
+Description: Fixes typep to recognize a bit array also as one of type
+  (*array (integer 0 1) *).
+Impact: recommended
+
+-------------------------------------------------------------------------------
+compiler patch pib002
+Date Posted: Thu Mar 18 14:46:45 PDT 2010
+Patch names: update/pib002.001
+Description: Fixes a bug whereby a variable which has been set from
+  another variable might under esoteric condition be thought to
+  contain a constant value, even though the second variable is setq'd
+  somewhere within its scope. This might especially happen if the
+  second variable has been the subject of a predicate in a cond
+  statement, e.g. `(let ((y x)) (cond ((null x) (if y ...))))'.  The
+  initializing of y is not necessarily the only storing of y, but if
+  x was initially a constant, the bug was that y might be thought of
+  as having a constant type.
+Impact: recommended
+Other info: Possible regression: Recompilation is necessary, and
+  recommended only when full testing can subsequently be done.
+
+-------------------------------------------------------------------------------
+base patch init2r for mswindows only
+Date Posted: Tue Mar 16 10:40:55 PDT 2010
+Patch names: code/init2r.001
+Description: Previously, starting a Lisp application with double
+  backslashes could, in some circumstances, cause an error on
+  application startup. This is no longer a problem.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+clim patch pij002
+Date Posted: Mon Mar 15 15:58:06 PDT 2010
+Patch names: update/pij002.001
+Description: Space requirement computation for certain types of combo
+  boxes would break with an error about a missing slot. Also,
+  computation for list panes would complain about a similar problem
+  if no items were specified. This patch fixes these errors.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+clim patch pij001
+Date Posted: Mon Mar 15 15:58:06 PDT 2010
+Patch names: update/pij001.002
+Description: This patch removes spurious warning messages about
+  missing fallback font character sets from first-time CLIM
+  application startup on X11 platforms. Some warnings in 8-bit lisps
+  were missed by the previous version of this patch.
+Impact: cosmetic
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio006
+Date Posted: Mon Mar 15 15:58:06 PDT 2010
+Patch names: update/agraph/3.3/pio006.001
+Description: This change allows for SPARQL's idiom for
+  Negation-As-Failure to be detected more reliably, and thus executed
+  more optimally.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+compiler patch pib001
+Date Posted: Mon Mar 15 15:58:06 PDT 2010
+Patch names: update/pib001.001
+Description: Fixes a compiler bug which results in an attempt to find
+  the class of the type 'atom.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base-lisp patch pia001
+Date Posted: Mon Mar 15 15:58:06 PDT 2010
+Patch names: update/pia001.001
+Description: Fixes issues with the attempt in the 8.2 CLOS walker to
+  remove macrolet and symbol-macrolet definitions from the code it is
+  walking. An internal variable called excl::*keep-macrolet* which
+  defaults to true can be set to nil to get the removal behavior as
+  in the pre-patched 8.2 lisp.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio005
+Date Posted: Fri Mar 12 10:32:31 PST 2010
+Patch names: update/agraph/3.3/pio005.001
+Description: Correct return type of `ego-group-layers` function from
+  vector to list.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio004
+Date Posted: Fri Mar 12 10:32:31 PST 2010
+Patch names: update/agraph/3.3/pio004.001
+Description: AllegroGraph's SPARQL engine raises an error when
+  imposed bindings (the :with-variables keyword argument to
+  run-sparql) are not a subset of the variables mentioned in the body
+  of the query. This error checking failed to include variables
+  mentioned in a CONSTRUCT template or DESCRIBE variable list, which
+  meant
+that query invocations which imposed bindings for variables mentioned
+  in the CONSTRUCT template alone would raise an error. This patch
+  corrects the error checking behavior.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio003
+Date Posted: Fri Mar 12 10:32:31 PST 2010
+Patch names: update/agraph/3.3/pio003.001
+Description: AllegroGraph 3.3 new support for SPARQL UPDATE did not
+  work correctly on RDFS++ triple-stores when it tries to add new
+  triples. This patch corrects the bug so that SPARQL UPDATE works
+  seamlessly on RDFS++ stores and regular triple-stores.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio002
+Date Posted: Fri Mar 12 10:32:31 PST 2010
+Patch names: update/agraph/3.3/pio002.001
+Description: This patch restores the behavior of print-triple to what
+  it was in AllegroGraph 3.2. AllegroGraph 3.3 inadvertently changed
+  print-triple so that it no longer returned the triple that it
+  printed. This patch also documents this behavior for future
+  reference.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+ec2 patch ec2
+Date Posted: Tue Mar  9 14:58:43 PST 2010
+Patch names: code/ec2.001
+Description: Make ec2 module loadable.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch update.fasl (version 1)
+Date Posted: Mon Mar  8 11:57:24 PST 2010
+Patch names: code/update.fasl (version 1)
+Description: Make message from install-allegrocache clearer when
+  there is no new release.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch datetime
+Date Posted: Tue Mar  2 14:13:34 PST 2010
+Patch names: code/datetime.001
+Description: Preserve time-zone through add-/subtract-duration.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+agraph-3.3 patch pio001
+Date Posted: Tue Mar  2 10:47:15 PST 2010
+Patch names: update/agraph/3.3/pio001.001
+Description: Blank nodes were serialized incorrectly by the HTTP
+  server and AGWebView, which made them unable to round-trip for
+  federated and remote stores. This is now fixed.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+base patch lldb
+Date Posted: Wed Feb 24 17:18:39 PST 2010
+Patch names: code/lldb.001
+Description: Fixes several bugs in the source stepper which caused
+  incorrect state changes and phantom breakpoints.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+shared-library patch acl8218 ...
+Date Posted: Tue Feb 23 13:53:18 PST 2010
+Patch names: acl8218.dll (version 294), acl8218.lib, acl8218.pdb,
+  acli8218.dll, acli8218.lib, acli8218.pdb, libacli8218.so,
+  libacl8218.so, libacli8218.dylib, libacl8218.dylib
+Description: Fixes two bugs, one fixing delete, delete-if, and
+  delete-if-not when shrinking vectors, and also a bug where stack
+  objects left over from a dumplisp call in the previous incarnation
+  of the lisp are not properly cleaned up.
+Impact: recommended
+Other info: If your Express Edition lisp won't start due to running
+  update.sh, some preliminary action is required. If
+  allegro-expressorig.dxl exists, move it to allegro-express.dxl,
+  start alisp, run sys:update-allegro, exit, and then run
+  update.exe/update.sh
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  solarisamd64.64lisp_build_176          lisp_build_177
+  linuxamd64.64lisp_build_191          lisp_build_192
+  aix          lisp_build_170          lisp_build_171
+  aix.64       lisp_build_182          lisp_build_183
+  freebsd      lisp_build_220          lisp_build_221
+  linux86      lisp_build_226          lisp_build_227
+  macosx86     lisp_build_232          lisp_build_233
+  macosx86-64.64lisp_build_185          lisp_build_186
+  solaris      lisp_build_170          lisp_build_171
+  solaris.64   lisp_build_170          lisp_build_171
+  windows      lisp_build_461          lisp_build_462
+  windows.64   lisp_build_294          lisp_build_295
+
+-------------------------------------------------------------------------------
+shared-library patch libacl8218 ... for linux only
+Date Posted: Thu Feb 18 16:31:43 PST 2010
+Patch names: libacl8218.so (version 222), libacli8218.so
+Description: Internal change to the Allegro Shared library.
+Impact: recommended
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  linux86      lisp_build_222          lisp_build_223
+  linuxamd64.64lisp_build_187          lisp_build_188
+
+-------------------------------------------------------------------------------
+clim patch pij001
+Date Posted: Tue Feb 16 13:13:16 PST 2010
+Patch names: update/pij001.001
+Description: This patch removes spurious warning messages about
+  missing fallback font character sets from first-time CLIM
+  application startup on X11 platforms. 
+Impact: cosmetic
+
+-------------------------------------------------------------------------------
+cg patch cg-grid-widget for cg-on-gtk only
+Date Posted: Tue Feb 16 13:13:16 PST 2010
+Patch names: code/cg-grid-widget.001
+Description: Creating any grid-widget that has scroll bars (including
+  the IDE's inspector) might fail on any GTK platform (Linux or Mac
+  OS X), though we have triggered the problem only in a 64-bit lisp
+  on a particular Mac.
+Impact: recommended
+
+-------------------------------------------------------------------------------
+shared-library patch acl8218.dll ... for mswindows only
+Date Posted: Mon Feb  1 10:45:36 PST 2010
+Patch names: acl8218.dll, acli8218.lib
+Description: Internal fix relating to the break key on windows.
+Impact: recommended
+
+--- Initial ACLID_lisp_build numbers -- 
+
+  _Platform_   _ACLID_                 Intl. _ACLID_
+  aix.64       lisp_build_171          lisp_build_170
+  aix          lisp_build_159          lisp_build_158
+  freebsd      lisp_build_207          lisp_build_208
+  linux86      lisp_build_211          lisp_build_212
+  linuxamd64.64lisp_build_174          lisp_build_173
+  macosx86-64.64lisp_build_174          lisp_build_173
+  macosx86     lisp_build_219          lisp_build_220
+  solaris.64   lisp_build_159          lisp_build_158
+  solaris      lisp_build_159          lisp_build_158
+  solarisamd64.64lisp_build_165          lisp_build_164
+  windows.64   lisp_build_278          lisp_build_279
+  windows      lisp_build_447          lisp_build_448

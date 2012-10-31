@@ -1,0 +1,114 @@
+<html><head><meta http-equiv="content-type" name="description" content="text/html; charset=UTF-8"> <title>:step</title><link rel="stylesheet" href="../acldoc-styles.css" type="text/css"></head><body><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"><b>Top-level Command</b></td><td align="left" bgcolor="#00FFFF"></td><td align="center" bgcolor="#00FFFF"><a href="../contents.htm"><b>ToC</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../introduction.htm"><b>DocOverview</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../cgide.htm"><b>CGDoc</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../release-notes.htm"><b>RelNotes</b></a></td><td align="center" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../index.htm"><b>Index</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="../introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/tpl-commands/step.htm">8.1 version</a></td></tr></table><h2 id="2">:step</h2>
+
+<p id="3"><b>Arguments: </b><i>
+</i> &amp;rest <i>args</i><i>
+</i></p>
+
+<p id="4">
+If not in ldb mode (ldb does not appear in the prompt), this command
+initiates or affects stepping, as we now describe. See below for
+behavior in ldb mode.
+</p>
+
+<p id="5">
+The <a href="step.htm"><b>:step</b></a> top-level command
+implements the functionality of the <a href="../../ansicl/dictentr/step.htm"><b>step</b></a> macro.
+</p>
+
+<p id="6">
+With an argument of <code>t</code>, stepping is enabled
+globally, otherwise the arguments are assumed to be symbols naming
+functions wherein stepping should occur. Any non-functions supplied to
+<a href="step.htm"><b>:step</b></a> will be flagged as invalid
+arguments, but an error will not be signaled.
+</p>
+
+<p id="7">
+Called with no arguments or <code>nil</code> as an
+argument while not stepping, stepping is disabled. Use the command
+<a href="sover.htm"><b>:sover</b></a> to get out of stepping in
+order to turn stepping off. <a href="step.htm"><b>:step</b></a>
+and <strong>:step nil</strong> have no effect while stepping is going
+on. It is only useful to step through compiled code. When you try to
+step through interpreted code, you end up stepping through the
+interpreter itself, with most output irrelevant to understanding your
+own code.
+</p>
+
+<p id="8">See also <a href="sover.htm"><b>:sover</b></a> and <a href="scont.htm"><b>:scont</b></a>.</p>
+
+<p id="9">The minimal abbreviation of <a href="step.htm"><b>:step</b></a> is <strong>:st</strong>.</p>
+
+<p id="10"><strong>:step in ldb mode</strong></p>
+
+<p id="11">When in ldb-step mode, the step command recognizes several
+sub-commands as its first argument:</p>
+
+<table border="1" width="77%">
+  <tr>
+    <td width="28%"><strong>Subcommand</strong></td>
+    <td width="72%"><strong>Action</strong></td>
+  </tr>
+  <tr>
+    <td width="28%"><code>:step over</code></td>
+    <td width="72%">Stepping is continued, once per command issue, through the code, following
+    branches but not following function calls into deeper level functions.</td>
+  </tr>
+  <tr>
+    <td width="28%"><code>:step into</code></td>
+    <td width="72%">Just like <code>:step over</code> except that if a call point is
+    encountered, the new function is breakpointed at or near pc=0. A primcall (a call to a
+    runtime system function) is never stepped into.</td>
+  </tr>
+  <tr>
+    <td width="28%"><code>:step this</code></td>
+    <td width="72%">No actual stepping is done, but the current instruction is re-printed in
+    disassembled form. </td>
+  </tr>
+  <tr>
+    <td width="28%"><code>:step return</code></td>
+    <td width="72%">The currently-debugged function continues to its end, and the caller of
+    the function is breakpointed just after the call.</td>
+  </tr>
+  <tr>
+    <td width="28%"><code>:step cont</code></td>
+    <td width="72%">Continues through the current instruction even if there is a breakpoint in
+    it.</td>
+  </tr>
+  <tr>
+    <td width="28%"><code>:step type</code></td>
+    <td width="72%">Prints information on what kind of stepping is being remembered for the
+    &lt;return&gt; key. :none is printed until the first occurrence of either a :step over or
+    :step into is done. See <a href="../debugging.htm#ldb-stepper-1">The Lisp DeBug (ldb) stepper</a>
+    in <a href="../debugging.htm">debugging.htm</a>.</td>
+  </tr>
+</table>
+
+<p id="12">
+To use :step in ldb mode, you must be at a breakpoint. Thus:
+</p>
+
+<pre id="13">
+cl-user(1): :ldb t
+[ldb] cl-user(2): :step into
+You must be stopped at a breakpoint before ldb-stepping can begin.
+[ldb] cl-user(3):
+</pre>
+
+<p id="14">
+See <a href="../operators/excl/with-breakpoints-installed.htm"><b>with-breakpoints-installed</b></a> and the <a href="break.htm"><b>:break</b></a>.
+</p>
+
+<p id="15">See <a href="../debugging.htm#ldb-stepper-1">The Lisp DeBug (ldb)
+stepper</a> in <a href="../debugging.htm">debugging.htm</a> for
+information on ldb stepping.</p>
+
+<p id="16">
+See <a href="../top-level.htm">top-level.htm</a> for more information on top-level
+commands. See <a href="../debugging.htm">debugging.htm</a> for information on the
+debugger and examples of stepping.
+</p>
+
+<hr><p id="17"><small>Copyright (c) 1998-2010, Franz Inc. Oakland, CA., USA. All rights reserved.</small><br><small>Documentation for Allegro CL version 8.2. This page was not revised from the 8.1 page.</small><br>
+<small>Created 2010.1.21.</small>
+<br></p><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"></td><td align="left" bgcolor="#00FFFF"></td><td align="center" bgcolor="#00FFFF"><a href="../contents.htm"><b>ToC</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../introduction.htm"><b>DocOverview</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../cgide.htm"><b>CGDoc</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../release-notes.htm"><b>RelNotes</b></a></td><td align="center" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../index.htm"><b>Index</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="../introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/tpl-commands/step.htm">8.1 version</a></td></tr></table></body></html>

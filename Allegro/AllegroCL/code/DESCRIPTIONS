@@ -1,0 +1,321 @@
+[ DESCRIPTIONS File Last Updated: 16-Feb-10 18:11:00 GMT ]
+
+This directory contains all the publicly available patches for:
+
+     product: Allegro CL
+     version: 8.2
+     architecture: macosx86
+     directory: code/
+
+There are two types of files in this directory:
+
+   DESCRIPTIONS
+    -- This information file.
+
+   <name>.fasl
+    -- (where <name> is patch name).  These are the actual patch
+       files.  Descriptions of the individual patches are below.  You can
+       take as many or as few of these patch files as you want or think
+       you need.  These patch files should be installed in the
+       code subdirectory of your Allegro CL distribution
+       directory (the directory into which the Allegro CL distribution
+       tape or CD was read).
+
+For more information on installing and using patches, see
+ftp://ftp.franz.com/pub/patches/8.2/README.
+
+Patch File Descriptions
+
+   This section lists the descriptions of the patch files available in
+   this directory.  All patches publicly available as of the date on
+   the top of this file are listed here.  The descriptions listed are
+   admittedly cryptic and may not reveal all the problems that the
+   patches fix.  Also not every "known" problem is fixable by a patch
+   file.  Contact Franz Inc. (see below) if you have questions about
+   patches or have a problem which seems not to be fixed by any of the
+   patches in this directory.
+
+   If you have any questions about any patch or the patch loading
+   procedure, please contact Franz Inc. by email at bugs@franz.com, by
+   phone at (510) 452-2000 (during US Pacific time zone work hours), or
+   by fax at (510) 452-0182.
+
+
+_ _ _ _ _ Descriptions Listing _ _ _ _ _
+
+Patch                  Description
+
+xml-rpc.001 : v1: apply aserve default external-format to messages & other updates.
+   Note: Patch can be manually loaded into running lisp.
+update.fasl (version 2): v1: Fix install-allegrocache message.
+   v2: Fix unnecessary downloads on windows due to DST.
+   Note: Patch can be manually loaded into running lisp.
+streamc.002 : v2: Fix differences in simple-stream redefined code when streamc is loaded.
+v1: Fix read-vector return value.
+   Note: Patch can be manually loaded into running lisp.
+streamc.001 : v1: Fix read-vector return value.
+   Note: Patch can be manually loaded into running lisp.
+ssl.002 : v1: new message digest functions;
+v2: fix restart after dumplisp when ssl was used before dumplisp.
+   Note: Patch can be manually loaded into running lisp.
+ssl.001 : v1: new message digest functions.
+   Note: Patch can be manually loaded into running lisp.
+sock.003 : v1: Fix caching of hostnames in clib mode;
+v2: hiper sockets can now read/write to malloc-aligned objects;
+v3: allow :backlog :max for make-socket.
+   Note: Patch can be manually loaded into running lisp.
+sock.002 : v1: Fix caching of hostnames in clib mode;
+v2: hiper sockets can now read/write to malloc-aligned objects
+   Note: Patch can be manually loaded into running lisp.
+sock.001 : v1: Fix caching of hostnames in clib mode.
+   Note: Patch can be manually loaded into running lisp.
+smputil.fasl (version 0): v0: initial release of :smputil module.
+   Note: Patch can be manually loaded into running lisp.
+smputil.003 : v0: initial release of :smputil module;
+v1: More accurate discounting of barriers;
+v2: Avoid error in recursive exclusive lock, extended recursive lock behavior;
+v3: Implement condition-variable.
+   Note: Patch can be manually loaded into running lisp.
+smputil.002 : v0: initial release of :smputil module;
+v1: More accurate discounting of barriers;
+v2: Avoid error in recursive exclusive lock, extended recursive lock behavior.
+   Note: Patch can be manually loaded into running lisp.
+smputil.001 : v0: initial release of :smputil module;
+v1: More accurate discounting of barriers.
+   Note: Patch can be manually loaded into running lisp.
+shell.001 : v1: add compiler macro for =~.
+   Note: Patch can be manually loaded into running lisp.
+sha1.001 : v1: new message digest functions.
+   Note: Patch can be manually loaded into running lisp.
+sax.001 : v1: parser was closing namespace context prematurely for nested identical element.
+   Note: Patch can be manually loaded into running lisp.
+regexp2.001 : v1: regexp engine fails to handle zero-width assertion after grouping.
+   Note: Patch can be manually loaded into running lisp.
+random.001 : v1: Fix fast random double-float generation.
+prolog.001 : update Allegro Prolog to version 1.0.8.
+   Note: Patch can be manually loaded into running lisp.
+proc2common.003 : v1: extend queue class with initial-contents and queue-length;
+v2: rfe9301: add timeout to mp:dequeue;
+v3: make with-process-lock use the process-lock name as default whostate.
+   Note: Patch can be manually loaded into running lisp.
+proc2common.002 : v1: extend queue class with initial-contents and queue-length;
+v2: rfe9301: add timeout to mp:dequeue.
+   Note: Patch can be manually loaded into running lisp.
+proc2common.001 : v1: extend queue class with initial-contents and queue-length
+   Note: Patch can be manually loaded into running lisp.
+proc2base.001 : v1: rfe9301: add timeout to mp:dequeue.
+proc2-s.001 : v1: export queue-length
+   Note: Patch can be manually loaded into running lisp.
+net-xml-generator.001 : v1: version 1.0.2.
+   Note: Patch can be manually loaded into running lisp.
+mysql.002 : v1: Export new API functions change-user and ping.
+v2: add :client-flags keyword to dbi.mysql:connect.
+   Note: Patch can be manually loaded into running lisp.
+mysql.001 : v1: Export new API functions change-user and ping.
+   Note: Patch can be manually loaded into running lisp.
+misc.001 : v1: new message digest functions.
+lldb.002 : v1: Fix various post-8.2 bugs in the stepper.
+v2: Fix stack overflow for large functions.
+   Note: Patch can be manually loaded into running lisp.
+lldb.001 : v1: Fix various post-8.2 bugs in the stepper.
+   Note: Patch can be manually loaded into running lisp.
+jlinker.003 : v3: restore released version of jlinker.
+   Note: Patch can be manually loaded into running lisp.
+jlinker.002 : v1: Revised connection protocol to use a single socket (v6.5.5);
+v2: Single-socket protocol, fully back-compatible (v6.5.7).
+   Note: Patch can be manually loaded into running lisp.
+jlinker.001 : Revised jlinker API and protocol version 6.5.
+   Note: Patch can be manually loaded into running lisp.
+jlinkent.003 : v3: restore released version of jlinker.
+   Note: Patch can be manually loaded into running lisp.
+jlinkent.001 : v1: Revised connection protocol to use a single socket (v6.5).
+   Note: Patch can be manually loaded into running lisp.
+jlinkent.001 : Revised jlinker API and protocol version 6.5.
+   Note: Patch can be manually loaded into running lisp.
+inflate.fasl (version 3): Improve handling of deflate compression formats in inflate-streams.
+   Note: Patch can be manually loaded into running lisp.
+inflate.fasl (version 3): v1: improved inflate-stream;
+v2: performance improvements.
+v3: Fix bug in v2 patch that always expected a gzip trailer.
+   Note: Patch can be manually loaded into running lisp.
+inflate.fasl (version 2): v1: improved inflate-stream;
+v2: performance improvements.
+   Note: Patch can be manually loaded into running lisp.
+inflate.fasl (version 1): v1: improved inflate-stream.
+   Note: Patch can be manually loaded into running lisp.
+ide-project.001 : New license renewal warning dialog for Express.
+   Note: Loaded only if (featurep :ide) returns non-nil.
+ec2.002 : v1: fix problem loading module;
+v2: rework API for regions (many changes, see patch notes).
+   Note: Patch can be manually loaded into running lisp.
+ec2.001 : v1: fix problem loading module.
+   Note: Patch can be manually loaded into running lisp.
+digest.fasl (version 0): v0: new message digest functions.
+   Note: Patch can be manually loaded into running lisp.
+deflate.fasl (version 0): v1: new deflate-stream.
+   Note: Patch can be manually loaded into running lisp.
+deflate.003 : v0: new deflate-stream;
+v1: load zlib.so.1 instead of zlib.so;
+v2: fix memory leak.
+v3: Add support for creating :gzip, :zlib, or raw :deflates streams.
+   Note: Patch can be manually loaded into running lisp.
+deflate.002 : v0: new deflate-stream;
+v1: load zlib.so.1 instead of zlib.so;
+v2: fix memory leak.
+   Note: Patch can be manually loaded into running lisp.
+deflate.001 : v0: new deflate-stream;
+v1: load zlib.so.1 instead of zlib.so.
+   Note: Patch can be manually loaded into running lisp.
+defftype.001 : Fix aligned-to-address handling of 0.
+   Note: Patch can be manually loaded into running lisp.
+datetime.001 : v2: Preserve time-zone through add-/subtract-duration.
+   Note: Patch can be manually loaded into running lisp.
+compftype.001 : v1: Fix open-coding of aligned-to-address.
+   Note: Patch can be manually loaded into running lisp.
+clx.001 : v1: support launchd DISPLAY settings on macosx.
+   Note: Patch can be manually loaded into running lisp.
+cg-text-edit-pane-file-io.001 : v1: Text-editing controls mishandled single CR's in text files.
+   Note: Loaded only if (featurep :common-graphics) returns non-nil.
+cg-tab-control.001 : Buttons and tab-controls copy a dialog's custom background color on GTK.
+   Note: Loaded only if (featurep :common-graphics) returns non-nil.
+cg-grid-widget.001 : Grid-widget creation can fail on GTK (on 64-bit Mac OS X at least).
+   Note: Loaded only if (featurep :common-graphics) returns non-nil.
+cg-file-dialog.001 : Finding a child project that was moved broke on GTK when opening the parent project.
+   Note: Loaded only if (featurep :common-graphics) returns non-nil.
+aserve.011 : v1: version 1.2.67, implement keep-alive in allegroserve client;
+v2: 1.2.68, obey keep-alive requests for PUT and POST requests;
+v3: 1.2.69, make logging though method specialized on wserver class;
+v4: 1.2.70: add support for Expect: 100-continue requests;
+v5: 1.3.1: compression support, publish-directory :destination can be a
+   list of directories, and various SSL improvements;
+v6: 1.3.5: doc updates, make client-request-read-sequence work with
+   compressed responses, delay sending headers for computed entities,
+   add option to do hidden redirect to an index file in a directory,
+   fix prepend-headers so that it works on windows;
+v7: 1.3.7: Add :default-actions to webactions,
+   Avoid polling in http-accept-thread,
+   smp thread safety changes;
+v8: 1.3.8: fix problem w/response handler using string output streams;
+v9: 1.3.9: speed up unchunking-streams;
+v10: 1.3.10: fix buffer boundary error in unchunking-streams.
+v11: 1.3.11: fix log reporting of content-length when using keep-alive.
+   Note: Patch can be manually loaded into running lisp.
+aserve.010 : v1: version 1.2.67, implement keep-alive in allegroserve client;
+v2: 1.2.68, obey keep-alive requests for PUT and POST requests;
+v3: 1.2.69, make logging though method specialized on wserver class;
+v4: 1.2.70: add support for Expect: 100-continue requests;
+v5: 1.3.1: compression support, publish-directory :destination can be a
+   list of directories, and various SSL improvements;
+v6: 1.3.5: doc updates, make client-request-read-sequence work with
+   compressed responses, delay sending headers for computed entities,
+   add option to do hidden redirect to an index file in a directory,
+   fix prepend-headers so that it works on windows;
+v7: 1.3.7: Add :default-actions to webactions,
+   Avoid polling in http-accept-thread,
+   smp thread safety changes;
+v8: 1.3.8: fix problem w/response handler using string output streams;
+v9: 1.3.9: speed up unchunking-streams;
+v10: 1.3.10: fix buffer boundary error in unchunking-streams.
+   Note: Patch can be manually loaded into running lisp.
+aserve.009 : v1: version 1.2.67, implement keep-alive in allegroserve client;
+v2: 1.2.68, obey keep-alive requests for PUT and POST requests;
+v3: 1.2.69, make logging though method specialized on wserver class;
+v4: 1.2.70: add support for Expect: 100-continue requests;
+v5: 1.3.1: compression support, publish-directory :destination can be a
+   list of directories, and various SSL improvements;
+v6: 1.3.5: doc updates, make client-request-read-sequence work with
+   compressed responses, delay sending headers for computed entities,
+   add option to do hidden redirect to an index file in a directory,
+   fix prepend-headers so that it works on windows;
+v7: 1.3.7: Add :default-actions to webactions,
+   Avoid polling in http-accept-thread,
+   smp thread safety changes;
+v8: 1.3.8: fix problem w/response handler using string output streams;
+v9: 1.3.9: speed up unchunking-streams.
+   Note: Patch can be manually loaded into running lisp.
+aserve.008 : v1: version 1.2.67, implement keep-alive in allegroserve client;
+v2: 1.2.68, obey keep-alive requests for PUT and POST requests;
+v3: 1.2.69, make logging though method specialized on wserver class;
+v4: 1.2.70: add support for Expect: 100-continue requests;
+v5: 1.3.1: compression support, publish-directory :destination can be a
+   list of directories, and various SSL improvements;
+v6: 1.3.5: doc updates, make client-request-read-sequence work with
+   compressed responses, delay sending headers for computed entities,
+   add option to do hidden redirect to an index file in a directory,
+   fix prepend-headers so that it works on windows;
+v7: 1.3.7: Add :default-actions to webactions,
+   Avoid polling in http-accept-thread,
+   smp thread safety changes;
+v8: 1.3.8: fix problem w/response handler using string output streams.
+   Note: Patch can be manually loaded into running lisp.
+aserve.007 : v1: version 1.2.67, implement keep-alive in allegroserve client;
+v2: 1.2.68, obey keep-alive requests for PUT and POST requests;
+v3: 1.2.69, make logging though method specialized on wserver class;
+v4: 1.2.70: add support for Expect: 100-continue requests;
+v5: 1.3.1: compression support, publish-directory :destination can be a
+   list of directories, and various SSL improvements;
+v6: 1.3.5: doc updates, make client-request-read-sequence work with
+   compressed responses, delay sending headers for computed entities,
+   add option to do hidden redirect to an index file in a directory,
+   fix prepend-headers so that it works on windows;
+v7: 1.3.7: Add :default-actions to webactions,
+   Avoid polling in http-accept-thread,
+   smp thread safety changes.
+   Note: Patch can be manually loaded into running lisp.
+aserve.006 : v1: version 1.2.67, implement keep-alive in allegroserve client;
+v2: 1.2.68, obey keep-alive requests for PUT and POST requests;
+v3: 1.2.69, make logging though method specialized on wserver class;
+v4: 1.2.70: add support for Expect: 100-continue requests;
+v5: 1.3.1: compression support, publish-directory :destination can be a
+   list of directories, and various SSL improvements;
+v6: 1.3.5: doc updates, make client-request-read-sequence work with
+   compressed responses, delay sending headers for computed entities,
+   add option to do hidden redirect to an index file in a directory,
+   fix prepend-headers so that it works on windows.
+   Note: Patch can be manually loaded into running lisp.
+aserve.005 : v1: version 1.2.67, implement keep-alive in allegroserve client;
+v2: 1.2.68, obey keep-alive requests for PUT and POST requests;
+v3: 1.2.69, make logging though method specialized on wserver class;
+v4: 1.2.70: add support for Expect: 100-continue requests;
+v5: 1.3.1: compression support, publish-directory :destination can be a
+   list of directories, and various SSL improvements.
+   Note: Patch can be manually loaded into running lisp.
+aserve.003 : v1: version 1.2.67, implement keep-alive in allegroserve client;
+v2: 1.2.68, obey keep-alive requests for PUT and POST requests;
+v3: 1.2.69, make logging though method specialized on wserver class;
+v4: 1.2.70: add support for Expect: 100-continue requests.
+   Note: Patch can be manually loaded into running lisp.
+aserve.003 : v1: version 1.2.67, implement keep-alive in allegroserve client;
+v2: 1.2.68, obey keep-alive requests for PUT and POST requests;
+v3: 1.2.69, make logging though method specialized on wserver class.
+   Note: Patch can be manually loaded into running lisp.
+aserve.002 : v1: version 1.2.67, implement keep-alive in allegroserve client;
+v2: 1.2.68, obey keep-alive requests for PUT and POST requests.
+   Note: Patch can be manually loaded into running lisp.
+aserve.001 : v1: version 1.2.67, implement keep-alive in allegroserve client.
+   Note: Patch can be manually loaded into running lisp.
+asdf.003 : v1: update to version 2.010.5;
+v2: update to version 2.017;
+v3: update to version 2.017.21.
+   Note: Patch can be manually loaded into running lisp.
+asdf.002 : v1: update to version 2.010.5;
+v2: update to version 2.017.
+   Note: Patch can be manually loaded into running lisp.
+asdf.001 : v1: update to version 2.010.5.
+   Note: Patch can be manually loaded into running lisp.
+aodbc_v2.001 : v1: Fix handle size for non-windows platforms.;
+   Note: Patch can be manually loaded into running lisp.
+acldns.001 : Add a cached AAAA record for 'localhost' when peforming lookups in acldns dns-mode.
+   Note: Patch can be manually loaded into running lisp.
+acache-2.1.19.fasl (version 0): acache version 2.1.19: create-expression-cursor return nil if class has no committed
+   Note: Patch can be manually loaded into running lisp.
+acache-2.1.18.fasl (version 0): acache version 2.1.18
+   Note: Patch can be manually loaded into running lisp.
+acache-2.1.17.fasl (version 0): acache version 2.1.17
+   Note: Patch can be manually loaded into running lisp.
+acache-2.1.16.fasl (version 0): acache version 2.1.16
+   Note: Patch can be manually loaded into running lisp.
+acache-2.1.15.fasl (version 0): acache version 2.1.15
+   Note: Patch can be manually loaded into running lisp.
+acache-2.1.14.fasl (version 0): acache version 2.1.14
+   Note: Patch can be manually loaded into running lisp.

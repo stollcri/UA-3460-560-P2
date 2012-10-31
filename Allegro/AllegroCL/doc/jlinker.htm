@@ -1,0 +1,2927 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=UTF-8"> <title>jLinker - A Dynamic Link between Lisp and Java</title></head><link rel="stylesheet" href="acldoc-styles.css" type="text/css"><body><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"><a href="contents.htm"><b>ToC</b></a></td><td align="left" bgcolor="#00FFFF"><a href="introduction.htm"><b>DocOverview</b></a></td><td align="left" bgcolor="#00FFFF"><a href="cgide.htm"><b>CGDoc</b></a></td><td align="left" bgcolor="#00FFFF"><a href="release-notes.htm"><b>RelNotes</b></a></td><td align="left" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="left" bgcolor="#00FFFF"><a href="index.htm"><b>Index</b></a></td><td align="left" bgcolor="#00FFFF"><a href="permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/jlinker.htm">8.1 version</a></td></tr></table><h1 id="2">jLinker - A Dynamic Link between Lisp and Java</h1><p id="3">This document contains the following sections:</p><a href="#intro-1">1.0 Introduction</a><br><a href="#creating-1">2.0 Creating a Dynamically Linked Lisp/Java Application</a><br>&nbsp;&nbsp;&nbsp;<a href="#calling-java-2">2.1 Calling Java</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#two-calling-models-3">2.1.1 Two Calling Models</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#data=types-conversions-3">2.1.2 Data Types and Conversions</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#two-implementations-3">2.1.3 Two Implementations</a><br>&nbsp;&nbsp;&nbsp;<a href="#dynamic-linker-ref-2">2.2 Dynamic Linkage Lisp Reference - The Funcall Model</a><br>&nbsp;&nbsp;&nbsp;<a href="#class-model-ref-2">2.3 Dynamic Linkage Lisp Reference - The Class Model</a><br>&nbsp;&nbsp;&nbsp;<a href="#dl-java-ref-2">2.4 Dynamic Linkage Java Reference</a><br>&nbsp;&nbsp;&nbsp;<a href="#init-funs-and-vars-2">2.5 Initialization Functions and Variables</a><br>&nbsp;&nbsp;&nbsp;<a href="#events-2">2.6 Event Handling</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#lightweight-callback-3">2.6.1 Lightweight Callback to Lisp Methods</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#dispatch-lisp-funs-3">2.6.2 Lisp Functions to Dispatch Java Events</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#implemented-subclasses-3">2.6.3 Implemented Sub-Classes of AWT Event Handlers</a><br>&nbsp;&nbsp;&nbsp;<a href="#i18n-2">2.7 I18N Issues</a><br>&nbsp;&nbsp;&nbsp;<a href="#applets-2">2.8 Java Applets</a><br>&nbsp;&nbsp;&nbsp;<a href="#rentrancy-2">2.9 Re-entrancy</a><br>&nbsp;&nbsp;&nbsp;<a href="#connect-issues-2">2.10 jLinker Connect Issues</a><br>&nbsp;&nbsp;&nbsp;<a href="#calling-inner-meth-2">2.11 Calling Methods of Inner Classes</a><br>&nbsp;&nbsp;&nbsp;<a href="#portability-issues-2">2.12 Portability Issues</a><br><a href="#install-1">3.0 Installation</a><br>&nbsp;&nbsp;&nbsp;<a href="#install-files-2">3.1 Files Involved in Installing jLinker</a><br>&nbsp;&nbsp;&nbsp;<a href="#dedicated-java-install-2">3.2 Dedicated Java Server</a><br>&nbsp;&nbsp;&nbsp;<a href="#peer-to-peer-2">3.3 Peer-to-Peer Interaction</a><br>&nbsp;&nbsp;&nbsp;<a href="#one-lisp-several-java-2">3.4 One Lisp and Several Java Client/Server connections</a><br>&nbsp;&nbsp;&nbsp;<a href="#native-java-issues-2">3.5 Native Java Issues</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#ld-library-path-3">3.5.1 LD_LIBRARY_PATH</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#dumplisp-3">3.5.2 Dumplisp</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#event-polling-3">3.5.3 Event Polling</a><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#misc-caveats-3">3.5.4 Miscellaneous Caveats</a><br><a href="#example-1">4.0 A Complete Code Example</a><br><a href="#bean-servlet-1">5.0 Packaging Lisp applications as Java beans and servlets</a><br>&nbsp;&nbsp;&nbsp;<a href="#bean-2">5.1 The jLinker Java Bean API</a><br>&nbsp;&nbsp;&nbsp;<a href="#servlet-2">5.2 The jLinker Servlet API</a><br><a href="#old-dyn-link-1">Appendix A. Deprecated Dynamic Linkage Reference</a><br><hr><hr><h2 id="4"><a name="intro-1">1.0 Introduction</a></h2>
+
+<p id="5">
+Starting with the patch release of May 2006,
+the Jlinker module is identical in ACL 7.0 and ACL 8.0.
+</p>
+<p id="6">
+The symbols in the jLinker module are exported from the package
+<b><code>:javatools.jlinker</code></b>.  The package also has
+nickname <code>:net.jlinker</code>.  In the next release of
+Allegro CL, the name and nickname will change places, and in the
+following release, the name <code>:javatools.jlinker</code> will
+be deprecated.
+</p>
+
+
+<p id="7">
+The purpose of this tool is to automate the interfacing of Lisp programs
+to Java class libraries. 
+
+
+Jlinker supports a socket interface that allows the Lisp and Java
+parts of an application to run in separate process, and even in
+separate hosts.  Jlinker also supports a native interface (new for
+8.0) that allows the Lisp and Java parts of an application to share
+the address space of a single process.  Both interfaces are accessed
+through the same API and in many cases, the choice of interface does
+not affect the application program style.
+
+</p>
+
+<p id="8">
+<i>jLinker</i> allows dynamic, unpremeditated access to the public
+methods, constructors, and members of Java classes from the Lisp
+runtime environment.
+</p>
+<p id="9">
+The end result is that the Lisp application may call Java methods as if 
+they were Lisp functions.  The documentation of the Java class is all that
+the Lisp programmer needs to know to use the Java library effectively.
+For example, the Java statements
+</p>
+<pre id="10">
+	java.awt.Canvas canvas = new java.awt.Canvas();
+	canvas.setSize( new java.awt.Dimension(12, 17) );
+</pre>
+<p id="11">
+have the Lisp equivalent
+</p>
+<pre id="12">
+	(setf canvas (jnew "java.awt.Canvas"))
+	(jcall "setSize" canvas (jnew "java.awt.Dimension" 12 17))
+</pre>
+
+<p id="13">
+Remote objects are retained as long as a reference exists in the
+calling environment. When a Lisp reference to a remote Java object
+is discarded and garbage collected, a reference to the Java object
+is eventually eliminated. The retention of the Java object is then
+controlled by Java rules.
+</p>
+
+<p id="14">
+To improve the efficiency of the interface, we allow values returned
+by methods to be ignored or copied.  This prevents the construction of
+a remote object on the Java side.  Ignored values are
+applicable to values that are already known or irrelevant to the Lisp
+application.  Copied objects are applicable when the Java object is
+used only for the values of its fields and not for any method invocations.
+</p>
+
+
+<p id="15">
+Calls from Java to Lisp are implemented by the LispCall class in Java.
+To facilitate some commonly used callbacks from Java to Lisp we
+provide some adapter and listener classes that send AWT event data to
+a dispatcher on the Lisp side.  This framework has been suitable for
+all the callbacks used in the java.awt library.
+</p>
+
+<p id="16">
+We have tested the concept with several Lisp applications that use the
+java.awt library for the gui component of the application.  The performance
+of the gui is comparable to a native Java application in most cases.
+We have demonstrated portability by running the same application on
+Microsoft Windows NT and Sun Solaris.
+</p>
+<p id="17">
+Symbols naming Lisp operators and variables associated with jLinker
+are in the <code>javatools.jlinker</code> package. You may want
+to use this package so symbols need not be qualified with
+<code>javatools.jlinker:</code>. Do this by evaluating
+<code>(use-package :javatools.jlinker)</code>. See <a href="../ansicl/dictentr/use-pack.htm"><b>use-package</b></a>.
+</p>
+<p id="18">
+The jLinker
+module is loaded by evaluating:
+</p>
+<pre id="19">
+(require :jlinker)
+
+;;;  You may load additional features
+;;;  (see <a href="#bean-servlet-1">Section 5.0 Packaging Lisp applications as Java beans and servlets</a>)
+;;;  by evaluating:
+
+(require :jlinkent)
+</pre>
+
+<p id="20">
+<b>Note that only public methods, constructors, and members of public
+Java class may be accessed from Lisp</b>. This constraint is implicit
+throughout this document whenever we mention a Java class, method,
+constructor, or member.
+</p>
+
+
+<hr><hr><h2 id="21"><a name="creating-1">2.0 Creating a Dynamically Linked Lisp/Java Application</a></h2>
+
+
+<hr><h2 id="22"><a name="calling-java-2">2.1 Calling Java</a></h2>
+<p id="23">
+
+Once a Jlinker interface has been initialized, 
+Java constructors and methods are called by name.
+</p>
+<p id="24"><i> All the following examples are shown in a
+<code>:case-sensitive-lower</code> Allegro CL lisp notation.  In a
+standard (<code>:case-insensitive-upper</code> Allegro CL) all Java
+names would need to be enclosed in string quotes.</i>
+</p>
+<p id="25">
+The form
+</p>
+<pre id="26">
+   (jconstructor 'java.util.StringTokenizer 
+          'java.lang.String 'java.lang.String)
+</pre>
+<p id="27">
+returns a reference to a constructor, and the form
+</p>
+<pre id="28">
+   (jcall (jconstructor 'java.util.StringTokenizer 
+                 'java.lang.String 'java.lang.String)
+          "ABC DEF GHI " " ")
+</pre>
+<p id="29">
+returns a reference to an instance created by the constructor.
+These references are ordinary Lisp objects that may be bound
+to variables and stored in data structures.
+</p>
+<pre id="30">
+   (jcall (jmethod 'java.util.StringTokenizer 'countTokens)
+          x)
+</pre>
+<p id="31">
+The operator lookup functions maintain a cache so that only the 
+first mention
+of a class, constructor, method or field requires a remote
+call.
+</p>
+
+<hr><h2 id="32"><a name="two-calling-models-3">2.1.1 Two Calling Models</a></h2>
+
+<p id="33">
+We provide two calling models that may be used separately or
+simultaneously at the discretion of the programmer.
+</p>
+<p id="34">
+In the <b>funcall model</b>, Java classes and methods are referenced
+by name. This is a somewhat verbose style but is convenient for quick
+prototyping since all Java classes and methods are immediately
+available without any additional work on the Java or
+the Lisp side. For example, the following two
+statements
+</p>
+<pre id="35">
+(setq x (jnew (jconstructor "java.util.StringTokenizer"
+                            "java.lang.String" "java.lang.String")
+              "a b c " " "))
+(jcall (jmethod "java.util.StringTokenizer" "nextToken") x)
+</pre>
+
+<p id="36">
+create an instance of the Java
+<code>java.util.StringTokenizer</code> class and call the
+<code>nextToken</code> method on the the new instance. In the
+funcall model, a method or constructor may be specified with an
+incomplete signature such as
+</p>
+<pre id="37">
+(jconstructor "java.util.StringTokenizer" 2)
+</pre>
+
+<p id="38">
+This notation specifies a constructor with two arguments.  If there is
+only one constructor with two arguments in the Java class, then we
+return the constructor.  Otherwise, we signal a continuable error
+where the desired constructor may be selected from a list of choices.
+A similar short-cut is possible in a call such as
+</p>
+<pre id="39">
+(jcall "nextToken" x)
+</pre>
+
+<p id="40">
+Here we are calling the (only) <code>nextToken</code> method
+with zero arguments in the class of the object x.  If several methods
+were available, then a continuable error would again be signalled.
+</p>
+<p id="41">
+Incomplete signatures are very convenient during development but
+should be avoided in final applications since searching for methods is
+a slow process that may require multiple round-trips between Lisp and
+Java.
+</p>
+<p id="42">
+In the <b>class model</b>, the user defines Lisp classes that
+correspond to Java classes and Lisp functions that correspond to Java
+constructors and Java methods.  The Lisp functions that correspond to
+Java class methods are generic functions specialized on Lisp classes
+that correspond to Java classes.  The Lisp functions that correspond to
+Java static methods are ordinary functions.  To translate the
+preceding <code>java.util.StringTokenizer</code> example to the
+class model, we need to make some definitions:
+</p>
+
+<pre id="43">
+(def-java-class (tokenizer "java.util.StringTokenizer")
+                () () () ())
+(def-java-constructor tokenizer (tokenizer "java.lang.String"
+                                           "java.lang.String"))
+(def-java-method (next-token "nextToken") (tokenizer))
+</pre>
+<p id="44">
+When we use these definitions, the code is more compact and Lisp-like:
+</p>
+
+<pre id="45">
+(setq x (tokenizer "a b c " " "))
+(next-token x)
+</pre>
+
+
+
+<hr><h2 id="46"><a name="data=types-conversions-3">2.1.2 Data Types and Conversions</a></h2>
+
+
+
+
+<p id="47">
+When Lisp values are passed as arguments in a call to Java, the Lisp
+values are converted to the Java types specified in the method
+signature.  The value returned by a call to Java is converted to a
+Lisp value following the rules in the table below.
+</p>
+
+
+
+<p id="48">
+In Java, values are automatically converted by calling the appropriate
+method of the LispCall class.
+</p>
+
+
+
+
+
+
+<h3 id="49">
+Table of argument conversions from Lisp to Java 
+</h3>
+
+<table border="1" width="90%">
+
+<tr>
+<td width="25%"><strong>Declared Java Type</strong></td>
+<td width="25%"><strong>Allowed Lisp Type</strong></td>
+<td width="25%"><strong>Actual Java type (or value)</strong></td>
+<td width="25%"><strong>Conversion Note</strong></td>
+</tr>
+<tr>
+<td width="25%">boolean</td>
+<td width="25%">null</td>
+<td width="25%">(false)</td>
+<td width="25%"> </td>
+</tr>
+<tr>
+<td width="25%">boolean</td>
+<td width="25%">any non-nil</td>
+<td width="25%">(true)</td>
+<td width="25%"> </td>
+</tr>
+<tr>
+<td width="25%"> char</td>
+<td width="25%">character</td>
+<td width="25%">char</td>
+<td width="25%"> </td>
+</tr>
+<tr>
+<td width="25%">byte</td>
+<td width="25%">integer</td>
+<td width="25%">byte</td>
+<td width="25%">truncate to 7 bits + sign</td>
+</tr>
+<tr>
+<td width="25%">short</td>
+<td width="25%">integer</td>
+<td width="25%">short</td>
+<td width="25%">truncate to 15 bits + sign</td>
+</tr>
+<tr>
+<td width="25%">int</td>
+<td width="25%">integer</td>
+<td width="25%">int</td>
+<td width="25%">truncate to 31 bits + sign</td>
+</tr>
+<tr>
+<td width="25%">long</td>
+<td width="25%">integer</td>
+<td width="25%">long</td>
+<td width="25%">truncate to 63 bits + sign</td>
+</tr>
+<tr>
+<td width="25%">float</td>
+<td width="25%">number</td>
+<td width="25%">float</td>
+<td width="25%"> </td>
+</tr>
+<tr>
+<td width="25%">double</td>
+<td width="25%">number</td>
+<td width="25%">double</td>
+<td width="25%"> </td>
+</tr>
+<tr>
+<td width="25%">java.lang.String</td>
+<td width="25%">string</td>
+<td width="25%">java.lang.String</td>
+<td width="25%"> </td>
+</tr>
+<tr>
+<td width="25%">byte[]</td>
+<td width="25%">sequence</td>
+<td width="25%">byte[]</td>
+<td width="25%">truncate to 7 bits + sign</td>
+</tr>
+<tr>
+<td width="25%">short[]</td>
+<td width="25%">sequence</td>
+<td width="25%">short[]</td>
+<td width="25%">truncate to 15 bits + sign</td>
+</tr>
+<tr>
+<td width="25%">int[]</td>
+<td width="25%">sequence</td>
+<td width="25%">int[]</td>
+<td width="25%">truncate to 31 bits + sign</td>
+</tr>
+<tr>
+<td width="25%">float[]</td>
+<td width="25%">sequence</td>
+<td width="25%">float[]</td>
+<td width="25%"> </td>
+</tr>
+<tr>
+<td width="25%">double[]</td>
+<td width="25%">sequence</td>
+<td width="25%">double[]</td>
+<td width="25%"> </td>
+</tr>
+<tr>
+<td width="25%">String[]</td>
+<td width="25%">sequence</td>
+<td width="25%">String[]</td>
+<td width="25%"> </td>
+</tr>
+<tr>
+<td width="25%">reference type</td>
+<td width="25%">jwrapper</td>
+<td width="25%">Java reference in wrapper</td>
+<td width="25%"> </td>
+</tr>
+<tr>
+<td width="25%">reference type</td>
+<td width="25%">null</td>
+<td width="25%">(null)</td>
+<td width="25%"> </td>
+</tr>
+<tr>
+<td width="25%">reference type</td>
+<td width="25%">any</td>
+<td width="25%">JLWrapper</td>
+<td width="25%"> </td>
+</tr>
+</table>
+
+<h3 id="50">
+Table of argument conversions from Java to Lisp
+</h3>
+
+<table border="1" width="90%">
+
+<tr>
+<td width="50%"><strong>Java Type</strong></td>
+<td width="50%"><strong>Lisp Type (or Value)</strong></td>
+</tr>
+<tr>
+<td width="50%">boolean</td>
+<td width="50%">(t or nil)</td>
+</tr>
+<tr>
+<td width="50%">byte</td>
+<td width="50%">integer</td>
+</tr>
+<tr>
+<td width="50%">short</td>
+<td width="50%">integer</td>
+</tr>
+<tr>
+<td width="50%">int</td>
+<td width="50%">integer</td>
+</tr>
+<tr>
+<td width="50%">long</td>
+<td width="50%">integer</td>
+</tr>
+<tr>
+<td width="50%">char</td>
+<td width="50%">character</td>
+</tr>
+<tr>
+<td width="50%">String</td>
+<td width="50%">string</td>
+</tr>
+<tr>
+<td width="50%">float</td>
+<td width="50%">double-float</td>
+</tr>
+<tr>
+<td width="50%">double</td>
+<td width="50%">double-float</td>
+</tr>
+<tr>
+<td width="50%">byte[]</td>
+<td width="50%">(array (signed-byte 8) (*))</td>
+</tr>
+<tr>
+<td width="50%">short[]</td>
+<td width="50%">(array (signed-byte 16) (*))</td>
+</tr>
+<tr>
+<td width="50%">int[]</td>
+<td width="50%">(array (signed-byte 32) (*))</td>
+</tr>
+<tr>
+<td width="50%">float[]</td>
+<td width="50%">(array double-float (*))</td>
+</tr>
+<tr>
+<td width="50%">double</td>
+<td width="50%">(array double-float (*))</td>
+</tr>
+<tr>
+<td width="50%">String[]</td>
+<td width="50%">(array t)</td>
+</tr>
+<tr>
+<td width="50%">null</td>
+<td width="50%">null</td>
+</tr>
+<tr>
+<td width="50%">JLWrapper</td>
+<td width="50%">Lisp type in wrapper</td>
+</tr>
+<tr>
+<td width="50%">reference type</td>
+<td width="50%">jwrapper</td>
+</tr>
+</table>
+
+<h3 id="51">
+COMPATIBILITY NOTE
+</h3>
+
+<p id="52">
+The conversions in the above tables are new for Allegro CL 8.0.  In
+earlier versions of Jlinker, the types in the method signature were
+not used during argument conversion and the function <a href="operators/jlinker/make-immediate-object.htm"><b>make-immediate-object</b></a> was
+required to coerce many Lisp types to the correct Java type.  Existing
+calls to <a href="operators/jlinker/make-immediate-object.htm"><b>make-immediate-object</b></a> will still
+produce the correct result but in all cases these calls are now
+redundant.
+</p>
+
+
+
+
+
+<hr><h2 id="53"><a name="two-implementations-3">2.1.3 Two Implementations</a></h2>
+
+<p id="54">
+There are two distinctly different implementations of the 
+Jlinker interface.  
+</p>
+<p id="55">
+In the socket implementation, the Lisp and Java parts of the
+application run in separate processes and may even run on separate
+hosts. A significant feature is that the address spaces of both parts
+are separate and protected. Each side of the application may be
+stopped and restarted without affecting the other. A disadvantage is
+that the speed of interactions is limited by the data transfer rate of
+sockets and may be subjected to indefinite network delays.
+</p>
+<p id="56">
+In the native implementation, the Lisp and Java parts of the
+application run in the same process and share the same address space.
+A significant feature is that calls between Lisp and Java run at the
+speed of foreign calls.  A possible disadvantage may be that the
+address space may be reduced for both parts of the application.
+Anoter potential disadvantage is that a serious error in one part may
+cause the other part to crash as well.
+</p>
+
+
+
+
+
+
+
+<hr><h2 id="57"><a name="dynamic-linker-ref-2">2.2 Dynamic Linkage Lisp Reference - The Funcall Model</a></h2>
+
+<p id="58">
+We use the following meta notations for certain arguments:
+</p>
+
+<ul>
+<li id="59">
+<b>class-ref</b>: an expression that evaluates to 
+either (1) a string or symbol that names a Java class
+or (2) a remote reference object that points to a Java class
+object.
+</li>
+<li id="60">
+<b>method-ref</b>: an expression that evaluates to either (1) a string
+or symbol that names a Java class or (2) a remote reference object
+that points to a Java method object.
+</li>
+</ul>
+<p id="61">
+In the cases where a compiler macro exists for a jLinker function, the
+compiler macro examines <i>class-ref</i> and
+<i>method-ref</i> arguments. If the arguments are
+compile-time constants which evaluate to a string or symbols, the
+compile-time values of these arguments are used to build the pre-load
+expressions.
+</p>
+
+<ul>
+<li id="62">
+<a href="operators/jlinker/discard-in-java.htm"><b>discard-in-java</b></a>:
+&nbsp;<b>Generic Function</b>
+</li>
+<li id="63">
+<a href="operators/jlinker/dist-object-p.htm"><b>dist-object-p</b></a>:
+&nbsp;<b>Generic Function</b>
+</li>
+<li id="64">
+<a href="operators/jlinker/jarrayp.htm"><b>jarrayp</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="65">
+<a href="operators/jlinker/jarray-ref.htm"><b>jarray-ref</b></a>:
+&nbsp;<b>Function</b>: <a href="../ansicl/dictentr/setfpset.htm"><b>setf</b></a> can be used with this function
+to set values in a Java array.
+</li>
+<li id="66">
+<a href="operators/jlinker/jarray-set.htm"><b>jarray-set</b></a>:
+&nbsp;<b>Function</b>: use of this function is deprecated.
+Use <a href="operators/jlinker/jarray-ref.htm"><b>jarray-ref</b></a>
+and <a href="../ansicl/dictentr/setfpset.htm"><b>setf</b></a> instead.
+</li>
+<li id="67">
+<a href="operators/jlinker/jcall.htm"><b>jcall</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="68">
+<a href="operators/jlinker/jclass.htm"><b>jclass</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="69">
+<a href="operators/jlinker/jclass-name.htm"><b>jclass-name</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="70">
+<a href="operators/jlinker/jclass-of.htm"><b>jclass-of</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="71">
+<a href="operators/jlinker/jconstructor.htm"><b>jconstructor</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="72">
+<a href="operators/jlinker/jdesc.htm"><b>jdesc</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="73">
+<a href="operators/jlinker/jfield.htm"><b>jfield</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="74">
+<a href="operators/jlinker/jlinker-version.htm"><b>jlinker-version</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="75">
+<a href="operators/jlinker/jlinker-buffer-size.htm"><b>jlinker-buffer-size</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="76">
+<a href="operators/jlinker/jlookup.htm"><b>jlookup</b></a>:
+&nbsp;<b>Generic Function</b>
+</li>
+<li id="77">
+<a href="operators/jlinker/jmethod.htm"><b>jmethod</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="78">
+<a href="operators/jlinker/jnew.htm"><b>jnew</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="79">
+<a href="operators/jlinker/jnew-array.htm"><b>jnew-array</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="80">
+<a href="operators/jlinker/jstatic.htm"><b>jstatic</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="81">
+<a href="operators/jlinker/kcons.htm"><b>kcons</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="82">
+<a href="operators/jlinker/kmeth.htm"><b>kmeth</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="83">
+<a href="operators/jlinker/last-use.htm"><b>last-use</b></a>:
+&nbsp;<b>Generic Function</b>
+</li>
+<li id="84">
+<a href="operators/jlinker/make-dist-object.htm"><b>make-dist-object</b></a>:
+&nbsp;<b>Generic Function</b>
+</li>
+<li id="85">
+<a href="operators/jlinker/make-immediate-object.htm"><b>make-immediate-object</b></a>:
+&nbsp;<b>Function</b>
+</li>
+<li id="86">
+<a href="operators/jlinker/eval-from-string.htm"><b>eval-from-string</b></a>:
+&nbsp;<b>Function</b>
+</li>
+</ul>
+
+
+
+<hr><h2 id="87"><a name="class-model-ref-2">2.3 Dynamic Linkage Lisp Reference - The Class Model</a></h2>
+
+<p id="88">
+The macro <a href="operators/jlinker/def-java-class.htm"><b>def-java-class</b></a> can be used to
+define a Lisp class which corresponds to a Java class. 
+</p>
+<p id="89">
+The macro <a href="operators/jlinker/def-java-constructor.htm"><b>def-java-constructor</b></a> allows
+defining constructor functions to create instances of the classes
+defined with <a href="operators/jlinker/def-java-class.htm"><b>def-java-class</b></a>. The macro <a href="operators/jlinker/def-java-method.htm"><b>def-java-method</b></a> can be
+used to define methods. <a href="operators/jlinker/def-java-static.htm"><b>def-java-static</b></a> defines static
+methods.
+</p>
+
+
+
+
+
+
+<hr><h2 id="90"><a name="dl-java-ref-2">2.4 Dynamic Linkage Java Reference</a></h2>
+
+
+<p id="91">
+All the following classes and methods are defined in Java package
+<code>com.franz.jlinker</code> and supplied in the 
+file <i>jlinker.jar</i>.
+</p>
+
+<p id="92">
+The recommended Java interface to jLinker is implemented in Java
+classes <b>LispCall</b> and <b>LispConnector</b> documented in JavaDoc
+files supplied with the documentation (linked to just below). These
+two classes provide all the API that a Java program needs to call Lisp
+or to allow Lisp to call Java. The remainder of this section describes
+additional Java classes and methods that implement similar but
+deprecated interfaces retained for compatibility with older versions
+of ACL.
+</p>
+
+<p id="93">
+<a name="lispcall"><b>LispCall Java class documentation</b></a>: the JavaDoc
+pages are automatically generated and do not have links to this
+documentation. Click <a href="javadoc/com/franz/jlinker/LispCall.html" target="_blank">here</a> to open the LispCall documentation in a new
+window, and <a href="javadoc/com/franz/jlinker/LispCall.html">here</a>
+to (usually) open in in this window.
+</p>
+<p id="94">
+<a name="lispconnector"><b>LispConnector Java class
+documentation</b></a>: the JavaDoc pages are automatically generated
+and do not have links to this documentation. Click <a href="javadoc/com/franz/jlinker/LispConnector.html" target="_blank">here</a> to open the LispConnector documentation in a
+new window, and <a href="javadoc/com/franz/jlinker/LispConnector.html">here</a> to
+(usually) open in in this window.
+</p>
+<p id="95">
+<a name="javadoc-index"><b>The JavaDoc index</b></a>: click <a href="javadoc/index-all.html" target="_blank">here</a> to see the
+index of the available JavaDocs in a new window and <a href="javadoc/index-all.html">here</a> in this window (usually). Only
+the LispCall and LispConnector classes have JavaDoc documentation.
+</p>
+
+
+<p id="96">
+<b>
+In earlier releases, there were additional classes and methods which
+are now replaced by <b>LispCall</b> and <b>LispConnector</b>
+classes. Use of these older classes and methods is deprecated. Their
+descriptions have been moved to
+<a href="#old-dyn-link-1">Appendix A Deprecated Dynamic Linkage Reference</a>. They are retained for
+compatibility with existing applications.  They may only be used with
+the socket implementation of the jlinker interface. (The only
+exceptions are the subclasses of
+<b><code>JavaLinkDist.JLinkerException</code></b>.)  All the
+equivalents of the deprecated classes and methods in the
+<b>LispCall</b> and <b>LispConnector</b> classes allow full
+portability between socket and native modes.
+</b>
+</p>
+
+
+
+
+
+
+<ul>
+<li id="97">
+<pre id="98">
+Package: com.franz.jlinker
+  Class: JavaLinkDist.JLinkerException	
+</pre>
+<p id="99">
+This is an abstract superclass of all the jLinker exceptions.
+</p>
+</li>
+<li id="100">
+<pre id="101">
+Package: com.franz.jlinker
+  Class: JavaLinkDist.InvokeException
+</pre>
+<p id="102">
+This exception is thrown when some unexpected situation occurs in a call
+to invokeInLispEx. <code>getMessage()</code>
+returns a string of the form
+</p>
+<pre id="103">
+"Nothing returned from Lisp"
+"Unexpected value: ..."  
+"Unexpected result: ..."
+</pre>
+<p id="104">
+when such an exception is signaled.
+</p>
+</li>
+<li id="105">
+<pre id="106">
+Package: com.franz.jlinker
+  Class: JavaLinkDist.LispException
+</pre>
+<p id="107">
+This exception is thrown when a Lisp error occurs in a call to
+invokeInLispEx. <code>getMessage()</code> returns a string
+description of the error when such an exception is signaled.
+</p>
+</li>
+<li id="108">
+<pre id="109">
+Package: com.franz.jlinker
+  Class: JavaLinkDist
+ Method: lispError
+
+	public static String lispError( JavaLinkDist.LispException x );
+</pre>
+<p id="110">
+This method returns a remote reference to the Lisp error that caused
+the JavaLinkDist.LispException exception. <code>stringValue(err,
+0)</code> returns a string containing the Lisp type of the error.
+<code>stringValue(err, 1)</code> returns a string containing the
+~A representation of the Lisp error.
+</p>
+</li>
+<li id="111">
+<pre id="112">
+Package: com.franz.jlinker
+  Class: JavaLinkDist.LispThrow	
+</pre>
+<p id="113">
+This exception is thrown when a Lisp throw terminated the Lisp call
+initiated by a call to invokeInLispEx.
+</p>
+</li>
+</ul>
+
+
+
+
+
+<hr><h2 id="114"><a name="init-funs-and-vars-2">2.5 Initialization Functions and Variables</a></h2>
+
+<p id="115">
+The functions described in this section are used to setup and query 
+the interface between Lisp and Java.
+</p>
+
+
+<p id="116">
+The functions and variables are:
+</p>
+
+<ul>
+<li id="117"><a href="operators/jlinker/jlinker-init.htm"><b>jlinker-init</b></a>: 
+This function establishes communication with a Java server.
+</li>
+
+<li id="118">
+<a href="variables/jlinker/s_jlinker-init_s.htm"><code>*jlinker-init*</code></a>: this variable
+specifies a default set of arguments to the <a href="operators/jlinker/jlinker-init.htm"><b>jlinker-init</b></a> function. The
+initial value in the jlinker module is
+<code>(:start-java)</code>.
+</li>
+
+<li id="119">
+<a href="operators/jlinker/jlinker-query.htm"><b>jlinker-query</b></a>: 
+This function sends a query to the jLinker interface.
+</li>
+<li id="120">
+<a href="operators/jlinker/jlinker-end.htm"><b>jlinker-end</b></a>: 
+End a jLinker connection.
+</li>
+<li id="121">
+<a href="operators/jlinker/jlinker-listen.htm"><b>jlinker-listen</b></a>: 
+This function starts a process that continuously restarts the Lisp
+jLinker server so that one is (almost) always available for a Java
+connection.
+</li>
+<li id="122">
+<a href="operators/jlinker/jlinker-slot.htm"><b>jlinker-slot</b></a>: 
+The purpose of this function is to extract and modify data specific to
+one particular Lisp-Java connection.
+</li>
+<li id="123">
+<a href="variables/jlinker/s_jlinker-connection_s.htm"><code>*jlinker-connection*</code></a>: 
+This anchor variable defines all the parameters for one complete connection 
+between Lisp and Java.
+</li>
+<li id="124">
+<a href="variables/jlinker/s_jlinker-verbose_s.htm"><code>*jlinker-verbose*</code></a>: 
+The value of this variable is the default value for the :verbose keyword argument to 
+<a href="operators/jlinker/jlinker-init.htm"><b>jlinker-init</b></a> and
+<a href="operators/jlinker/jlinker-end.htm"><b>jlinker-end</b></a>.
+When true Lisp emits many status messages while connecting.
+</li>
+<li id="125">
+<a href="variables/jlinker/s_jlinker-debug_s.htm"><code>*jlinker-debug*</code></a>: The value of
+this variable is the default value for the :debug keyword argument to
+<a href="operators/jlinker/jlinker-init.htm"><b>jlinker-init</b></a>.
+</li>
+<li id="126">
+<a href="variables/jlinker/s_jlinker-error-p_s.htm"><code>*jlinker-error-p*</code></a>: The value of
+this variable is the default value for the :error-p keyword argument
+to <a href="operators/jlinker/jlinker-init.htm"><b>jlinker-init</b></a>
+and <a href="operators/jlinker/jlinker-end.htm"><b>jlinker-end</b></a>.
+</li>
+<li id="127">
+<a href="variables/jlinker/s_jlinker-set-accessible_s.htm"><code>*jlinker-set-accessible*</code></a>: The
+value of this special variable determines the jLinker behavior when
+Java throws <code>java.lang.IllegalAccessException</code> during
+a method call.
+</li>
+
+<li id="128">
+<a href="variables/jlinker/s_jlinker-run-java_s.htm"><code>*jlinker-run-java*</code></a>: 
+</li>
+<li id="129">
+<a href="variables/jlinker/s_file-type-comparator_s.htm"><code>*file-type-comparator*</code></a>: 
+The value of this variable should be a function name or function object
+of the function used to compare file types.  
+</li>
+
+<li id="130">
+<a href="variables/jlinker/s_jlinker-deprecated-warnings_s.htm"><code>*jlinker-deprecated-warnings*</code></a>: if
+this variable is set to a non-<code>nil</code> value, then
+the compiler will signal warnings if deprecated operators are
+encountered.  In any case, the compiler collects the operators of
+deprecated forms in a list stored in this variable.  The initial value
+is <code>nil</code>.
+</li>
+</ul>
+
+
+
+
+<p id="131">
+On MS Windows, jLinker is able to locate the Java executable and the
+required jar files by examining the Windows registry.  Therefore, in
+most installations, it is not necessary to configure jLinker.
+</p>
+<p id="132">
+On Unix, Linux or MacOSX systems, we have not discovered a general
+method for discovering the location of the Java executable and
+libraries. Therefore some configuration is necessary. The sample file
+<b><i>jlinker/jl-config.cl</i></b> is a template that can be
+customized to set the jLinker configuration variables in several
+different situations.
+</p>
+
+<ul>
+<li id="133">
+<a href="variables/jlinker/s_jlinker-java-home_s.htm"><code>*jlinker-java-home*</code></a>: this
+variable must be set to the location of the Java installation. On MS
+Windows, the keyword <code>:find</code> specifies a Registry
+search.
+</li>
+<li id="134">
+<a href="variables/jlinker/s_jni-library_s.htm"><code>*jni-library*</code></a>: this variable is
+used only when the native Java interface is used. The value of this
+variable must be the pathname string of the Java JNI shared library
+(libjni.so, libjni.dll, libjvm.dylib ...). If the value is a relative
+path string, then it is merged with the value of <a href="variables/jlinker/s_jlinker-java-home_s.htm"><code>*jlinker-java-home*</code></a>. On MS
+Windows, the keyword <code>:find</code> specifies a Registry
+search.
+</li>
+</ul>
+
+
+
+
+<hr><h2 id="135"><a name="events-2">2.6 Event Handling</a></h2>
+
+<p id="136">
+Many Java classes customize their behavior by allowing the programmer
+to extend them with custom implementations of selected methods.  The
+java.awt package makes extensive use of this facility to handle the
+events associated with the use of a GUI.
+</p>
+<p id="137">
+In a distributed computing environment, the question arises of
+where the custom implementations of the methods should be executed.
+There is a range of answers to this question and some of the 
+possibilities are discussed in the following sections.
+</p>
+<p id="138">
+If the custom behavior of an extended method does not require any
+data from the Lisp side of the application, the method can be 
+implemented in a pure Java extension of the class in question.
+The extended method may be linked to the 
+application from Lisp.
+</p>
+<pre id="139">
+<i>----- Java ----------</i>
+
+public class MyWindowAdapter extends WindowAdapter {
+
+  public void windowClosing(WindowEvent e) {
+    e.getWindow().dispose();
+  };
+
+
+<i>----- Lisp ----------</i>
+
+(jcall "addWindowListener" frame (jnew "MyWindowAdapter"))
+
+</pre>
+
+<p id="140">
+The Java method may also call back to Lisp with
+<code>LispCall</code> methods.
+</p>
+
+<hr><h2 id="141"><a name="lightweight-callback-3">2.6.1 Lightweight Callback to Lisp Methods</a></h2>
+
+<p id="142">
+When callback methods follow a common pattern, it may be possible to
+implement a general function that passes enough information from Java 
+to Lisp through a common interface.
+</p>
+<p id="143">
+In the case of java.awt events, this is a very reasonable approach, and
+we have subclassed many of the event handlers to transmit event information
+to Lisp in a common form where it is dispatched by Lisp functions.
+</p>
+<pre id="144">
+
+(jcall (jmethod "com.franz.jlinker.JLWindowAdapter" "addTo") frame)
+(jregister-handler frame :windowClosing #'(lambda (data frame &rest x)
+                                            (jcall "dispose" frame)))
+
+</pre>
+<p id="145">
+This approach can be extended or modified to handle a wide range of
+callback situations.
+</p>
+
+
+<hr><h2 id="146"><a name="dispatch-lisp-funs-3">2.6.2 Lisp Functions to Dispatch Java Events</a></h2>
+
+
+<ul>
+<li id="147">
+<a href="operators/jlinker/jnotify-lisp.htm"><b>jnotify-lisp</b></a>
+</li>
+<li id="148">
+<a href="operators/jlinker/jregister-handler.htm"><b>jregister-handler</b></a>
+</li>
+<li id="149">
+<a href="operators/jlinker/jquery-handler.htm"><b>jquery-handler</b></a><br>
+</li>
+</ul>
+
+
+
+
+<hr><h2 id="150"><a name="implemented-subclasses-3">2.6.3 Implemented Sub-Classes of AWT Event Handlers</a></h2>
+
+<h3 id="151">ActionListener</h3>
+<pre id="152">
+   class com.franz.jlinker.JLActionListener implements ActionListener
+
+   Methods:
+     addTo(java.awt.Button)
+     addTo(java.awt.List)
+     addTo(java.awt.MenuItem)
+     addTo(java.awt.TextField)
+
+   Handler arguments:
+     object is argument to addTo
+     event=   :actionPerformed
+     longs=   { event.getModifiers() }
+     strings= { event.paramString(), event.getActionCommand() }
+</pre>
+
+<h3 id="153">ComponentAdapter</h3>
+<pre id="154">
+   class com.franz.jlinker.JLComponentAdapter extends ComponentAdapter
+
+   Methods:
+     addTo(java.awt.Component)
+
+   Handler arguments:
+     object is argument to addTo
+     event=   :componentResized   :componentMoved
+              :componentShown     :componentHidden
+     longs=   { }
+     strings= { event.paramString() }
+</pre>
+
+<h3 id="155">ItemListener</h3>
+<pre id="156">
+   class com.franz.jlinker.JLItemListener implements ItemListener
+
+   Methods:
+     addTo(java.awt.Checkbox)
+     addTo(java.awt.CheckboxMenuItem)
+     addTo(java.awt.Choice)
+     addTo(java.awt.ItemSelectable)
+     addTo(java.awt.List) 
+
+   Handler arguments:
+     object is argument to addTo
+     event=   :itemStateChanged
+     longs=   { (event.getStateChange()==event.SELECTED)?1:0 }
+     strings= { event.paramString(), (event.getItem()).toString() }
+</pre>
+
+<h3 id="157">KeyAdapter</h3>
+<pre id="158">
+   class com.franz.jlinker.JLKeyAdapter extends KeyAdapter
+
+   Methods:
+     addTo(java.awt.Component)
+
+   Handler arguments:
+     object is argument to addTo
+     event=   :keyTyped   :keyPressed   :keyReleased
+     longs=   { event.getModifiers(), (event.isActionKey()?1:0), 
+                event.getKeyCode() }
+     strings= { event.paramString() }
+</pre>
+
+<h3 id="159">MouseAdapter</h3>
+<pre id="160">
+   class com.franz.jlinker.JLMouseAdapter extends MouseAdapter
+
+   Methods:
+     addTo(java.awt.Component)
+
+   Handler arguments:
+     object is argument to addTo
+     event= :mouseClicked  :mousePressed  :mouseReleased
+                           :mouseEntered  :mouseExited
+     longs=   { event.getModifiers(), (event.isPopupTrigger()?1:0), 
+                event.getClickCount(), event.getX(), event.getY() }
+     strings= { event.paramString() }
+</pre>
+
+<h3 id="161">MouseMotionAdapter</h3>
+<pre id="162">
+   class com.franz.jlinker.JLMouseMotionAdapter extends MouseMotionAdapter
+
+   Methods:
+     addTo(java.awt.Component)
+
+   Handler arguments:
+     object is argument to addTo
+     event= :mouseDragged   :mouseMoved
+     longs=   { event.getModifiers(), (event.isPopupTrigger()?1:0), 
+                event.getClickCount(), event.getX(), event.getY() }
+     strings= { event.paramString() }
+</pre>
+
+<h3 id="163">WindowAdapter</h3>
+<pre id="164">
+   class com.franz.jlinker.JLWindowAdapter extends WindowAdapter
+
+   Methods:
+     addTo(java.awt.Window)
+
+   Handler arguments:
+     object is argument to addTo
+     event=   :windowOpened  :windowClosing    :windowClosed
+                             :windowIconified  :windowDeiconified
+	                     :windowActivated  :windowDeactivated
+     longs=   { }  
+     strings= { }
+</pre>
+
+<h3 id="165">Generic Event Handler</h3>
+<p id="166">
+The following code examples show parts of some of the above adapter
+implementations.  The examples illustrate how to add a new event
+handler that propagates the Java event to the Lisp <a href="operators/jlinker/jregister-handler.htm"><b>jregister-handler</b></a> interface.
+</p>
+<p id="167">
+When the Java object supplied with the event is also the object
+registered in Lisp:
+</p>
+<pre id="168">
+package com.franz.jlinker;
+import java.awt.*;
+import java.awt.event.*;
+
+
+public class JLKeyAdapter extends KeyAdapter {
+
+  // One addTo method is needed for each argument type.
+  public static synchronized void addTo( Component comp ) {
+    comp.addKeyListener( (KeyListener)(new JLKeyAdapter()) );
+  }
+
+
+
+  // One event method is needed for each event defined in the 
+  // listener or adapter interface.
+  public void keyTyped(KeyEvent e) {
+    String s = { e.paramString() };
+    int[] l = { e.getModifiers(), (e.isActionKey()?1:0), e.getKeyCode() };
+    LispCall.dispatchEvent("keyTyped", (Object)(e.getComponent()), s, l);
+  }
+
+}
+</pre>
+
+
+
+<p id="169">
+When the Java object associated with the event is not the object registered
+in Lisp:
+</p>
+<pre id="170">
+package com.franz.jlinker;
+import java.awt.*;
+import java.awt.event.*;
+
+public class JLActionListener implements ActionListener {
+
+  private Object handle;
+
+  // One addTo method is needed for each argument type.
+  public static synchronized void addTo( Button comp ) {
+    JLActionListener l = new JLActionListener();
+    l.handle = (Object)comp;
+    comp.addActionListener( (ActionListener)l );
+  }
+
+
+
+  // One event method is needed for each event defined in the 
+  // listener or adapter interface.
+  public void actionPerformed(ActionEvent e) {
+
+    String[] s = { e.paramString(), e.getActionCommand() };
+    int[]    l = { e.getModifiers() };
+    
+    LispCall.dispatchEvent("actionPerformed", handle, s, l);
+  }
+
+
+}
+
+
+</pre>
+
+
+
+
+
+<hr><h2 id="171"><a name="i18n-2">2.7 I18N Issues</a></h2>
+
+<p id="172">
+Characters are converted to 16-bit positive integers for transmission
+and then converted back to characters using the following
+primitive sequences.  
+This should yield consistent results when client and host are on the same
+machine.
+</p>
+<pre id="173">
+                  Lisp                     Java
+
+Start String      s                        s
+       
+Extraction     c&lt;-(char s i)            c&lt;-s.charAt(i)
+
+Conversion     n&lt;-(char-code c)         n&lt;-(int)c
+
+Transmit          16-bit n                 16-bit n
+              
+Conversion     c&lt;-(code-char n)         c&lt;-(char)n
+
+Construction   s&lt;-(make-string len)     sb&lt;-new StringBuffer(len)
+	          (setf (char s i) c)       sb.append(c)
+	                                s &lt;-sb.toString()
+
+Result String     s                         s
+</pre>
+
+
+
+<hr><h2 id="174"><a name="applets-2">2.8 Java Applets</a></h2>
+
+<p id="175">
+When calling Lisp from a Java Applet, the normal mode
+is to advertise in Lisp and use connect() in Java.
+</p>
+
+<p id="176">
+<b>NOTE:</b>
+The behavior of the plain APPLET tag in Netscape is not reliable.
+The plug-in style of applet activation seems to work without problems.
+In Netscape this is invoked with the EMBED html tag;
+in Internet Explorer, the OBJECThtml tag.
+</p>
+<p id="177">
+When a jLinker application is running as an applet in a browser, the
+security measures in the browser prevent the use of run-time method
+lookup in the Lisp application.
+All methods and constructors must be named with a complete signature 
+in the Lisp code.
+</p>
+
+
+
+
+
+<hr><h2 id="178"><a name="rentrancy-2">2.9 Re-entrancy</a></h2>
+
+
+
+<p id="179">
+One Java VM can support exactly one socket connection to Lisp (because
+static variables are used extensively).
+</p>
+
+<p id="180">
+If Lisp calls Java then Java may call back to Lisp before
+returning from the initial call, but a call to Java from the 
+callback will block until the initial call returns. 
+This will typically lead to a deadlock.
+</p>
+<p id="181">
+If Java calls Lisp then Lisp may call back to Java, but
+a call to Lisp from the callback will block until the initial
+call to Lisp returns.
+This will typically lead to a deadlock also.
+</p>
+<p id="182">
+On the Lisp side, the variable
+<code>javatools.jlinker::*transport-timeout*</code> may be set
+to a positive number. This will trigger an error when a call to Java
+blocks for more than the specified number of seconds.  If the number
+is larger than most reasonable delays in Java, this should detect most
+deadlock situations in the Lisp code.  There is no corresponding
+timeout feature in Java.
+</p>
+
+<p id="183">
+In the native (JNI) implementation of jlinker, there are no recursion
+restrictions on calls between Lisp and Java. There is a thread
+restriction in ACL impementations that do not use OS threads (at this
+time all Unix ports): Java may call Lisp only in the thread in which
+Lisp initially started the Java VM. Any Lisp LWP may call Java since
+from the Java perspective all Lisp LWPs are the same thread.
+</p>
+
+
+
+
+<hr><h2 id="184"><a name="connect-issues-2">2.10 jLinker Connect Issues</a></h2>
+
+<p id="185">
+jLinker requires two open socket connections between Lisp and
+Java:
+</p>
+<ul>
+<li id="186">
+one for calls from Lisp to Java</li>
+<li id="187">
+one for calls from Java to Lisp</li>
+</ul>
+<p id="188">
+By default, Lisp listens for a connection from Java and that becomes
+the connection for calls from Java to Lisp;  Java listens for a
+connection from Lisp and that becomes the connection for calls from
+Lisp to Java.
+</p>
+<p id="189">
+It is also possible for Lisp to listen and accept both connections.
+</p>
+<h3 id="190">How do Lisp and Java find each other?</h3>
+
+<p id="191">
+<b>Intranet</b>:
+</p>
+<p id="192">
+Lisp and dedicated Java VM (Lisp starts the JVM)
+</p>
+<ul>
+<li id="193">system allocated ports (Lisp passes port and host to
+Java in commandline args, Java responds with same when
+connected to Lisp)</li>
+<li id="194">
+user specified pre-allocated fixed port and host</li>
+</ul>
+<p id="195">
+Lisp and separate Java application
+</p>
+<ul>
+<li id="196">communicate port and host in shared file</li>
+<li id="197">
+pre-assigned port and host</li>
+</ul>
+<p id="198">
+Lisp and applet	must use EMBED or OBJECT tag to run Java plugin
+(APPLET tag signals random errors)
+</p>
+<ul>
+<li id="199">communicate port and host in shared file
+but this may cause security problems</li>
+<li id="200">pre-assigned port and host
+</li>
+</ul>
+<p id="201">
+<b>Internet</b>:
+</p>
+<p id="202">
+The only secure connection is to connect to Lisp
+from a servlet. Servlet connection to Lisp is an intranet
+situation.
+</p>
+<p id="203">
+The other forms of connection will run into firewall problems.
+</p>
+<h3 id="204">
+Connecting from the Java side:</h3>
+
+<pre id="205">
+ // sample variable settings:
+ String lispFile     = &quot;&quot;;
+ String lispHost     = &quot;&quot;;
+ int    lispPort     = 4321;
+ int    pollInterval = 1000;
+ int    pollCount    = 300;
+
+ int    javaTimeout   = -1;
+ String javaFile      = &quot;&quot;;
+ String javaHost      = &quot;&quot;;
+ int    javaPort      = 0;
+
+ // use this to emit progress messages in Java
+ com.franz.jlinker.JavaLinkCommon.sdebug = true;
+
+Mode-&gt;		Lisp		Lisp		Java		Java
+		advertises	advertises	advertises	advertises
+		in file		at port		in file		at port
+
+lispFile	A1		--		--		--
+lispHost	--		B2		--		--
+lispPort	--		C2		--		--
+pollInterval	D1		D1		--		--
+pollCount	E1		E1		--		--
+
+javaFile	--		--		F3		--
+javaHost	G1		G1		G3		--
+javaPort	H1		H1		H3		H4
+javaTimeout	--		--		I3		I3
+
+
+Java call:	connect(lispFile, javaHost, javaPort, pollInterval, pollCount);
+
+	--	ignored
+	A1	The pathname for the file where Lisp advertises host:port
+		&quot;&quot; denotes default value &quot;JavaToLisp.trp&quot;
+	D1	If Lisp advertises, then java will poll every pollInterval
+		milliseconds.
+		If pollInterval&lt;0, look for Lisp exactly once
+	E1	If pollInterval&gt;=0 count down the pollCount value and stop
+		polling when negative
+	G1	This is the host name transmitted to Lisp when a connection 
+		is made to the advertising Lisp
+		&quot;&quot; denotes the default host &quot;localhost&quot;
+	H1	If this is 0, Java allocates a port and transmits the 
+			port number to Lisp
+		If this is &gt;0, Java listens at that port and transmits
+			the port number to Lisp
+		If this is &lt;0, Java assumes the absval is the port number 
+			where Lisp is listening to connect to the Java server
+
+		Meanwhile back in Lisp:
+		(jlinker-init :lisp-advertises	:lisp-file non-nil
+						[:lisp-host hh :lisp-port pp]
+						[:java-port neg])
+			Lisp writes the effective host:port into the file
+
+
+Java call:	connect(lispHost, lispPort, javaHost, javaPort, 
+			pollInterval, pollCount)
+
+	B2	The hostname where Lisp is advertising 
+	C2	The port number where Lisp is advertising
+
+		Meanwhile back in Lisp:
+		(jlinker-init :lisp-advertises	:lisp-file nil
+						:lisp-port non-zero-non-neg
+						[:lisp-host hh])
+
+
+
+Java call:	advertise(javaFile, javaHost, javaPort, javaTimeout)
+
+	F3	The pathname for the file where Java advertises host:port
+		&quot;&quot; denotes default value &quot;LispToJava.trp&quot;
+	G3	This is the host name transmitted to Lisp in the advert file
+		&quot;&quot; denotes the default host &quot;localhost&quot;
+	H3	This is the port number transmitted to Lisp in the advert file
+		If this is 0, Java allocates a port and transmits the 
+			port number to Lisp
+		If this is &gt;0, Java listens at that port and transmits
+			the port number to Lisp
+	I3	the number of milliseconds that Java will advertise
+		-1 denotes forever
+
+		Meanwhile back in Lisp:
+		(jlinker-init :java-advertises ...)
+
+
+Java call:	advertise(javaPort, javaTimeout)
+
+	H4	This is the port number where Java will advertise,
+		it must be &gt;0 (since otherwise, Lisp would not know
+		where to listen)
+	I3	the number of milliseconds that Java will advertise
+		-1 denotes forever
+
+		Meanwhile back in Lisp:
+		(jlinker-init :java-advertises	:lisp-file nil
+						[:lisp-host hh :lisp-port pp]
+						:java-file nil
+						:java-host &quot;hh&quot;
+						:java-port pp)
+</pre>
+
+
+
+<hr><h2 id="206"><a name="calling-inner-meth-2">2.11 Calling Methods of Inner Classes</a></h2>
+
+<p id="207">
+JLinker uses Java Reflection methods to make all the method calls
+requested by the Lisp application.  When an application attempts to
+call a method of an inner class as in the example below:
+</p>
+<pre id="208">
+(let* ((al (jnew "java.util.ArrayList"))
+       (it (jcall "iterator" al)))
+   (jcall "hasNext" it))
+</pre>
+<p id="209">
+Java throws <code>java.lang.IllegalAccessException</code>. 
+</p>
+<p id="210">
+Our experience shows that the accessibility of inner class methods is
+tested when Java reflection methods are used on them and the default
+accessibility of all methods is False.  If the special variable
+<a href="variables/jlinker/s_jlinker-set-accessible_s.htm"><code>*jlinker-set-accessible*</code></a> is set
+to a non-<code>nil</code> value, then jLinker will
+automatically re-try the call after changing the accessibility of the
+method to True.
+</p>
+<p id="211">
+The application programmer can avoid the overhead of a double
+call by evaluating a form such as
+</p>
+<pre id="212">
+(jcall "setAccessible" m (make-immediate-object t :boolean))
+</pre>
+<p id="213">
+for any methods known to be implemented in inner classes.  
+</p>
+<p id="214">
+Naturally, if Java security settings prevent access to the
+accessibility setting of the method, then the method simply cannot be
+called from Lisp.  One workaround in this case is to add a Java class
+that implements the desired method call from Java:
+</p>
+<pre id="215">
+public class Wrap {
+  public static boolean hasNext( java.util.Iterator x ) {
+    return x.hasNext();
+  }
+}
+</pre>
+<p id="216">
+The Lisp code for the previous example is then:
+</p>
+<pre id="217">
+(let* ((al (jnew "java.util.ArrayList"))
+       (it (jcall "iterator" al)))
+   (jstatic "hasNext" "Wrap" it))
+</pre>
+<p id="218">
+A single wrapper class can be used to define any number of these 
+helper methods.
+</p>
+
+
+
+
+<hr><h2 id="219"><a name="portability-issues-2">2.12 Portability Issues</a></h2>
+
+<p id="220">
+Lisp applications can interface to Java through both jlinker
+implementations with the same code. The only place where the jlinker
+implementation is apparent is in the call to <a href="operators/jlinker/jlinker-init.htm"><b>jlinker-init</b></a>. This part of the
+application can be made more portable with a suitable binding for
+<a href="variables/jlinker/s_jlinker-init_s.htm"><code>*jlinker-init*</code></a>.
+</p>
+<p id="221">
+Java applications that use only <code>LispCall</code> can
+interface to Lisp through both jlinker implementations with the same
+code.
+</p>
+<p id="222">
+Any part of the Java application that depends on the
+<code>LispConnector</code>, <code>JavaLinkDist</code>, and
+<code>TransStruct</code> classes can only be used with the
+socket implementation.
+</p>
+<p id="223">
+There is one important difference in the jlinker behavior that depends
+on the threads implementation of the Lisp image. In a Lisp
+implementation that uses native OS threads, Java and Lisp threads may
+call back and forth freely. In a Lisp implementation that does not
+use native OS threads, a Java application may call Lisp only from the
+one thread in which Lisp is running. Thus a call from Java to Lisp is
+possible only when Java is running in call from Lisp.
+</p>
+<p id="224">
+To overcome this limitation in graphic applications, the jlinker
+adapter and listener classes may be used to handle AWT events. These
+adapters and listeners queue Java events on the Java side. A Lisp
+process periodically polls this queue and dispatches the events to the
+Lisp handlers.
+</p>
+<p id="225">
+The <b>mayCall()</b> method in the <code>LispCall</code> class
+returns an integer that describes the thread callback restrictions:
+</p>
+<ul>
+<li id="226">
+0  - cannot call yet, interface is not fully initialized
+</li>
+<li id="227">
+-1 - cannot call from this thread, ever
+</li>
+<li id="228">
++1 - may call from this thread, but not from any other
+</li>
+<li id="229">
++2 - may call from this or any other thread
+</li>
+</ul>
+
+
+
+
+<hr><hr><h2 id="230"><a name="install-1">3.0 Installation</a></h2>
+
+
+<hr><h2 id="231"><a name="install-files-2">3.1 Files Involved in Installing jLinker</a></h2>
+
+<ul>
+<li id="232">
+<i>jlinker.jar</i>: 
+This file must be visible to the Java application that uses jLinker.
+</li>
+<li id="233">
+<i>jlinker.fasl</i>: 
+This file normally resides in the Lisp distribution directory
+and is loaded with a call to require.
+</li>
+<li id="234">
+<i>jl-config.cl</i>: 
+This sample file sets the variables needed when Lisp is to start
+the Java VM.
+</li>
+</ul>
+
+
+
+
+<hr><h2 id="235"><a name="dedicated-java-install-2">3.2 Dedicated Java Server</a></h2>
+
+<p id="236">
+When the interface is to a dedicated Java server, 
+the interface is setup and controlled entirely from the Lisp application.
+</p>
+
+<h3 id="237">To Prepare the Environment</h3>
+<ul>
+<li id="238">Make sure the file <i>jlinker.jar</i> is visible.
+    The default strategy is to copy the file to the application
+    startup directory.
+    An alternative is to adjust the CLASSPATH value.
+</li>
+<li id="239">Make sure the file <i>jl-config.cl</i> is visible
+    and appropriately customized in the application startup directory.
+</li></ul>
+
+<h3 id="240">To Prepare the Application</h3>
+<ol>
+<li id="241">Start Allegro CL, and make sure that jLinker is loaded.</li>
+<li id="242">Compile application files with preload instructions.
+    This will start the jLinker interfaces with a call to 
+    <a href="operators/jlinker/jlinker-init.htm"><b>jlinker-init</b></a>
+    and update the preload file.</li>
+<li id="243">Optionally, start the application and exercize it to uncover
+    dynamic class and method references.</li>
+<li id="244">Create a class and method preload file,
+    with a call to <code>(jlookup :gen-preload)</code>.</li>
+</ol>
+
+
+<h3 id="245">To Run the Application</h3>
+<ol>
+<li id="246">Start Allegro CL, and make sure that jLinker is loaded.</li>
+<li id="247">Make sure the application is loaded.</li>
+<li id="248">Start the jLinker interfaces with a call to 
+<a href="operators/jlinker/jlinker-init.htm"><b>jlinker-init</b></a>.</li>
+<li id="249">Start the application.</li>
+</ol>
+
+
+
+
+<hr><h2 id="250"><a name="peer-to-peer-2">3.3 Peer-to-Peer Interaction</a></h2>
+
+<p id="251">
+If the jLinker interface is to an independently running
+Java application, the steps needed to establish the interface 
+need to be modified.
+</p>
+
+<h3 id="252">Lisp advertises, THEN, Java connects</h3>
+<pre id="253">
+     <i>Advertise in (default) file:</i>
+     Lisp: (jlinker-init :lisp-advertises [:lisp-file path] [:timeout n] ...)
+
+     Java: com.franz.jlinker.JavaLinkDist.connect(j2l, "", 0, -1, -1);
+</pre>
+<p id="254">
+Lisp must advertise before Java issues the connect() call; 
+otherwise the connect() call will fail (return false).
+Lisp advertises the port in the specified file.
+</p>
+<p id="255">
+To advertise for a limited time, call <a href="operators/jlinker/jlinker-init.htm"><b>jlinker-init</b></a> with
+<code>:timeout n</code> where n is the number of seconds to advertise.
+</p>
+
+<h3 id="256">Java keeps looking for Lisp to advertise</h3>
+<pre id="257">
+     Java: com.franz.jlinker.JavaLinkDist.connect(j2l, "", 0, 
+                                                   pollInterval, pollCount);
+
+     Lisp: (jlinker-init :lisp-advertises [:lisp-file path] [:timeout n] ...)
+</pre>
+<p id="258">
+If Java makes the call first, then the Java program will keep
+checking every pollInterval (milliseconds) until Lisp starts or
+the count runs out.
+</p>
+<p id="259">
+If Lisp has made the call first, Java will connect immediately.
+</p>
+
+
+<h3 id="260">Java advertises, THEN, Lisp connects</h3>
+<pre id="261">
+     Java: com.franz.jlinker.JavaLinkDist.advertise(l2j, "", 0, -1)
+
+     Lisp: (jlinker-init :java-advertises [:java-file l2j] ...)
+</pre>
+
+<p id="262">
+Java must make the call first, otherwise, the call to <a href="operators/jlinker/jlinker-init.htm"><b>jlinker-init</b></a> will
+fail (return a list).  Java advertises a port number in the given file
+that defaults to "LispToJava.trp", or Java may simply advertise at a
+pre-determined port known to the Lisp application.
+</p>
+
+
+
+<hr><h2 id="263"><a name="one-lisp-several-java-2">3.4 One Lisp and Several Java Client/Server connections</a></h2>
+
+<p id="264">
+The function <a href="operators/jlinker/jlinker-listen.htm"><b>jlinker-listen</b></a> sets up a process
+that creates a new listener every time Java makes a new connection, so
+that it is always possible for Java to connect to Lisp, except for a
+narrow time slot when Lisp is processing a new connection.  In this
+case, the style is always for Lisp to advertise and Java to connect.
+</p>
+<p id="265">
+When multiple connections are active, the code for each must run in a
+separate Lisp process, and in the scope of a separate binding of
+<a href="variables/jlinker/s_jlinker-connection_s.htm"><code>*jlinker-connection*</code></a>.
+</p>
+
+
+
+
+
+<hr><h2 id="266"><a name="native-java-issues-2">3.5 Native Java Issues</a></h2>
+
+<p id="267">
+This section covers some issues that apply only to the native 
+jlinker implementation.
+</p>
+<p id="268">
+On some UNIX or Linux versions, it may be necessary to modify the
+environment variable LD_LIBRARY_PATH to include the directory where
+the Java VM shared library (<i>libjvm.so</i> or
+<i>libjvm.dylib</i>) is located. This setting is
+required if the Lisp/Java application exits with the message
+</p>
+<pre id="269">
+Error occurred during initialization of VM
+Unable to load native library: libjvm.so: cannot open shared object file:
+</pre>
+
+<hr><h2 id="270"><a name="ld-library-path-3">3.5.1 LD_LIBRARY_PATH</a></h2>
+
+<p id="271">
+If the environment variable LD_LIBRARY_PATH is needed by the Java VM,
+the value must be set before Allegro CL is started.  Calling <a href="operators/system/getenv.htm"><b>(setf sys:getenv)</b></a>
+(after Lisp has started) is not sufficient in this case. If the Lisp
+variable <a href="variables/jlinker/s_jni-ld-path-p_s.htm"><code>javatools.jlinker:*jni-ld-path-p*</code></a>
+is set to a non-<code>nil</code> value we search the
+locations specified in LD_LIBRARY_PATH for a file named
+<i>libjni.so</i>, <i>libjni.dll</i>,
+<i>libjvm.dylib</i>, or if the value of <a href="variables/jlinker/s_jni-ld-path-p_s.htm"><code>*jni-ld-path-p*</code></a>
+is a string, then a file with that name. If the file is not found, we
+signal a continuable error.
+</p>
+
+
+
+<hr><h2 id="272"><a name="dumplisp-3">3.5.2 Dumplisp</a></h2>
+<p id="273">
+When a Lisp image is saved with <a href="operators/excl/dumplisp.htm"><b>dumplisp</b></a> and a native jlinker connection was
+running at the time of the dumplisp, the jlinker interface must be
+re-initialized again when the saved image is restarted. To
+re-initialize the jlinker interface, use the following sequence:
+</p>
+
+<pre id="274">
+(jlookup :connection-instance :reset)
+(jlinker-init :native :load t 
+              :library "correct path to Java VM shared library")
+</pre>
+
+
+
+<hr><h2 id="275"><a name="event-polling-3">3.5.3 Event Polling</a></h2>
+
+<p id="276">
+In the Unix versions of Allegro CL we do not use native OS thread
+implementations. Consequently, Java methods can only call Lisp when
+called from Lisp initially. To allow GUI event callbacks to function,
+the listener and adapter classes described above can be used to queue
+AWT events in Java. The queue is polled periodically from Lisp and
+the events transferred to a Lisp scheduler. The following calls may
+be used to manage the poll behavior:
+</p>
+
+<pre id="277">
+(jlinker-slot :max-interval [new-value])
+   The longest interval (in seconds) between polls.
+   The initial value is 0.5.
+(jlinker-slot :min-interval [new-value])
+   The shortest interval (in seconds) between polls.
+   The initial value 0.075.
+(jlinker-slot :event-group [new-value])
+   The maximum number of events to dequeue at each poll.
+   The initial value is 5.
+</pre>
+
+
+
+<hr><h2 id="278"><a name="misc-caveats-3">3.5.4 Miscellaneous Caveats</a></h2>
+
+<p id="279">
+If the Lisp application call the AWT "dispose" method for an object
+where "isDisplayable" is "false", the Java VM will not return to Lisp
+and the entire application will hang in a non-interruptible state.
+We recommend a form such as 
+</p>
+
+<pre id="280">
+(when (jcall "isDisplayable" x) (jcall "dispose" x))
+</pre>
+
+
+
+
+
+
+
+<hr><hr><h2 id="281"><a name="example-1">4.0 A Complete Code Example</a></h2>
+
+
+
+<p id="282">
+All the following classes and methods are defined in Java package
+<code>com.franz.jlinker</code> and supplied in the 
+file <i>jlinker.jar</i>.
+</p>
+
+<p id="283">
+We include here a complete example of a simple program.
+</p>
+<pre id="284">
+(in-package :user)
+
+;;(set-case-mode :case-sensitive-lower)
+
+(require :jlinker)
+
+(use-package :javatools.jlinker)
+(defpackage :javatools.jlinker (:nicknames :jl))
+
+;; Make sure the required files are locally visible
+;; customized copy of [Allegro directory]/jlinker/jl-config.cl
+;;                    [Allegro directory]/jlinker/jlinker.jar
+
+(load &quot;jl-config&quot;)
+
+
+
+(defun new-tokenizer (&amp;optional (string &quot;A B C D &quot;)
+				(delimiters &quot; &quot;))
+  (jnew (jconstructor &quot;java.util.StringTokenizer&quot; 
+	       &quot;java.lang.String&quot; &quot;java.lang.String&quot;) 
+	string delimiters))
+
+(defun next-token (inst)
+  (jcall (jmethod &quot;java.util.StringTokenizer&quot; &quot;nextToken&quot;)
+		   inst))
+
+(defun run-tokenizer (&amp;optional (string &quot;A B C D &quot;)
+				(delimiters &quot; &quot;))
+
+  (or (jlinker-query) (jlinker-init))
+  
+  (let ((inst (new-tokenizer string delimiters))
+	res)
+    
+    (dotimes (i (jcall (jmethod &quot;java.util.StringTokenizer&quot; &quot;countTokens&quot;) 
+		       inst))
+      (push (next-token inst)
+	    res))
+    
+    (values inst (reverse res))))
+
+------------------- console log: ---------------------
+cl-user(4): :ld example
+; Loading C:\mmWork\java\fi\java-cur\example.cl
+;   Loading C:\mmWork\java\fi\java-cur\jl-config.cl
+cl-user(5): (run-tokenizer)
+; Fast loading from bundle code\acldns.fasl.
+#&lt;tran-struct Java IP 1004,118185548 java.util.StringTokenizer&gt;
+(&quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot;)
+
+	;; the following example shows how a Java error
+	;; is mapped to a Lisp error
+
+cl-user(6): (next-token *)
+Error: Java error: java.util.NoSuchElementException
+result= &quot;java.util.NoSuchElementException&quot;
+
+Restart actions (select using :continue):
+ 0: Supply another value.
+ 1: Return to Top Level (an &quot;abort&quot; restart)
+ 2: Abort #&lt;process Initial Lisp Listener(6d8)&gt;
+[1c] cl-user(7): :pop
+cl-user(8): 
+</pre>
+
+<p id="285">
+There are additional code examples in <em>&lt;Allegro
+directory&gt;/examples/jlinker/*</em>, including: 
+</p>
+
+
+<pre id="286">
+applet/      examples of Java applets connected to Lisp.
+javabean/    examples of Java Beans connected to Lisp.
+servlet/     examples of Java servlets connected to Lisp.
+timecard/    a complete Lisp application using the Java
+		AWT classes for the user interface.
+</pre>
+
+
+<hr><hr><h2 id="287"><a name="bean-servlet-1">5.0 Packaging Lisp applications as Java beans and servlets</a></h2>
+
+
+<p id="288">
+The jLinker Java Bean API facilitates the creation of Java Bean
+classes that call Allegro CL functions to do the work of the Java
+Bean. The jLinker Servlet API facilitates the creation of Java
+Servlets that call Allegro CL functions to do the work of the Servlet.
+
+</p>
+<p id="289">
+ The extensions are loaded with the forms
+</p>
+<pre id="290">
+(require :jlinker)    ;; Available to all customers.
+                      ;; returns NIL if jlinker is already 
+                      ;; loaded. jlinker module must be
+                      ;; loaded before jlinkent module.
+(require :jlinkent)   
+</pre>
+
+<p id="291">
+
+
+jLinker includes support for Java Servlets
+and Java Beans. The Java support consists of Java classes that
+implement communication between a Java HttpServlet and a Lisp
+image.
+
+The Lisp support consists of classes and functions that
+implement the Lisp side of the interface. We also include examples of
+simple servlets where the work of the servlet is performed in Lisp.
+</p>
+
+<hr><h2 id="292"><a name="bean-2">5.1 The jLinker Java Bean API</a></h2>
+
+<p id="293">
+The jLinker Java Bean API facilitates the creation of Java Bean
+classes that call Allegro CL functions to do the work of the Java
+Bean. 
+</p>
+
+<p id="294">
+All Lisp symbols are in package <code>:javatools.jlinker</code>.
+</p>
+
+<p id="295">The example code in <em>examples/jlinker/javabean</em> is described
+in the file <em>readme.txt</em>.
+</p>
+
+<h4 id="296">Lisp API</h4>
+
+See <a href="operators/jlinker/def-java-to-lisp-wrapper.htm"><b>def-java-to-lisp-wrapper</b></a>,
+
+<a href="operators/jlinker/gen-output-lang.htm"><b>gen-output-lang</b></a>, and
+<a href="operators/jlinker/gen-java-stream.htm"><b>gen-java-stream</b></a>.
+
+
+
+<hr><h2 id="297"><a name="servlet-2">5.2 The jLinker Servlet API</a></h2>
+
+<p id="298">
+The jLinker Servlet API facilitates the creation of Java Servlets that
+call Allegro CL functions to do the work of the Servlet. 
+</p>
+
+<p id="299">
+All Lisp symbols are in package <code>javatools.jlinker</code>.
+</p>
+
+<p id="300">
+Java signatures are taken from "Java Servlet API Specification -
+Version 2.1a - November 1998" from Sun Microsystems at <a href="http://java.sun.com/products/servlet/">http://java.sun.com/products/servlet/</a>.</p>
+
+<p id="301">
+The example code in <em>examples/jlinker/servlet</em> is described in
+the file <em>readme.txt</em>.
+</p>
+
+<h3 id="302">Lisp API</h3>
+
+<p id="303">
+The <code>javatools.jlinker::servlet</code> class is the
+superclass of all the Lisp implementation classes that support the
+servlet interface. It has slots:
+</p>
+
+<ul>
+<li id="304">
+<code>instances</code>:
+This is a class slot that keeps track of
+the number of instances of the class.
+</li>
+<li id="305">
+<code>instance</code>:
+An instance slot that identifies each instance uniquely.
+</li>
+<li id="306">
+<code>java-classes</code>:
+A list of strings naming Java classes that 
+may invoke this Lisp class.  Access from 
+other Java classes causes an error signal.
+</li>
+</ul>
+
+<p id="307">
+The following functions and methods are defined:
+</p>
+
+<ul>
+<li id="308">
+<a href="operators/jlinker/new-servlet.htm"><b>new-servlet</b></a>, Arguments: <i>lisp-class-name servlet-ref config-ref</i>. This function is called from the Java servlet <code>init()</code> method. The
+lisp-class-name argument must be a string containing a fully qualified
+class name and the class must be a sub-class of <a href="classes/jlinker/http-servlet.htm"><code>http-servlet</code></a>.
+</li>
+<li id="309">
+<a href="operators/jlinker/destroy-servlet.htm"><b>destroy-servlet</b></a>, Arguments:
+<code>(</code><code><i>self</i></code><code>
+javatools.jlinker::servlet)</code>. This method is called from the
+Java servlet <code>destroy()</code> method. The pre-defined
+primary method discards any locally cached information and any remote
+references.
+</li>
+<li id="310">
+<a href="operators/jlinker/get-servlet-config.htm"><b>get-servlet-config</b></a>, Arguments:
+<code>(</code><code><i>self</i></code><code>&nbsp;</code><code>
+javatools.jlinker::servlet)</code>.  Returns the ServletConfig
+reference saved from the call to <code>init()</code>.
+</li>
+<li id="311">
+<a href="operators/jlinker/get-servlet-info.htm"><b>get-servlet-info</b></a>, Arguments:
+<code>(</code><code><i>self</i></code><code>
+javatools.jlinker::servlet)</code>. 
+Retrieve from Java a reference to the <code>ServletInfo</code> object.
+</li>
+</ul>
+
+<p id="312">
+The <a href="classes/jlinker/http-servlet.htm"><code>http-servlet</code></a>
+class is a subclass of <code>javatools.jlinker::servlet</code>. This is the Lisp counterpart to the Java class <code>LispHttpServlet</code>.
+</p>
+<p id="313">
+This class implements dummy methods for all the Java methods in the
+Java class <code>HttpServlet</code>. User code should subclass
+this class and override any method definitions that are actually used
+by the application. The subclass must also define a value for
+<code>java-classes slot</code>.
+</p>
+<p id="314">
+The predefined dummy methods are:
+</p>
+
+<ul>
+<li id="315">
+<a href="operators/jlinker/do-delete.htm"><b>do-delete</b></a>: Arguments:
+<code>(</code><code><i>self</i></code><code> </code><code>&nbsp;</code><code><a href="classes/jlinker/http-servlet.htm"><code>http-servlet</code></a></code><code>)
+</code><code><i>request response</i></code>
+</li>
+
+<li id="316">
+<a href="operators/jlinker/do-get.htm"><b>do-get</b></a>: Arguments:
+<code>(</code><code><i>(self</i></code><code> </code><code>&nbsp;</code><code><a href="classes/jlinker/http-servlet.htm"><code>http-servlet</code></a></code><code>)
+</code><code><i>request response</i></code>
+</li>
+
+<li id="317">
+<a href="operators/jlinker/do-head.htm"><b>do-head</b></a>: Arguments:
+<code>(</code><code><i>(self</i></code><code> </code><code>&nbsp;</code><code><a href="classes/jlinker/http-servlet.htm"><code>http-servlet</code></a></code><code>)
+</code><code><i>request response</i></code>
+</li>
+
+<li id="318">
+<a href="operators/jlinker/do-options.htm"><b>do-options</b></a>: Arguments:
+<code>(</code><code><i>(self</i></code><code> </code><code>&nbsp;</code><code><a href="classes/jlinker/http-servlet.htm"><code>http-servlet</code></a></code><code>)
+</code><code><i>request response</i></code>
+</li>
+
+<li id="319">
+<a href="operators/jlinker/do-post.htm"><b>do-post</b></a>: Arguments:
+<code>(</code><code><i>(self</i></code><code> </code><code>&nbsp;</code><code><a href="classes/jlinker/http-servlet.htm"><code>http-servlet</code></a></code><code>)
+</code><code><i>request response</i></code>
+</li>
+
+<li id="320">
+<a href="operators/jlinker/do-put.htm"><b>do-put</b></a>: Arguments:
+<code>(</code><code><i>(self</i></code><code> </code><code>&nbsp;</code><code><a href="classes/jlinker/http-servlet.htm"><code>http-servlet</code></a></code><code>)
+</code><code><i>request response</i></code>
+</li>
+
+<li id="321">
+<a href="operators/jlinker/do-trace.htm"><b>do-trace</b></a>: Arguments:
+<code>(</code><code><i>(self</i></code><code> </code><code>&nbsp;</code><code><a href="classes/jlinker/http-servlet.htm"><code>http-servlet</code></a></code><code>)
+</code><code><i>request response</i></code>
+</li>
+</ul>
+
+<p id="322">
+These are classes that should be subclassed by the application. The
+subclass defines working methods for the above generic functions. The
+subclass also defines a value for the <code>java-classes</code>
+slot:
+</p>
+
+<ul>
+<li id="323">
+<a href="classes/jlinker/async-http-servlet.htm"><code>async-http-servlet</code></a>
+</li>
+<li id="324">
+<a href="classes/jlinker/multi-async-http-servlet.htm"><code>multi-async-http-servlet</code></a>
+</li>
+</ul>
+
+<p id="325">
+Two <a href="operators/jlinker/start-work.htm"><b>start-work</b></a>
+methods are defined on instances of those classes. The argument list
+is <code>(</code><code><i>self</i></code><code> </code><code>&nbsp;</code><code><a href="classes/jlinker/async-http-servlet.htm"><code>async-http-servlet</code></a></code><code>)
+</code><code><i>work request response gate</i></code> and
+<code>(</code><code><i>self</i></code><code> </code><code>&nbsp;</code><code><a href="classes/jlinker/multi-async-http-servlet.htm"><code>multi-async-http-servlet</code></a></code><code>)
+</code><code><i>work request response gate</i></code>.
+</p>
+
+
+<h3 id="326">Java API</h3>
+
+<h3 id="327">Methods implemented in Java class LispHttpServlet.</h3>
+
+<pre id="328">
+public void init(ServletConfig config)			Java Method
+</pre>
+
+<blockquote>
+  <p id="329">The Java method invokes the Lisp function new-servlet to propagate this method call. </p>
+</blockquote>
+
+<pre id="330">
+public void service(...)				Java Method
+</pre>
+
+<blockquote>
+  <p id="331">Handled by the Java super-class implementation. </p>
+</blockquote>
+
+<pre id="332">
+public void destroy()					Java Method
+</pre>
+
+<blockquote>
+  <p id="333">The Java method calls the Lisp destroy method. </p>
+</blockquote>
+
+<pre id="334">
+protected void doDelete(HttpServletRequest request,	Java Method
+                        HttpServletResponse response) 
+          throws ServletException;
+</pre>
+
+<blockquote>
+  <p id="335">The Java method calls the Lisp do-delete method. </p>
+</blockquote>
+
+<pre id="336">
+protected void doGet(HttpServletRequest request,	Java Method
+                     HttpServletResponse response) 
+          throws ServletException;
+</pre>
+
+<blockquote>
+  <p id="337">The Java method calls the Lisp do-get method. </p>
+</blockquote>
+
+<pre id="338">
+protected void doHead(HttpServletRequest request,	Java Method
+                      HttpServletResponse response)
+          throws ServletException;
+</pre>
+
+<blockquote>
+  <p id="339">The Java method calls the Lisp do-head method. </p>
+</blockquote>
+
+<pre id="340">
+protected void doOptions(HttpServletRequest request,	Java Method
+                         HttpServletResponse response)
+          throws ServletException;
+</pre>
+
+<blockquote>
+  <p id="341">The Java method calls the Lisp do-options method. </p>
+</blockquote>
+
+<pre id="342">
+protected void doPost(HttpServletRequest request,	Java Method
+                      HttpServletResponse response)
+          throws ServletException;
+</pre>
+
+<blockquote>
+  <p id="343">The Java method calls the Lisp do-post method. </p>
+</blockquote>
+
+<pre id="344">
+protected void doPut(HttpServletRequest request,	Java Method
+                     HttpServletResponse response)
+          throws ServletException;
+</pre>
+
+<blockquote>
+  <p id="345">The Java method calls the Lisp do-put method. </p>
+</blockquote>
+
+<pre id="346">
+protected void doTrace(HttpServletRequest request,	Java Method
+                       HttpServletResponse response)
+          throws ServletException;
+</pre>
+
+<blockquote>
+  <p id="347">The Java method calls the Lisp do-trace method. </p>
+</blockquote>
+
+<h3 id="348">Methods implemented in Java class com.franz.jlinker.JavaLinkCommon.</h3>
+
+<pre id="349">
+public static Object[] newGate()			Java Method
+</pre>
+
+<blockquote>
+  <p id="350">Return a new closed gate. </p>
+</blockquote>
+
+<pre id="351">
+public static void testGate(Object[] gate)		Java Method
+</pre>
+
+<blockquote>
+  <p id="352">Wait for gate to open and return a String x. </p>
+</blockquote>
+
+<pre id="353">
+	x.length()=0 if operation completed 
+	x.length()&gt;0 if error or failure, string contains message
+</pre>
+
+<pre id="354">
+public static Object[] lispValues			Java Method
+              (res, called, min, max, firstRefP)
+</pre>
+
+<blockquote>
+  <p id="355">Utility function called by the sample implementations of LispHttpServlet and
+  LispAsyncHttpServlet to decode the result array returned from a call to Lisp. </p>
+</blockquote>
+
+<pre id="356">
+	res    - result array returned from Lisp
+	called - the name of the Lisp function called
+	min    - the minimum number of expected values
+	max    - the maximum number of expected values
+	firstRefP - first returned value should be a remote reference
+			to a Lisp object
+</pre>
+
+<blockquote>
+  <p id="357">returned value is an array Object[2] where the first element is an Integer return code
+  and the second element a String error message. </p>
+</blockquote>
+
+
+
+
+<hr><hr><h2 id="358"><a name="old-dyn-link-1">Appendix A: Deprecated Dynamic Linkage Reference</a></h2>
+
+<p id="359">
+As described in <a href="#dl-java-ref-2">Section 2.4 Dynamic Linkage Java Reference</a>, various
+classes and methods defined in earlier jLinker releases now have
+equivalents in the <b>LispCall</b> and <b>LispConnector</b> classes
+(discussed in <a href="#dl-java-ref-2">Section 2.4 Dynamic Linkage Java Reference</a>). The
+equivalent calls in <b>LispCall</b> allow full portability between
+socket and native modes.
+</p>
+<p id="360">
+Use of the classes and methods described next is deprecated. These
+definitions are retained for compatibility with existing applications
+only. All these methods may only be used with the socket
+implementation of the jlinker interface. The only exceptions are the
+subclasses of <b><code>JavaLinkDist.JLinkerException</code></b>.
+</p>
+
+<ul>
+<li id="361">
+<code>public class TranStruct</code>: this class represents
+remote references passed between Java and Lisp.
+</li>
+</ul>
+
+<p id="362">
+All the methods below are defined in class <code>JavaLinkDist</code>.
+</p>
+
+<ul>
+<li id="363">
+<code>public static TranStruct newDistOb (boolean x)</code>
+<br>...
+<br><code>public static TranStruct newDistOb ( Object x )</code>:
+<p id="364">
+These methods are used to create a remote reference to a Java 
+value or object so that it may be passed to Lisp.
+</p>
+<p id="365">
+There is one method for each primitive
+Java type, for <code>int[]</code>, for <code>String[]</code>,
+and for <code>Object</code>.
+</p>
+</li>
+<li id="366">
+<code>public static TranStruct nullDistOb ()</code>
+<p id="367">
+This method is needed to create a remote reference to Java <code>null</code>
+or to Lisp
+<code>nil</code>.
+</p>
+</li>
+<li id="368">
+<code>static public boolean nullP (TranStruct str)</code>
+<br><code>public static boolean booleanP(TranStruct)</code>
+<br><code>static public boolean integerP (TranStruct str)</code>
+<br><code>static public boolean realP (TranStruct str)</code>
+<br><code>static public boolean stringP (TranStruct str)</code>
+<br><code>static public boolean errorP (TranStruct str)</code>
+<br><code>static public boolean pointerP (TranStruct str)</code>
+<br>
+<br><code>public static boolean boolValue(TranStruct)</code>
+<br><code>static public int intValue (TranStruct str)</code>
+<br><code>static public double doubleValue (TranStruct str)</code>
+<br><code>static public char charValue (TranStruct str)</code>
+<br><code>static public char charValue (TranStruct str, int j)</code>
+<br><code>static public char charValue (TranStruct str, int j, int i)</code>
+<br><code>static public String stringValue (TranStruct str)</code>
+<br><code>static public String stringValue (TranStruct x, int i)</code>
+<br><code>public static Object pointerValue(TranStruct)</code>
+<p id="369">
+These predicates and accessors are used to test and extract 
+primitive Java values from remote references. 
+The TranStruct class acts as a tagged wrapper for values passed
+between Lisp and Java. The predicates determine the type of the
+primitive data in the wrapper and the other functions are accessors
+for the value.
+</p>
+
+<p id="370">
+Thus, if <code>integerP(x)</code> is true,
+<code>intValue(x)</code> returns the integer value inside the
+wrapper.  Similarly for <code>realP</code> and
+<code>stringP</code>.
+</p>
+<p id="371">
+<code>pointerP</code> is true
+for remote ref objects.
+</p>
+<p id="372">
+If <code>pointerP(x)</code> or <code>errorP(x)</code> is
+true, then <code>stringValue(x)</code> is the symbol-name of the
+Lisp type of the object.
+</p>
+<p id="373">
+<code>stringValue(x, 0)</code> is equivalent to
+<code>stringValue(x)</code>.
+</p>
+<p id="374">
+<code>stringValue(x, 1)</code> is defined only when
+<code>errorP(x)</code> is true in that case, it returns the "~A"
+representation of the Lisp error.  
+</p>
+<p id="375">
+For <code>stringValue(TranStruct x , int i)</code>, When x is a
+remote reference to a symbol then <code>stringValue</code>
+should not be used.  Use <code>symbolName</code> and
+<code>symbolPackage</code> instead.
+</p>
+<p id="376">
+The type information extracted by <code>stringValue(x, 0)</code>
+is truncated to 50 characters.
+</p>
+<p id="377">
+NOTE: this is an incompatible change from Version 3.0.8 or
+earlier.  In the earlier versions, the type string was not
+limited in length, and Lisp symbols appeared simply as remote
+reference pointers with the type string set to "SYMBOL".
+</p>
+</li>
+<li id="378">
+<pre id="379">
+public static TranStruct[] invokeInLisp
+            ( int style, TranStruct op, TranStruct args[] )
+
+public static TranStruct[] invokeInLisp( int style, String op )
+public static TranStruct[] invokeInLisp( int style, String op, int arg )
+public static TranStruct[] invokeInLisp
+            ( int style, String op, String arg )
+</pre>
+
+<p id="380">
+This method is used to invoke a Lisp function.
+</p>
+<p id="381">
+The second argument may be a remote reference to a string containing
+a fully qualified name of a symbol that represents a Lisp function.
+It may also be a remote reference to a symbol or a function
+obtained in a previous call to Lisp.
+The third argument is an array of argument references.
+</p>
+<p id="382">
+The first (<i>style</i>) argument passed to Lisp may be
+one of 5 integer values:
+</p>
+<ul>
+<li id="383">
+-1: A one-way call, do not wait for the answer
+</li>
+<li id="384">
+0: A normal call, but ignore the answer
+</li>
+<li id="385">
+1: A normal call, return a remote reference if possible
+</li>
+<li id="386">
+2: A normal call, return an immediate value if possible
+</li>
+<li id="387">
+3: A call that allows Lisp errors to be handled in Lisp
+</li>
+</ul>
+
+
+<p id="388">
+When the <i>style</i> argument is -1 or 0, the method
+invokeInLisp returns an array of length zero.
+</p>
+<p id="389">
+When the <i>style</i> argument is 1 or 2, the method
+invokeInLisp returns an array of values, which represents the list of
+values returned by the Lisp function. If the array size is 1, and the
+array element is an immediate string reference, the Lisp function
+signaled an error and the string contains a description of the error.
+If array element 0 is not an immediate string reference, it is an
+immediate integer reference, and represents the number of values
+returned by the Lisp function.
+</p>
+<p id="390">
+When the style argument is 3, the behavior is similar to a one-way
+call. The Java side does not wait for the Lisp operation to finish.
+The Lisp operation is started in a new Lisp light-weight process
+(thread) to prevent blocking of the interface. The value returned
+immediately from Lisp to Java is a remote reference
+<code>(TranStruct instance)</code> to a Lisp list of the form
+<code>(status . rest)</code>. The car of this list may be
+queried from Java to determine the progress of the operation.
+</p>
+<p id="391">
+When status is a negative value greater than -99, that indicates an
+operation in progress as described next. The value will keep changing
+as the operation progresses. A value of -99 indicates a cancelled
+operation, the state will not change any more.  When status changes to
+zero or a positive value, the operation is complete and the rest
+component is a list of the value returned.
+</p>
+<p id="392">
+The following <code>status</code> values have the indicated
+meanings:
+</p>
+<ul>
+<li id="393">
+<b>-1</b>: call recognized by Lisp
+</li>
+<li id="394">
+<b>-2</b>: process started
+</li>
+<li id="395">
+<b>-3</b>: arguments verified
+</li>
+<li id="396">
+<b>-4</b>: operator resolved
+</li>
+<li id="397">
+<b>-5</b>: arguments resolved
+</li>
+<li id="398">
+<b>-1</b>: call recognized by Lisp
+</li>
+<li id="399">
+<b>-6</b>: call completed (<code>status</code> should shortly
+become 0 or positive)
+</li>
+</ul>
+
+</li>
+
+<li id="400">
+<pre id="401">
+Package: com.franz.jlinker
+  Class: JavaLinkDist
+ Method: invokeInLispEx
+
+public static TranStruct[] invokeInLispEx( int style, String op, int arg );
+public static TranStruct[] invokeInLispEx( int style, String op, String arg );
+public static TranStruct[] invokeInLispEx( int style, String op );
+public static TranStruct[] invokeInLispEx( int style,
+                                           TranStruct op, 
+                                           TranStruct args[] )
+</pre>
+<p id="402">
+This method is like invokeInLisp, but it throws one of the subclasses
+of JLinkerException if the call does not result in a normal value
+returned from Lisp.  Consequently, if res is a variable holding the
+returned result, <code>intValue(res[0])</code> is the
+number of values returned from Lisp; <code>res[1]</code> is the
+first value returned from Lisp, and so on through
+<code>res[n]</code>, which is the n-th value returned from Lisp.
+</p>
+
+	
+<p id="403">
+For example,
+The following is an example of an asynchronous call to Lisp (style=3):
+</p>
+<pre id="404">
+import com.franz.jlinker.JavaLinkDist;
+  ...
+// Let myfunc be a Lisp function that takes a while to 
+//  compute a string value.
+TranStruct[] res = invokeInLispEx(3, &quot;myfunc&quot;);
+// We can safely assume that exactly one Lisp reference was returned
+TranStruct[] args = new  TranStruct[] { res[1], newDistOb(0) };
+TranStruct elt = newDistOb(&quot;elt&quot;);
+int flag = -1;
+while ( flag==-1 ) {
+   Thread.sleep(100);
+   // Call Lisp to fetch a new flag value
+   res = invokeInLispEx(2, elt, args);
+   flag = intValue(res[1]);
+}
+if ( 0&lt;flag )
+   { arg[1] = newDistOb(1);
+     // Call Lisp to fetch the second element in the list
+     res = invokeInLispEx(2, elt, args);
+     String v1 = stringValue(res[1]);
+   }
+</pre>
+
+
+
+</li>
+
+<li id="405">
+<pre id="406">
+public static void discardInLisp (TranStruct str)
+</pre>
+
+<p id="407">
+The purpose of this method is to indicate to Java and to Lisp that
+a remote reference is no longer in use.
+Any further use of the argument will result in an error signal.
+</p>
+</li>
+
+<li id="408">
+<pre id="409">
+public static boolean query()
+public static boolean query(boolean verify)
+
+public static void disconnect()
+</pre>
+
+<p id="410">
+The query function returns true if the interface is available.
+The verify argument, if true, requests a round-trip message to Lisp
+to verify that Lisp is actually there.
+</p>
+</li>
+<li id="411">
+<pre id="412">
+public static boolean connect(String j2l, String javaHost, int javaPort,
+                              int pollInterval, int pollCount)
+
+public static boolean connect(String lispHost, int lispPort,
+                              String javaHost, int javaPort,
+                              int pollInterval, int pollCount)
+</pre>
+<p id="413">
+The connect method attempts to connect to a Lisp server.
+The first form looks for Lisp advertising in 
+the file specified in the j2l argument.
+The second form attempts to connect to a Lisp server
+listening at the specified host and port.
+</p>
+<p id="414">
+If pollInterval is -1, only one attempt is made.
+Otherwise pollCount attempts are made pollInterval
+milliseconds apart.
+</p>
+<pre id="415">
+j2l        &quot;&quot; -&gt; &quot;JavaToLisp.trp&quot; 
+javaHost   &quot;&quot; -&gt; &quot;localhost&quot;
+javaPort   0  -&gt; system assigned
+lispHost   &quot;&quot; -&gt; &quot;localhost&quot;
+lispPort   0  -&gt; error, must be &gt;0
+</pre>
+</li>
+<li id="416">
+<pre id="417">
+public static boolean advertise(String l2j, String host, int port, 
+                                int timeoutSeconds)
+
+public static boolean advertise(int port, int timeoutSeconds)
+</pre>
+<p id="418">
+The first form of the advertise method 
+advertises Java in the file <i>JavaToLisp.trp</i>
+or the one specified in the l2j argument, and waits until
+Lisp makes a connection.
+The second form does not write a file, but simply listens at the specified
+port which must be greater than zero.
+If timeoutSeconds is -1, wait forever.
+</p>
+</li>
+<li id="419">
+<pre id="420">
+public static boolean booleanP(TranStruct);
+public static boolean boolValue(TranStruct);
+public static Object pointerValue(TranStruct);
+</pre>
+
+<p id="421">
+If booleanP(x) is true, then boolValue(x) will return the boolean
+value referenced by x. If pointerP(x) is true and x is reference to a
+Java object then pointerValue(x) is that Java object; if x is a
+reference to an immediate value, then pointerValue(x) is the Java
+object form of that value; otherwise, x must be a remote reference to
+an object in Lisp, and x itself is returned. 
+</p>
+</li>
+<li id="422">
+<pre id="423">
+public class com.franz.jlinker.LispConnector {
+  public static boolean lispAdvertises = true;  // false -&gt; Java advertises
+  public static boolean advertInFile   = false;  // true -&gt; advertise in file
+  public static String lispFile  = &quot;&quot;;  // use default &quot;JavaToLisp.trp&quot;
+  public static String lispHost  = &quot;&quot;;  // use default &quot;localhost&quot;
+  public static int    lispPort  = 4321;  
+  public static int pollInterval = 1000;
+  public static int pollCount    = 300;
+  public static int    javaTimeout    = -1;  // wait forever
+  public static String javaFile = &quot;&quot;;  // use default &quot;LispToJava.trp&quot;
+  public static String javaHost = &quot;&quot;;  // use default &quot;localhost&quot;
+  public static int    javaPort = 0;
+  public static boolean debug = = false;
+}</pre>
+
+<p id="424">
+This class implements a generic connection to Lisp. The typical way to
+use this is to create a subclass that overrides the go method with one
+that sets the connection variable to appropriate values and then calls
+the superclass go method.
+</p>
+</li>
+<li id="425">
+<pre id="426">
+public static boolean go(boolean verify, String[] throwErr)
+</pre>
+
+<p id="427">
+This method tests the connection to Lisp.
+</p>
+<ul>
+<li id="428">
+If verify arg is true, verify the connection with a round-trip message.
+</li>
+<li id="429">
+If the connection is good, return true immediately.
+</li>
+<li id="430">
+Otherwise, connect to Lisp according to the setting of the above
+static variables.
+</li>
+</ul>
+
+
+<p id="431">
+If the connection succeeds, return true. If the connection fails, the
+result depends on the value of the throwErr argument. 
+</p>
+<ul>
+<li id="432">
+If the argument is null, throw IllegalArgumentException with an
+explanation in the message string. 
+</li>
+<li id="433">
+If the argument is
+an array String[] with zero length, just return false.
+</li>
+<li id="434">
+If the argument is an array String[] with non-zero length,
+store the error explanation string in element 0 of the array and
+return false.
+</li>
+</ul>
+</li>
+</ul>
+
+<h3 id="435">Further boolean predicates on numbers and other operators</h3>
+
+<p id="436">
+While <code>integerP()</code> 
+returns true for any integer value (byte, short or 
+int) the following predicates return true only when
+a specific type was encapsulated in an immediate
+object.
+</p>
+<ul>
+<li id="437">
+<code>public static boolean byteP(TranStruct)</code>
+<p id="438">
+Returns true if and only if a byte value was stored into an immediate 
+transfer object.
+If <code>byteP(x)</code> is true, 
+<code>intValue(x)</code> may be safely cast to byte.
+</p>
+</li>
+<li id="439">
+<code>public static boolean shortP(TranStruct)</code>
+<p id="440">
+Returns
+true if and only if a short value was stored into an immediate
+transfer object.  If <code>shortP(x)</code> is true,
+<code>intValue(x)</code> may be safely cast to short.
+</p>
+</li>
+<li id="441">
+<code>public static boolean intP(TranStruct)</code>
+<p id="442">
+Returns true if and only if an int value was stored into an immediate
+transfer object.</p>
+</li>
+<li id="443">
+<code>public static boolean longP(TranStruct)</code>
+<p id="444">
+Returns
+true if and only if a long value was stored into an immediate transfer
+object.  If <code>longP(x)</code> is true then
+<code>longValue(x)</code> returns the value,
+<code>intValue(x)</code> returns some number of low-order bits
+of the long value but the number of bits is implementation-dependent.
+</p>
+</li>
+<li id="445">
+<code>public static boolean charP(TranStruct)</code>
+<p id="446">
+Returns
+true if and only if a char value was stored into an immediate transfer
+object. If <code>charP(x)</code> is true then
+<code>charValue(x)</code> returns a valid character.
+</p>
+</li>
+<li id="447">
+<code>public static boolean singleP(TranStruct)</code>
+<p id="448">
+Returns
+true if and only if a single value was stored into an immediate
+transfer object. If <code>singleP(x)</code> is true, then
+<code>doubleValue(x)</code> may be safely cast to float.
+</p>
+</li>
+<li id="449">
+<code>public static boolean doubleP(TranStruct)</code>
+<p id="450">
+Returns
+true if and only if a double value was stored into an immediate
+transfer object.
+</p>
+</li>
+</ul>
+<p id="451">
+The following are also useful.
+</p>
+<ul>
+<li id="452">
+<code>public static long longValue(TranStruct)</code>
+<p id="453">
+If
+<code>longP(x)</code> is true then
+<code>longValue(x)</code> returns the value, otherwise some
+random value.
+</p>
+</li>
+<li id="454">
+<code>public static TranStruct newDistOb ( long x)</code>
+<p id="455">
+Creates a new immediate transfer object containing the long value.
+</p>
+</li>
+<li id="456">
+<code>public static boolean symbolP(TranStruct)</code>
+<p id="457">
+Returns
+true if argument is a remote reference to a Lisp symbol.
+</p>
+</li>
+<li id="458">
+<code>public static String symbolName(TranStruct x)</code>
+<p id="459">
+If
+<code>symbolP(x)</code> is true, then this function returns the
+symbol name component of the remote reference.
+</p>
+</li>
+<li id="460">
+<code>public static String symbolPackage(TranStruct x)</code>
+<p id="461">
+If <code>symbolP(x)</code> is true, then this function returns
+the symbol package component of the remote reference.
+</p>
+</li>
+<li id="462">
+<code>public static int symbolCaseModes(TranStruct x)</code>
+<p id="463">
+If <code>symbolP(x)</code> is true,
+then this function returns a value of
+the form <code>0xvvppnn</code>, where
+</p>
+<pre id="464">
+pp is a package name qualifier
+nn is a symbol name qualifer
+   00 = read
+   01 = intern
+   02 - find
+vv is a symbol reference qualifier
+   00 = symbol reference
+   01 = symbol-value
+   02 = symbol-function
+   03 = class
+</pre>
+</li>
+<li id="465">
+<code>public Static TranStruct newDistSym(String pname, String pkg, int caseflag)</code>
+<p id="466">
+To create a remote reference to a Lisp symbol.
+The caseflag argument is a number of the form 0xppnnvv as
+described in the description of symbolCaseModes(TranStruct x)
+just above.
+</p>
+</li>
+</ul>
+<p id="467">
+<b>Java NOTE</b>: There are no constructors in Java to generate a
+transfer object containing an array of byte, short, or float (and Lisp
+does not expect or recognize these).  These arrays can be converted in
+Java to arrays of int or double and passed to Lisp that way.
+</p>
+
+
+
+
+</body><hr><p id="2"><small>Copyright (c) 1998-2010, Franz Inc. Oakland, CA., USA. All rights reserved.</small><br><small>Documentation for Allegro CL version 8.2. This page was not revised from the 8.1 page.</small><br>
+<small>Created 2010.1.21.</small>
+<br></p><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"><a href="contents.htm"><b>ToC</b></a></td><td align="left" bgcolor="#00FFFF"><a href="introduction.htm"><b>DocOverview</b></a></td><td align="left" bgcolor="#00FFFF"><a href="cgide.htm"><b>CGDoc</b></a></td><td align="left" bgcolor="#00FFFF"><a href="release-notes.htm"><b>RelNotes</b></a></td><td align="left" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="left" bgcolor="#00FFFF"><a href="index.htm"><b>Index</b></a></td><td align="left" bgcolor="#00FFFF"><a href="permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="introduction.htm#updates-s">Unrevised from 8.1 to 8.2.</a></small><br><a href="http://www.franz.com/support/documentation/8.1/doc/jlinker.htm">8.1 version</a></td></tr></table></html>

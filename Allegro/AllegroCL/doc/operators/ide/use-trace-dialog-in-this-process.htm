@@ -1,0 +1,23 @@
+<html><head><meta http-equiv="content-type" name="description" content="text/html; charset=UTF-8"> <title>use-trace-dialog-in-this-process</title><link rel="stylesheet" href="../../acldoc-styles.css" type="text/css"></head><body><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"><b>Function</b></td><td align="left" bgcolor="#00FFFF"><b>Package: ide</b></td><td align="center" bgcolor="#00FFFF"><a href="../../contents.htm"><b>ToC</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../introduction.htm"><b>DocOverview</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../cgide.htm"><b>CGDoc</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../release-notes.htm"><b>RelNotes</b></a></td><td align="center" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../index.htm"><b>Index</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="../../introduction.htm#updates-s">This page is new in 8.2.</a></small></td></tr></table><h2 id="2">use-trace-dialog-in-this-process</h2>
+
+<p id="3"><b>Arguments: </b><i>
+</i></p>
+
+<p id="4">
+Causes the current process to direct its trace output to the IDE's
+<a href="../../ide-menus-and-dialogs/trace-dialog.htm">Trace Dialog</a> if
+it is present, rather than to the <a href="../../../ansicl/dictentr/debug-io.htm"><code>*trace-output*</code></a> stream as usual. When the dialog
+is not present, trace output will still be directed
+to <a href="../../../ansicl/dictentr/debug-io.htm"><code>*trace-output*</code></a>. There
+is no exported way to undo this setting.
+</p>
+<p id="5">
+It would have no effect to call this function in processes that use
+the Trace dialog anyway. These processes include IDE Listener
+processes, the IDE GUI process, <a href="../../ide-menus-and-dialogs/run-menu.htm#run-project">Run | Run Project</a>
+processes, and any process that was given the <a href="../../variables/cg/s_default-cg-bindings_s.htm"><code>*default-cg-bindings*</code></a> when it was created.
+</p>
+
+<hr><p id="6"><small>Copyright (c) 1998-2010, Franz Inc. Oakland, CA., USA. All rights reserved.</small><br><small>Documentation for Allegro CL version 8.2. This page is new in the  8.2 release.</small><br>
+<small>Created 2010.1.21.</small>
+<br></p><table border="0" width="100%" cellpadding="1" cellspacing="0"><tr><td colspan="2" bgcolor="#00FFFF"><table border="0" cellpadding="5" cellspacing="3"><tr><td align="left" bgcolor="#00FFFF"></td><td align="left" bgcolor="#00FFFF"></td><td align="center" bgcolor="#00FFFF"><a href="../../contents.htm"><b>ToC</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../introduction.htm"><b>DocOverview</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../cgide.htm"><b>CGDoc</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../release-notes.htm"><b>RelNotes</b></a></td><td align="center" bgcolor="#00FFFF"><a href="http://www.franz.com/support/faqs/"><b>FAQ</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../index.htm"><b>Index</b></a></td><td align="center" bgcolor="#00FFFF"><a href="../../permuted-index.htm"><b>PermutedIndex</b></a></td></tr></table></td><td align="right"><b>Allegro CL version 8.2</b><br><small><a href="../../introduction.htm#updates-s">This page is new in 8.2.</a></small></td></tr></table></body></html>
