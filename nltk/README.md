@@ -28,6 +28,8 @@ First download the right version of setuptools for your version of Python, then 
 	python
 	>>> nltk.download()
 
+# Use NTLK for your data
+
 ## Load custom corpus
 (As seen[http://nltk.googlecode.com/svn/trunk/doc/book/ch02.html](http://nltk.googlecode.com/svn/trunk/doc/book/ch02.html))
 

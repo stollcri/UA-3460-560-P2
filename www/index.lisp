@@ -4,7 +4,6 @@
 
 ;; To test it eval this:
 ;; (start-apache-listener)
-;; (fetch-mod-lisp-url "localhost" "/asp/fixed")
 
 (defconstant +apache-port+ 3000)
 (defvar *apache-stream* nil) ;the socket to apache
@@ -80,28 +79,10 @@
   (write-char #\NewLine *apache-stream*)
 )
 
-(defun template-from-query (query-string)
-  (cond
-    ((> (position #\? query-string) 0)
-      (subseq
-        query-string
-        (+ 1 (position #\? query-string))
-      )
-    )
-    (t nil)
-  )
-)
-
 (defun process-apache-command (command)
   (let
-    ;((template-name
-    ;  (template-from-query (position #\? (cdr (assoc "url" command :test #'string=)))))
-    ;))
     ((html
-      (if (equal (cdr (assoc "url" command :test #'string=)) "/lisp/system-info")
-        (debug-table command)
-        (fixed-html)
-      )
+      (get-html-content (subseq (cdr (assoc "url" command :test #'string=)) 5))
     ))
     (write-header-line "Status" "200 OK")
     (write-header-line "Content-Type" "text/html")
@@ -114,87 +95,97 @@
   )
 )
 
-(defun debug-table (command)
-  (with-output-to-string (s)
-    (write-string
-      "<!doctype html>
-       <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\" dir=\"ltr\">
-       <head><meta charset=\"utf-8\" /><title>Clisp Sample WebApp</title>
-       </head><body>
-        <table bgcolor=\"#c0c0c0\">
-        <tr bgcolor=\"yellow\"><th colspan=2>CMUCL + mod_lisp 2.0 + Apache2 + OS X</th></tr>
-        <tr bgcolor=\"yellow\"><th>Key</th><th>Value</th></tr>"
-      s
+(defun parse-url-query-worker (query-string)
+  (if (position #\= query-string)
+    ; there is a variable/value delimiter
+    (list ; lists are nested to create a list of lists in parse-url-query
+      (list
+        (subseq query-string 0 (position #\= query-string))
+        (subseq query-string (+ 1 (position #\= query-string)))
+      )
     )
-    (format s "<tr bgcolor=\"#F0F0c0\"><td>apache-nb-use-socket</td><td>~a</td></tr>"  *apache-nb-use-socket*)
-    (loop for (key . value) in command do
-      (format s "<tr bgcolor=\"#F0F0c0\"><td>~a</td><td>~a</td></tr>" key value)
-    )
-    (write-string
-      "</table>
-      </body></html>"
-      s
+    ; there is no variable/value delimiter (value is blank)
+    (list ; lists are nested to create a list of lists in parse-url-query
+      (list
+        (subseq query-string 0 (position #\= query-string))
+        ""
+      )
     )
   )
 )
 
-(defun fixed-html ()
+(defun parse-url-query (query-string)
+  (if (= (length query-string) 0)
+    ; the query string is empty
+    NIL
+    ; the query string is not empty
+    (if (position #\& query-string)
+      ; there are multiple url query variables
+      (append ; use append to create list of lists
+        (parse-url-query-worker
+          (subseq query-string 0 (position #\& query-string))
+        )
+        (parse-url-query
+          (subseq query-string (+ 1 (position #\& query-string)))
+        )
+      )
+      ; there is only one url query variable
+      (parse-url-query-worker query-string)
+    )
+  )
+)
+
+(defun get-html-content (page-name)
+  (if (position #\? page-name)
+    ; we have a query string to parse
+    (html-dynamic
+      (subseq page-name 0 (position #\? page-name))
+      (parse-url-query (subseq page-name (+ 1 (position #\? page-name))))
+    )
+    ; no query string pass page name (with leading "/")
+    ;(html-fixed page-name)
+    (html-dynamic page-name "")
+  )
+)
+
+(defun html-head ()
   "<!doctype html>
     <html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\" dir=\"ltr\">
     <head><meta charset=\"utf-8\" /><title>Clisp Sample WebApp</title>
-    </head><body>
-      <h1>mod_lisp 2.0</h1>
-      <p>This is a constant html string sent by CMUCL + mod_lisp 2.0 + Apache2 + OS X</p>
-      <p>~a</p>
-      <a href=\"/lisp/system-info\">Debug Information</a>
-    </body></html>"
+    </head><body>"
 )
 
-(defun fetch-mod-lisp-url (server url &key (nb-fetch 1) (port 3000) close-socket)
-  (let
-    ((socket (ext:connect-to-inet-socket server port)) (reply))
-    (unwind-protect
-      (let
-        ((stream (sys:make-fd-stream socket :input t :output t)))
-        (dotimes
-          (i nb-fetch)
-          (write-string "url" stream)
-          (write-char #\NewLine stream)
-          (write-string url stream)
-          (write-char #\NewLine stream)
-          (write-string "end" stream)
-          (write-char #\NewLine stream)
-          (force-output stream)
-          (setf reply (read-reply stream))
-          (when close-socket
-            (close stream)
-            (setf stream nil)
-          )
-        )
+(defun html-tail ()
+  "</body></html>"
+)
+
+(defun html-dynamic (page-name query-string)
+  (if (string= page-name "/nlp")
+    (html-content-nlp query-string)
+    ; show the default page
+    (with-output-to-string (s)
+      (write-string (html-head) s)
+      (write-string
+        "<h1>mod_lisp 2.0</h1>
+          <p>This is a default html string sent by CMUCL + mod_lisp 2.0 + Apache2 + OS X</p>"
+        s
       )
-      (unix:unix-close socket)
+      (format s "<p>Page name: ~a</p>" page-name)
+      (format s "<p>Query string: ~a</p>" query-string)
+      (write-string (html-tail) s)
     )
-    reply
   )
 )
 
-(defun read-reply (socket)
-  (let*
-    (
-      (header
-        (loop for key = (read-line socket nil nil)
-           while (and key (string-not-equal key "end"))
-           for value = (read-line socket nil nil)
-           collect (cons key value)
-        )
-      )
-      (content-length (cdr (assoc "Content-Length" header :test #'string=)))
-      (content (when content-length (make-string (parse-integer content-length :junk-allowed t))))
+(defun html-content-nlp (query-string)
+  (with-output-to-string (s)
+    (write-string (html-head) s)
+    (write-string
+      "<h1>Natural Language Processing</h1>
+        <p>Something goes here</p>"
+      s
     )
-    (when content
-      (read-sequence content socket)
-      (push (cons "reply-content" content) header)
-    )
-    header
+    (format s "<p>Query string: ~a</p>" query-string)
+    (write-string (html-tail) s)
   )
 )
