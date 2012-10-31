@@ -30,7 +30,7 @@ The :path is what will be in the URL. The :file is the full path of the file to 
 [localhost:8000/test.html](localhost:8000/test.html)
 	
 ### Publish a directory
-The :prefix will be replaced by the :destination. If index.html is in directory, just add /index.html to the URL to get to it.
+The :prefix will be replaced by the :destination. If index.html is in the destination directory, just add /index.html to the URL to get to it.
 
 	(net.aserve:publish-directory :prefix "/" :destination "/Users/USERNAME/Sites/UA-3460-560-P2/Allegro/testDir/")
 	
