@@ -95,6 +95,21 @@
   )
 )
 
+(defun replace-all (string part replacement &key (test #'char=))
+  (with-output-to-string (out)
+    (loop with part-length = (length part)
+          for old-pos = 0 then (+ pos part-length)
+          for pos = (search part string
+                            :start2 old-pos
+                            :test test)
+          do (write-string string out
+                           :start old-pos
+                           :end (or pos (length string)))
+          when pos do (write-string replacement out)
+          while pos)
+  )
+)
+
 (defun parse-url-query-worker (query-string)
   (if (position #\= query-string)
     ; there is a variable/value delimiter
@@ -116,8 +131,8 @@
 
 (defun parse-url-query (query-string)
   (if (= (length query-string) 0)
-    ; the query string is empty
-    NIL
+    ; the query string is empty, return empty
+    ""
     ; the query string is not empty
     (if (position #\& query-string)
       ; there are multiple url query variables
@@ -177,15 +192,29 @@
   )
 )
 
-(defun html-content-nlp (query-string)
+(defun html-content-nlp (query-params)
+  (if (> (length query-params) 0)
+    ;(setf query-q (replace-all (cadr (car query-params))) "+" " ")
+    (setf query-q (cadr (car query-params)))
+    (setf query-q "")
+  )
   (with-output-to-string (s)
     (write-string (html-head) s)
     (write-string
       "<h1>Natural Language Processing</h1>
-        <p>Something goes here</p>"
+        <form method='get' action='nlp' >
+          <label for='q'>Ask us a question</label>
+          <input type='text' name='q' />
+          <input type='submit' />
+        </form>
+      "
       s
     )
-    (format s "<p>Query string: ~a</p>" query-string)
+    (if (> (length query-q) 0)
+      (format s "<p>Answer: I cannot answer \"~a\"</p>" query-q)
+      (write-string "<p>Answer:</p>" s)
+    )
+    (format s "<p><span style='color:#ccc;'>Query string: ~a</span></p>" query-params)
     (write-string (html-tail) s)
   )
 )
