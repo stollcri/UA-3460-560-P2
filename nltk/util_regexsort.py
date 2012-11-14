@@ -156,4 +156,4 @@ if __name__ == "__main__":
 	]
 	useless_texts = sorted(useless_texts, key=len, reverse=True)
 	for text in useless_texts:
-		print text
+		print '"', text, '",'

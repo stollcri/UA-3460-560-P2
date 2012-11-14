@@ -4,9 +4,6 @@
 import sys, fileinput, re
 
 def usefull_line(text_line):
-	"""Determine if a csv row is usefull.
-	csv_cols -- a list of columns
-	"""
 	discard_markers = [
 		"Automatically generated ticket by SAP Global Technical Application Development",
 		"This ticket has been created automatically",
