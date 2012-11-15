@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys, fileinput, csv, re, nltk
+from nltk.corpus import brown
 
 # from the NLTK
 class ConsecutiveNPChunkTagger(nltk.TaggerI): # [_consec-chunk-tagger]
@@ -62,37 +63,17 @@ class UnigramChunker(nltk.ChunkParserI):
 
 
 # from NLTK book examples
-def chunk_regex(text_string):
-	# TODO: don't leave this here, no reason to do this work repeatedly
-	#		if this is used for production, abstract these two declarations
-	parser_grammar = r"""
-		NP: {<DT|PP\$>?<JJ>*<NN>} # chunk determiner/possessive, adjectives and nouns
-			{<NNP>+}  			  # chunk sequences of proper nouns
-		"""
-	parser_grammar = r"""
-		NP: {<CD|DT|JJ|NN.*>+}       # Chunk sequences of DT, JJ, NN
-		NP: {<NP><CC><NP>}
-		PP: {<IN><NP>}               # Chunk prepositions followed by NP
-		VB: {<MD|TO|VBZ><VB.*>} 
-		VP: {<VB.*><NP|PP|CLAUSE|VB.*>+}  # Chunk verbs and their arguments
-		CLAUSE: {<NP><VP>}           # Chunk NP, VP
-		"""
-	parser_grammar = r"""
-		NPP: {<NPP>+}
-		NP: {<IN|CD|DT|JJ|NN.*>+}       # Chunk sequences of DT, JJ, NN
-		NP: {<NP><CC><NP>}
-		VB: {<MD|RB|TO|VBZ><VB.*>+} 
-		VP: {<VB><NP|PP|RP>+} 
-		CLAUSE: {<NP><VP>}           # Chunk NP, VP
-		"""
-	text_parser = nltk.RegexpParser(parser_grammar, loop=2)
-
+# (actually a cascaded finite-state transducer)
+def chunk_regex(text_string, text_parser):
+	# TOKENIZATION
 	# split into sentences
 	text_sentns = nltk.sent_tokenize(text_string)
 	
+	# TOKENIZATION
 	# split into words
 	text_sentns = [nltk.word_tokenize(sent) for sent in text_sentns]
 	
+	# TOKENIZATION
 	# spellcheck
 	#snts_new = []
 	#sent_new = []
@@ -104,9 +85,15 @@ def chunk_regex(text_string):
 	#	sent_new = []
 	#text_sentns = snts_new
 
+	# TOKENIZATION
 	# tag the words' part of speach
 	text_sentns = [nltk.pos_tag(sent) for sent in text_sentns]
+	#train_sents = brown.tagged_sents(categories=brown.categories())
+	#bigram_tagger = nltk.BigramTagger(train_sents)
+	#text_sentns = [bigram_tagger.tag(sent) for sent in text_sentns]
+	#return text_sentns
 	
+	# TOKENIZATION
 	# remove sentences without verbs or nouns
 	new_sent = []
 	new_sentns = []
@@ -120,8 +107,24 @@ def chunk_regex(text_string):
 				verb_found = True
 
 		if noun_found and verb_found:
-			new_sentns.append(sent)
+			# reverse sentence order while we are here
+			# (put the sentences in chronological order)
+			# (gets weird when sentences are split wrong)
+			new_sentns.insert(0, sent)
+			#new_sentns.append(sent)
+	
+	# only keep three sentences
+	# (these are likely to be from the user)
+	new_sentns = new_sentns[:3]
 
+	# COMPLEX-WORD HANDLING
+	# TODO: Add something here
+	#		Look for most common bi-grams?
+
+	# BASIC-GROUP HANDLING
+	# COMPLEX-PHRASE HANDLING
+	# TODO: Split these into two distinct steps
+	#		see: http://www.isi.edu/~hobbs/biomed/node2.html
 	# chunk the words
 	text_parsed = [text_parser.parse(sent) for sent in new_sentns]
 	
@@ -132,11 +135,35 @@ def process_file():
 	csv_reader = csv.reader(fileinput.input(), delimiter=',', quotechar='"')
 	for csv_row in csv_reader:
 		if (len(csv_row) >= 2):
-			row_chunked = chunk_regex(csv_row[1])
+			parser_grammar = r"""
+				NP: {<DT|PP\$>?<JJ>*<NN>} # chunk determiner/possessive, adjectives and nouns
+					{<NNP>+}  			  # chunk sequences of proper nouns
+				"""
+			parser_grammar = r"""
+				NP: {<CD|DT|JJ|NN.*>+}       # Chunk sequences of DT, JJ, NN
+				NP: {<NP><CC><NP>}
+				PP: {<IN><NP>}               # Chunk prepositions followed by NP
+				VB: {<MD|TO|VBZ><VB.*>} 
+				VP: {<VB.*><NP|PP|CLAUSE|VB.*>+}  # Chunk verbs and their arguments
+				CLAUSE: {<NP><VP>}           # Chunk NP, VP
+				"""
+			parser_grammar = r"""
+				NPP: {<NPP>+}
+				NP: {<IN|CD|DT|JJ|NN.*>+}       # Chunk sequences of DT, JJ, NN
+				NP: {<NN|NNS><CC><NN|NNS>}
+				VB: {<MD|RB|TO|VBZ><VB.*>+} 
+				VP: {<VB><NP|PP|RP>+} 
+				CLAUSE: {<NP><VP>}           # Chunk NP, VP
+				"""
+			text_parser = nltk.RegexpParser(parser_grammar, loop=2)
+
+			row_chunked = chunk_regex(csv_row[1], text_parser)
 			if len(row_chunked) > 0:
 				print "----- ----- -----"
+				#print row_chunked
 				for sent in row_chunked:
 					print sent
+
 
 if __name__ == "__main__":
 	if len(sys.argv) >= 2 and sys.argv[1] == "-?":

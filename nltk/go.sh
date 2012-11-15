@@ -15,11 +15,11 @@ echo
 date
 echo "Running pre-process ..."
 ./preprocess.py hddata_c.csv > hddata_d.csv
-rm hddata_c.csv
+#rm hddata_c.csv
 
 echo
 date
 echo "Generate description/solution files ..."
-./csvcat.py hddata_d.csv 13 > hddata_d_desc.csv
-./csvcat.py hddata_d.csv 14 > hddata_d_soln.csv
-rm hddata_d.csv
+./util_csvcat.py hddata_d.csv 13 > hddata_d_des.csv
+./util_csvcat.py hddata_d.csv 14 > hddata_d_sol.csv
+#rm hddata_d.csv

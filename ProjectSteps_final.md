@@ -11,7 +11,6 @@ Steps to process training/example files into a corpus
 * Remove bogus entries/lines
 	* ones which were automatically handled (password resets)
 * Normalize the text
-	* convert everything to lowwer case
 	* remove dates and times
 	* remove other know bogus strings
 * Stem the verbs
@@ -34,3 +33,16 @@ Steps to process training/example files into a corpus
 ### Create Decision Tree
 
 ## Inference Engine
+
+# Take 2
+* Information Retrieval
+	* Question Answering
+	* Information Extraction
+		* Cascade Finite-state Transducer
+			* Tokenization
+			* Complex word handling
+			* Basic group handling
+			* Complex phrase handling
+			* Structure merging
+		* Probabilistic models
+			* Hidden Markov Model

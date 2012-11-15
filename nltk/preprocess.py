@@ -24,7 +24,6 @@ def remove_cruft(text_line):
 	text_cleaned = re.sub('(i |I |and ){0,1}(l|L)(eft).{1,16}?(vmail|vm|v.m.)(\.){0,1}', '', text_cleaned)
 	text_cleaned = re.sub('(i|I){0,1}.{1,2}?(c|C)(alled).{1,16}?(user)(\.){0,1}', '', text_cleaned)
 	text_cleaned = re.sub('(problem).{1,16}?(resolved)(\.){0,1}', '', text_cleaned)
-	text_cleaned = re.sub('(^)(done|Done)($|\.)', '', text_cleaned)
 	# datetime
 	text_cleaned = re.sub('[ ]([0-9]{1,2})[-/.]([0-9]{1,2})[-/.]([0-9]{4})([ -:]{1,5})([0-9]{1,2})[:]([0-9]{1,2})[ :]([0-9]{0,2})[ ]{0,2}((AM|PM|am|pm){0,1})', '', text_cleaned)
 	text_cleaned = re.sub('[ ]([0-9]{4})[-.]([0-9]{1,2})[-.]([0-9]{1,2})([ -:]{1,5})([0-9]{1,2})[:]([0-9]{1,2})[ :]([0-9]{0,2})[ ]{0,2}((AM|PM|am|pm){0,1})', '', text_cleaned)
@@ -91,25 +90,25 @@ def remove_cruft(text_line):
 	text_cleaned = re.sub('(Email).{2,4}(Self Service).{2,3}[ ]', ' ', text_cleaned)
 	text_cleaned = re.sub('[\(][a-zA-Z0-9\-]{3,16}[\)]', '', text_cleaned)
 	text_cleaned = re.sub('(SY-)[A-Z]{3,6}(.)', ' ', text_cleaned)
-	#text_cleaned = re.sub('(,EST )', ' ', text_cleaned)
+	text_cleaned = re.sub('(Done\.)', '', text_cleaned)
 	# compress dashes/dots
 	text_cleaned = re.sub('[!?]{2,}', '.', text_cleaned)
 	text_cleaned = re.sub('[-]{2,}', '-', text_cleaned)
 	text_cleaned = re.sub('[.]{2,}', '.', text_cleaned)
+	# remove numbers : TODO : TOO DRASTIC?
+	text_cleaned = re.sub('[ ][0-9#,\-\.\(\)]+[ ]', ' ', text_cleaned)
+	text_cleaned = re.sub('[0-9\-\(\)]+', '', text_cleaned)
 	# remove punctutions
 	text_cleaned = re.sub('( )[`~!@#$%^&\*\(\)\-_\+=\[\]\{\}:;,\.\?/]+( )', ' ', text_cleaned)
 	text_cleaned = re.sub('[\*]+[a-zA-Z]+[\*]+', ' ', text_cleaned)
-	text_cleaned = re.sub('[ ]["\'\?!\-]', ' ', text_cleaned)
-	text_cleaned = re.sub('[0-9\-\(\)]+', '', text_cleaned)
-	text_cleaned = re.sub('[ ][\.\?!]', '.', text_cleaned)
-	text_cleaned = re.sub('[“”““™™˜]+', '', text_cleaned)
+	text_cleaned = re.sub('[ ]["\'\.\?!\-]', ' ', text_cleaned)
+	text_cleaned = re.sub('[“”““™™˜]+', ' ', text_cleaned)
+	text_cleaned = re.sub('[\*=/]{2,}', ' ', text_cleaned)
 	text_cleaned = re.sub('["\'][ ]', ' ', text_cleaned)
-	text_cleaned = re.sub('[\*=]{2,}', '', text_cleaned)
-	text_cleaned = re.sub('[\.:;_]+', '', text_cleaned)
-	text_cleaned = re.sub('(=-)+', '', text_cleaned)
-	text_cleaned = re.sub('( -)+', '', text_cleaned)
-	# remove numbers : TODO : TOO DRASTIC?
-	text_cleaned = re.sub('[ ][0-9#,\-\.\(\)]+[ ]', ' ', text_cleaned)
+	text_cleaned = re.sub('[:;_]+', ' ', text_cleaned)
+	text_cleaned = re.sub('(=-)+', ' ', text_cleaned)
+	text_cleaned = re.sub('( =)+', ' ', text_cleaned)
+	text_cleaned = re.sub('( -)+', ' ', text_cleaned)
 	# Leading special characters
 	text_cleaned = re.sub('^[^a-z^A-Z^0-9]+', '', text_cleaned)
 	# compress spaces
