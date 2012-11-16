@@ -154,6 +154,8 @@ def remove_useless_texts(text_line):
 		"thanks,",
 		"thanks!",
 		"thanks.",
+		"pleased",
+		"please",
 		"urgent"
 	]
 	
@@ -170,6 +172,7 @@ def remove_usernames(text_line):
 		"bezolabr",
 		"blanksef",
 		"blunddbo",
+		"bhamasou",
 		"bhanupak",
 		"bonczaex",
 		"bosicmry",
@@ -220,6 +223,7 @@ def remove_usernames(text_line):
 		"melenrdr",
 		"mendocrl",
 		"mesenmch",
+		"milletm",
 		"myerskm",
 		"ohrcrs",
 		"paveytom",
