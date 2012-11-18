@@ -49,7 +49,10 @@ def cfst(text_raw, text_stemmer, text_parser_a, text_parser_b):
 	# COMPLEX-PHRASE HANDLING: chunk the words
 	text_chunked = [text_parser_a.parse(sent) for sent in text_chunked]
 	#text_chunked = [text_parser_b.parse(sent) for sent in text_chunked]
-	
+	#for sent in text_chunked:
+	#	print sent
+	#	print
+
 	# unwind the tree only keeping interesting parts
 	text_done = []
 	for sent in text_chunked:
@@ -61,11 +64,16 @@ def cfst(text_raw, text_stemmer, text_parser_a, text_parser_b):
 					word = sent[x][y]
 					if len(word) == 2:
 						if len(word[0][0]) > 1:
-							text_frag.append(str(word[0][0]).lower())
+							for sub_word in word:
+								#print "a", str(sub_word[0]).lower()
+								text_frag.append(str(sub_word[0]).lower())
 						else:
+							#print "b", str(word[0]).lower()
 							text_frag.append(str(word[0]).lower())
-					else:
-						text_frag.append(str(word[0][0]).lower())
+					elif len(word) > 2:
+						for sub_word in word:
+							#print "c", len(sub_word), str(sub_word[0]).lower()
+							text_frag.append(str(sub_word[0]).lower())
 				text_done.append(text_frag)
 
 	return text_done

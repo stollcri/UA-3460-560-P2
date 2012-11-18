@@ -24,6 +24,8 @@ def remove_cruft(text_line):
 	text_cleaned = re.sub('(i |I |and ){0,1}(l|L)(eft).{1,16}?(vmail|vm|v.m.)(\.){0,1}', '', text_cleaned)
 	text_cleaned = re.sub('(i|I){0,1}.{1,2}?(c|C)(alled).{1,16}?(user)(\.){0,1}', '', text_cleaned)
 	text_cleaned = re.sub('(problem).{1,16}?(resolved)(\.){0,1}', '', text_cleaned)
+	# this just anoys me, I'll pick for you
+	text_cleaned = re.sub('and/or', 'or', text_cleaned)
 	# datetime
 	text_cleaned = re.sub('[ ]([0-9]{1,2})[-/.]([0-9]{1,2})[-/.]([0-9]{4})([ -:]{1,5})([0-9]{1,2})[:]([0-9]{1,2})[ :]([0-9]{0,2})[ ]{0,2}((AM|PM|am|pm){0,1})', '', text_cleaned)
 	text_cleaned = re.sub('[ ]([0-9]{4})[-.]([0-9]{1,2})[-.]([0-9]{1,2})([ -:]{1,5})([0-9]{1,2})[:]([0-9]{1,2})[ :]([0-9]{0,2})[ ]{0,2}((AM|PM|am|pm){0,1})', '', text_cleaned)
@@ -105,10 +107,12 @@ def remove_cruft(text_line):
 	text_cleaned = re.sub('[“”““™™˜]+', ' ', text_cleaned)
 	text_cleaned = re.sub('[\*=/]{2,}', ' ', text_cleaned)
 	text_cleaned = re.sub('["\'][ ]', ' ', text_cleaned)
-	text_cleaned = re.sub('[:;_]+', ' ', text_cleaned)
-	text_cleaned = re.sub('(=-)+', ' ', text_cleaned)
-	text_cleaned = re.sub('( =)+', ' ', text_cleaned)
-	text_cleaned = re.sub('( -)+', ' ', text_cleaned)
+	#text_cleaned = re.sub('[:;_]+', ' ', text_cleaned)
+	#text_cleaned = re.sub('(=-)+', ' ', text_cleaned)
+	#text_cleaned = re.sub('( =)+', ' ', text_cleaned)
+	#text_cleaned = re.sub('( -)+', ' ', text_cleaned)
+	# remove remaining punctuation : TODO : TOO DRASTIC?
+	text_cleaned = re.sub('[`~@#$%^\*\(\)\-_\+=\[\]\{\}:;/]+', ' ', text_cleaned)
 	# Leading special characters
 	text_cleaned = re.sub('^[^a-z^A-Z^0-9]+', '', text_cleaned)
 	# compress spaces
