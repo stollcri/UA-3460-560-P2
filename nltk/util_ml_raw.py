@@ -4,7 +4,7 @@
 import sys, fileinput, csv, ast
 
 def process_file():
-	row_to_use = 2
+	row_to_use = 1
 	dict_graph = {}
 	dict_size_limit = 32 # 2x the average, excludes ~7% of possible phrases
 	csv_reader = csv.reader(fileinput.input(), delimiter=',', quotechar='"')
@@ -22,13 +22,6 @@ def process_file():
 
 	print dict_graph
 
-	area_a = dict_graph["hp-account-valid-date"]
-	area_b = dict_graph["been-extend"]
-	print
-	print area_a
-	print area_b
-	intersection = set(area_a) & set(area_b)
-	print intersection
 
 if __name__ == "__main__":
 	if len(sys.argv) >= 2 and sys.argv[1] == "-?":

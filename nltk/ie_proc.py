@@ -65,16 +65,20 @@ def cfst(text_raw, text_stemmer, text_parser_a, text_parser_b):
 					if len(word) == 2:
 						if len(word[0][0]) > 1:
 							for sub_word in word:
-								#print "a", str(sub_word[0]).lower()
-								text_frag.append(str(sub_word[0]).lower())
+								if len(sub_word[0]) > 0:
+									#print "a", str(sub_word[0]).lower()
+									text_frag.append(str(sub_word[0]).lower())
 						else:
-							#print "b", str(word[0]).lower()
-							text_frag.append(str(word[0]).lower())
+							if len(word[0]) > 0:
+								#print "b", str(word[0]).lower()
+								text_frag.append(str(word[0]).lower())
 					elif len(word) > 2:
 						for sub_word in word:
-							#print "c", len(sub_word), str(sub_word[0]).lower()
-							text_frag.append(str(sub_word[0]).lower())
-				text_done.append(text_frag)
+							if len(sub_word[0]) > 0:
+								#print "c", len(sub_word), str(sub_word[0]).lower()
+								text_frag.append(str(sub_word[0]).lower())
+				if (len(text_frag) > 0):
+					text_done.append(text_frag)
 
 	return text_done
 
