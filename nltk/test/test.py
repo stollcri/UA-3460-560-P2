@@ -25,6 +25,8 @@ def build_graph(train_file):
 	return dict_graph
 
 def search_graph(dict_graph, search_string):
+	print
+
 	# make list of nodes in graph that match search nodes
 	# and keep track of the hit percentage
 	hit_made = 0
@@ -38,21 +40,32 @@ def search_graph(dict_graph, search_string):
 		if dict_graph.get(search_phrase, '') != '':
 			hit_made += 1
 			hit_list.append(search_phrase)
-			#print "yes", search_phrase
+			print "yes:", search_phrase
 		else:
-			#print "no", search_phrase
+			print "no:", search_phrase
 			continue
 
 	hit_confidence_a = float(hit_made) / hit_tries
-	#print "Confidence A:", "{0:.0f}%".format(hit_confidence_a * 100)
+	hit_confidence_b = 0
+	hit_confidence_c = 0
 
 	# find the intersection of training and test data
 	match_made = 0
 	intersection = []
-	if hit_confidence_a > .75:
+	if hit_confidence_a > .25:
 		# longest matching nodes (more unique) first
 		# (or sort by number of hits in graph?)
-		hit_list.sort(key = lambda s: -len(s))
+		#
+		# This (below) makes accuracy slightly worse
+		#hit_list.sort(key = lambda s: -len(s))
+		#
+		# TODO:
+		# need to grab all intersections
+		# then sort based upon the number of nodes
+		# then perform the union
+		# -OR-
+		# join all of the possible matches and then sort by probability?
+		print hit_list
 		for x in xrange(1,len(hit_list)):
 			#print x, hit_list[x-1], hit_list[x]
 			if x == 1:
@@ -69,35 +82,33 @@ def search_graph(dict_graph, search_string):
 				#if len(intersection) > 0:
 				#	match_made += 1
 				#print "el", intersection
+			print "intersection:", intersection
 
 		hit_confidence_b = float(match_made) / hit_made
-		#print "Confidence B:", "{0:.0f}%".format(hit_confidence_b * 100)
-
 		hit_confidence_c = float(match_made) / hit_tries
-		#print "Confidence C:", "{0:.0f}%".format(hit_confidence_c * 100)
 
-		if len(intersection) == 0:
-			#print "No results. (",
-			#print "{0:.0f}%, ".format(hit_confidence_a * 100),
-			#print "{0:.0f}%, ".format(hit_confidence_b * 100),
-			#print "{0:.0f}%) ".format(hit_confidence_c * 100)
-			return False
-		elif hit_confidence_c < .5:
-			#print "Unreliable results. (",
-			#print "{0:.0f}%, ".format(hit_confidence_a * 100),
-			#print "{0:.0f}%, ".format(hit_confidence_b * 100),
-			#print "{0:.0f}%) ".format(hit_confidence_c * 100)
-			return False
-		else:
-			#print "Reliable results. (",
-			#print "{0:.0f}%, ".format(hit_confidence_a * 100),
-			#print "{0:.0f}%, ".format(hit_confidence_b * 100),
-			#print "{0:.0f}%) ".format(hit_confidence_c * 100),
-			#print "Hit count: ", len(intersection)
-			#for item in intersection:
-			#	print item,
-			#print
-			return True
+	if len(intersection) == 0:
+		print "No results. (",
+		print "{0:.0f}%, ".format(hit_confidence_a * 100),
+		print "{0:.0f}%, ".format(hit_confidence_b * 100),
+		print "{0:.0f}%) ".format(hit_confidence_c * 100)
+		return False
+	elif hit_confidence_c < .5:
+		print "Unreliable results. (",
+		print "{0:.0f}%, ".format(hit_confidence_a * 100),
+		print "{0:.0f}%, ".format(hit_confidence_b * 100),
+		print "{0:.0f}%) ".format(hit_confidence_c * 100)
+		return False
+	else:
+		print "Reliable results. (",
+		print "{0:.0f}%, ".format(hit_confidence_a * 100),
+		print "{0:.0f}%, ".format(hit_confidence_b * 100),
+		print "{0:.0f}%) ".format(hit_confidence_c * 100),
+		print "Hit count: ", len(intersection)
+		for item in intersection:
+			print item,
+		print
+		return True
 
 
 def run_test(train_file, test_file):
@@ -116,7 +127,7 @@ def run_test(train_file, test_file):
 					test_good += 1
 				else:
 					test_bad += 1
-	return dict(good=test_good, bad=test_bad, skip=test_skip)
+	return dict(good=test_good, bad=test_bad)
 
 
 if __name__ == "__main__":
@@ -132,7 +143,7 @@ if __name__ == "__main__":
 	print "Bad results:", test_bad
 	print "Good results", test_good
 	print "Potential accuracy: {0:.0f}% ".format(float(test_good) / (test_good + test_bad) * 100)
-
+"""
 	test_results = run_test("i2_train.csv", "i2_test.csv")
 	test_bad += test_results["bad"]
 	test_good += test_results["good"]
@@ -169,3 +180,4 @@ if __name__ == "__main__":
 	print "Good results", test_good
 	print "Potential accuracy: {0:.0f}% ".format(float(test_good) / (test_good + test_bad) * 100)
 	print
+"""
