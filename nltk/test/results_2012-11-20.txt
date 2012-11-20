@@ -1,0 +1,25 @@
+
+Bad results: 902
+Good results 121
+Potential accuracy: 12% 
+(1023 of 1024 lines)
+
+Bad results: 1793
+Good results 258
+Potential accuracy: 13% 
+(1028 of 1030 lines)
+
+Bad results: 2700
+Good results 386
+Potential accuracy: 13% 
+(1035 of 1035 lines)
+
+Bad results: 3544
+Good results 517
+Potential accuracy: 13% 
+(975 of 975 lines)
+
+Bad results: 4425
+Good results 645
+Potential accuracy: 13% 
+(1009 of 1010 lines)

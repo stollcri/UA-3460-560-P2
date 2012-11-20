@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys, fileinput, csv, re, nltk
+# import cPickle
 
 # from NLTK book examples
 # (actually a cascaded finite-state transducer)
@@ -113,6 +114,8 @@ def process_file():
 					csv_new[2] = row_two_chunked	# solution (nlp'd)
 					csv_new[3] = csv_row[3]			# solution (original)
 
+					# TODO: Maybe use the pickle function?
+					#print cPickle.dumps(csv_new)
 					csv_output = csv.writer(sys.stdout, delimiter=',', 
 						quotechar='"', quoting=csv.QUOTE_MINIMAL)
 					csv_output.writerow(csv_new)
@@ -124,3 +127,4 @@ if __name__ == "__main__":
 		print " prints processed file to stdout in csv format"
 	else:
 		process_file()
+		

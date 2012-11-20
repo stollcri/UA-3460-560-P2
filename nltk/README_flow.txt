@@ -14,7 +14,7 @@ RAW DATA:
 		--melenrdr - 04/11/2012 - 06:53 21-------------- SAP HP1 account validity date has been extended. Problem resolved. ---------------------------------------------------
 
 
-AFTER PREPROCESSOR B (AND A):
+AFTER PREPROCESSOR (A AND) B:
 	2500638,"   try again.       _____________________________________________ From: Sevel, Evan NI/IBC-SIM Sent: Wednesday, April 11, 2012 12:13 AM  Subject: 500 Internal Server Error When trying to access the Self Service to access my benefits and payment, I receive the error “500 Internal Server Error.” Evan P. Sevel International Key Account Manager  Mobile: 704-519-8474 E-mail: sevelean@schaeffler.com Catalog: http://medias.schaeffler.com/medias/en!hp/","-- - 04/11/2012 - 06:53 13-------------- _____________________________________________ From: Sevel, Evan NI/IBC-SIM Sent: Wednesday, April 11, 2012 12:13 AM  Subject: 500 Internal Server Error When trying to access the Self Service to access my benefits and payment, I receive the error “500 Internal Server Error.” Evan P. Sevel International Key Account Manager  Mobile: 704-519-8474 E-mail: sevelean@schaeffler.com Catalog: http://medias.schaeffler.com/medias/en!hp/",-- - 04/11/2012 - 06:53 21-------------- SAP HP1 account validity date has been extended.  ---------------------------------------------------
 
 	REFERENCE NUMBER:
@@ -40,7 +40,7 @@ AFTER PREPROCESSOR C:
 		try again. 
 
 	INCIDENT PROBLEM:
-		"Internal Server Error When trying to access the Self Service to access my benefits and payment, I receive the error Internal Server Error. Evan P. Sevel International Key Account Manager Catalog ",
+		"Internal Server Error When trying to access the Self Service to access my benefits and payment, I receive the error Internal Server Error. Evan P. Sevel International Key Account Manager Catalog "
 
 	INCIDENT SOLUTION:
 		SAP HP account validity date has been extended. 

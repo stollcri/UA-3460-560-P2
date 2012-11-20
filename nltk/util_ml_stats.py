@@ -15,7 +15,7 @@ def process_file():
 				dict_phrase = '-'.join(sent)
 				if len(dict_phrase) > 0 and len(dict_phrase) < dict_size_limit:
 					if dict_phrase in dict_graph:
-						dict_graph[dict_phrase] = dict_graph[dict_phrase] + 1
+						dict_graph[dict_phrase] += 1
 					else:
 						dict_graph[dict_phrase] = 1
 
@@ -41,17 +41,17 @@ def process_file():
 	for key in dict_graph:
 		key_sizes.append(len(key))
 		if len(key) > limit_a:
-			limit_a_count = limit_a_count + 1
+			limit_a_count += 1
 		if len(key) > limit_b:
-			limit_b_count = limit_b_count + 1
+			limit_b_count += 1
 		if len(key) > limit_c:
-			limit_c_count = limit_c_count + 1
+			limit_c_count += 1
 		if len(key) > limit_d:
-			limit_d_count = limit_d_count + 1
+			limit_d_count += 1
 		if dict_graph[key] == number_a:
-			number_a_count = number_a_count + 1
+			number_a_count += 1
 		if dict_graph[key] == number_b:
-			number_b_count = number_b_count + 1
+			number_b_count += 1
 
 	print
 	print "items used once:", number_a_count
