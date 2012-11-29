@@ -10,7 +10,7 @@ def remove_cruft(text_line):
 	text_cleaned = text_line + ' '
 	# Useless courtesies
 	text_cleaned = re.sub('(H|h)ello Mr( |. |s. )[a-zA-Z]{2,16}[,]', '', text_cleaned)
-	text_cleaned = re.sub('Hello [a-zA-Z]+,', '', text_cleaned)
+	text_cleaned = re.sub('(Hello|Hi) [a-zA-Z]+,', '', text_cleaned)
 	text_cleaned = re.sub('( If)[ .,a-zA-Z]+(Please)[ a-zA-Z,]+?(1188)[.]', '', text_cleaned)
 	text_cleaned = re.sub('(Please)[ .,a-zA-Z]+?(1188)[.]', '', text_cleaned)
 	text_cleaned = re.sub('(Note: This E-mail).+?\.', '', text_cleaned)
@@ -61,7 +61,7 @@ def remove_cruft(text_line):
 	text_cleaned = re.sub('\+[0-9\(\)]{9,}[.-][0-9]{4,}', '', text_cleaned)
 	text_cleaned = re.sub('(x|X)[0-9]{3,5}', '', text_cleaned)
 	# Department codes
-	text_cleaned = re.sub('([A-Z]{2,}/[A-Z]{3,}-[A-Z0-9]{1,5})[ ]', '', text_cleaned)
+	text_cleaned = re.sub('([A-Z]{2,}/[A-Z]{3,}-[A-Z0-9]{1,5})', '', text_cleaned)
 	# User names
 	text_cleaned = re.sub('(Username): [a-zA-Z]+?[ ]', '', text_cleaned)
 	# Computer names
@@ -104,9 +104,9 @@ def remove_cruft(text_line):
 	text_cleaned = re.sub('( )[`~!@#$%^&\*\(\)\-_\+=\[\]\{\}:;,\.\?/]+( )', ' ', text_cleaned)
 	text_cleaned = re.sub('[\*]+[a-zA-Z]+[\*]+', ' ', text_cleaned)
 	text_cleaned = re.sub('[ ]["\'\.\?!\-]', ' ', text_cleaned)
-	text_cleaned = re.sub('[“”““™™˜]+', ' ', text_cleaned)
-	text_cleaned = re.sub('[\*=/]{2,}', ' ', text_cleaned)
 	text_cleaned = re.sub('["\'][ ]', ' ', text_cleaned)
+	text_cleaned = re.sub('[^a-zA-Z0-9 &\-\.\,\'"\?!<>]+', ' ', text_cleaned)
+	#text_cleaned = re.sub('[\*=/]{2,}', ' ', text_cleaned)
 	#text_cleaned = re.sub('[:;_]+', ' ', text_cleaned)
 	#text_cleaned = re.sub('(=-)+', ' ', text_cleaned)
 	#text_cleaned = re.sub('( =)+', ' ', text_cleaned)

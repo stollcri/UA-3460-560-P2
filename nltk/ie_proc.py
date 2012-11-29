@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys, fileinput, csv, re, nltk
+import sys, fileinput, csv, nltk
 # import cPickle
 
 # from NLTK book examples
 # (actually a cascaded finite-state transducer)
-def cfst(text_raw, text_stemmer, text_parser_a, text_parser_b):
+def cfst(text_raw, text_stemmer, text_parser_a):
 	# TOKENIZATION: split into sentences
 	text_sentences = nltk.sent_tokenize(text_raw)
 	
@@ -16,7 +16,7 @@ def cfst(text_raw, text_stemmer, text_parser_a, text_parser_b):
 	# TOKENIZATION: tag the words' part of speach
 	text_posed = [nltk.pos_tag(sent) for sent in text_words]
 	
-	# TOKENIZATION: stem and remove sentences without either verbs or nouns
+	# TOKENIZATION: stem and also remove sentences without either verbs or nouns
 	text_cleaned = []
 	for sent in text_posed:
 		noun_found = False
@@ -30,26 +30,25 @@ def cfst(text_raw, text_stemmer, text_parser_a, text_parser_b):
 			new_sent.append((text_stemmer.stem(word[0]), word[1]))
 
 		if noun_found and verb_found:
-			#new_sentns.append(sent)
+			text_cleaned.append(new_sent)
 			# reverse sentence order while we are here
 			# (put the sentences in chronological order)
 			# (gets weird when sentences are split wrong)
-			text_cleaned.insert(0, new_sent)
+			#text_cleaned.insert(0, new_sent)
 	
 	# only keep three sentences
 	# (these are most likely to be from the user)
-	text_cleaned = text_cleaned[:3]
+	#text_cleaned = text_cleaned[:3]
 
 	# COMPLEX-WORD HANDLING
 	# TODO: Add something here (or earlier)
 	#		Look for most common tri-grams and bi-grams?
 
-	# BASIC-GROUP HANDLING: chunk the words
-	text_chunked = [nltk.chunk.ne_chunk(sent) for sent in text_cleaned]
+	# BASIC-GROUP HANDLING: chunk the words at named entities
+	text_chunked = nltk.batch_ne_chunk(text_cleaned)#[nltk.chunk.ne_chunk(sent) for sent in text_cleaned]
 
 	# COMPLEX-PHRASE HANDLING: chunk the words
 	text_chunked = [text_parser_a.parse(sent) for sent in text_chunked]
-	#text_chunked = [text_parser_b.parse(sent) for sent in text_chunked]
 	#for sent in text_chunked:
 	#	print sent
 	#	print
@@ -79,40 +78,39 @@ def cfst(text_raw, text_stemmer, text_parser_a, text_parser_b):
 								#print "c", len(sub_word), str(sub_word[0]).lower()
 								text_frag.append(str(sub_word[0]).lower())
 				if (len(text_frag) > 0):
-					text_done.append(text_frag)
+					text_done.append('-'.join(text_frag))
 
 	return text_done
 
 
 def process_file():
-	text_stemmer = nltk.PorterStemmer()
+	#text_stemmer = nltk.PorterStemmer()
+	#text_stemmer = nltk.snowball.EnglishStemmer()
+	text_stemmer = nltk.lancaster.LancasterStemmer()
 	parser_grammar_a = r"""
-		NP: {<NN|NNS><CC><NN|NNS>}
-		NP: {<DT|ORGANIZATION|PERSON|NN.*>+}
-		VP: {<RB|VB|VBG|VBN|VBP>+}
-		"""
-	parser_grammar_b = r"""
-		CLAUSE: {<NP><VP>} 
+		NP: {<NN|NNS|PERSON><CC><NN|NNS|PERSON>}
+		NP: {<JJ|ORGANIZATION|PERSON|NN.*>+}
+		VP: {<RB|VB|VBD|VBG|VBN|VBP>+}
 		"""
 	text_parser_a = nltk.RegexpParser(parser_grammar_a, loop=1)
-	text_parser_b = nltk.RegexpParser(parser_grammar_b, loop=1)
 
 	csv_reader = csv.reader(fileinput.input(), delimiter=',', quotechar='"')
 	for csv_row in csv_reader:
 		if (len(csv_row) >= 4):
 
 			# nlp for the problem statement
-			row_one_chunked = cfst(csv_row[2], text_stemmer, text_parser_a, text_parser_b)
+			row_one_chunked = cfst(csv_row[2], text_stemmer, text_parser_a)
 			if len(row_one_chunked) > 0:
 
 				# nlp for the problem solution
-				row_two_chunked = cfst(csv_row[3], text_stemmer, text_parser_a, text_parser_b)
+				row_two_chunked = cfst(csv_row[3], text_stemmer, text_parser_a)
 				if len(row_two_chunked) > 0:
-					csv_new = ['', '', '', '']
+					csv_new = ['', '', '', '', '']
 					csv_new[0] = csv_row[0] 		# index number
 					csv_new[1] = row_one_chunked	# problem (nlp'd)
 					csv_new[2] = row_two_chunked	# solution (nlp'd)
-					csv_new[3] = csv_row[3]			# solution (original)
+					csv_new[3] = csv_row[2]			# problem (original)
+					csv_new[4] = csv_row[3]			# solution (original)
 
 					# TODO: Maybe use the pickle function?
 					#print cPickle.dumps(csv_new)

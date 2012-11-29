@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys, fileinput, re
+import sys, fileinput
 
 def usefull_line(text_line):
 	discard_markers = [

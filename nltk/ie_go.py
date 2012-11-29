@@ -13,7 +13,7 @@ if [ -e "hddata_b.csv" ]; then
 	date
 	echo "Running pre-pre-process b (remove usernames, etc.) ..."
 	./ie_preproc_b.py hddata_b.csv > hddata_c.csv
-	rm hddata_b.csv
+	#rm hddata_b.csv
 fi
 
 if [ -e "hddata_c.csv" ]; then
@@ -28,4 +28,5 @@ if [ -e "hddata_d.csv" ]; then
 	echo "Running process (cascaded finite-state transducer) ..."
 	./ie_proc.py hddata_d.csv > hddata_e.csv
 	#rm hddata_d.csv
+	date
 fi

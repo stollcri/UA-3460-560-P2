@@ -38,3 +38,9 @@ First download the right version of setuptools for your version of Python, then 
 	>>> corpus_root = '/usr/share/dict'
 	>>> wordlists = PlaintextCorpusReader(corpus_root, '.*')
 	>>> wordlists.fileids()
+
+
+
+# Install scikit-learn
+
+	sudo pip install -U scikit-learn
