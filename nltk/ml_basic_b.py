@@ -4,6 +4,7 @@
 import sys, fileinput, csv, ast, operator
 
 def build_graph(train_file):
+	corpus = {}
 	dict_graph = {}
 	dict_score = {}
 	corpus_size = 0
@@ -17,7 +18,8 @@ def build_graph(train_file):
 			#print "PROBLEM: ", csv_row[3]
 			#print "SOLUTION:", csv_row[4]
 
-			csv_col = ast.literal_eval(csv_row[1])
+			csv_col = ast.literal_eval(csv_row[3])
+			corpus[int(csv_row[0])] = csv_col
 			phrase_prob = 1.0 / len(csv_col)
 			for dict_phrase in csv_col:
 				corpus_size += 1
@@ -81,10 +83,39 @@ def build_graph(train_file):
 		phrase_probability_sum = phrase_probability_global * phrase_probability_local
 		dict_probs[word] = phrase_probability_sum
 
-	return dict(graph=dict_graph, scores=dict_score, probabilities=dict_probs, corpus_size=corpus_size)
+	return dict(corpus=corpus, graph=dict_graph, scores=dict_score, probabilities=dict_probs, corpus_size=corpus_size)
 
 
-def limit_graph(train_data, query_string_list):
+def compare_statements(string_a, string_b):
+	max_value = 0
+	matrix = []
+	for idx_a, phrase_a in enumerate(string_a):
+		matrix.append([])
+
+		for idx_b, phrase_b in enumerate(string_b):
+			matrix[idx_a].append(0)
+
+			last_value = 0
+			if idx_a > 0 and idx_b >0:
+				last_value = matrix[idx_a-1][idx_b-1]
+
+			this_value = last_value
+			if phrase_b == phrase_a:
+				this_value += 1
+			else:
+				if this_value > 0:
+					this_value -= 1
+
+			matrix[idx_a][idx_b] = this_value
+
+			if this_value > max_value:
+				max_value = this_value
+		
+	return float(max_value) / max(len(string_a), len(string_b))
+
+
+def search_graph(train_data, query_string_list):
+	corpus = train_data["corpus"]
 	dict_graph = train_data["graph"]
 	dict_score = train_data["scores"]
 
@@ -98,25 +129,54 @@ def limit_graph(train_data, query_string_list):
 				hits_dict[query_string] = 1
 				hits_list.append(query_string)
 				hits_tuples.append((query_string, dict_graph[query_string]))
-
-	# sort to search dict starting with most common words
-	hits_tuples = sorted(hits_tuples, key=lambda hit: -len(hit[1]))
 	
 	# join all nodes into a single set
+	all_hits = []
 	for x in xrange(1,len(hits_list)):
 		last_phrase = hits_tuples[x-1][0]
 		this_phrase = hits_tuples[x][0]
 		if x == 1:
-			intersection = set(dict_graph[last_phrase]).union(set(dict_graph[this_phrase]))
+			all_hits = set(dict_graph[last_phrase]).union(set(dict_graph[this_phrase]))
 		else:
-			intersection = set(intersection).union(set(dict_graph[this_phrase]))
+			all_hits = set(all_hits).union(set(dict_graph[this_phrase]))
 
-	print len(intersection)
+	hits_compared = []
+	for hit in all_hits:
+		compared = compare_statements(query_string_list, corpus[hit])
+		hits_compared.append((compared, hit))
+
+	hits_compared = sorted(hits_compared, key=lambda hit: -hit[0])
+	return hits_compared
 
 
 def test_graph(train_data, test_file):
-	manual_data = ['do-not-hav', 'access', 'workspac', 'pdm-link', 'am', 'abl', 'log', 'prop', 'access-pdmlink', 'just-do-not-hav', 'access', 'context']
-	test_data = limit_graph(train_data, manual_data)
+	hit_pass = 0
+	hit_fail = 0
+	corpus = train_data["corpus"]
+	csv_file = open(test_file, 'rb')
+	csv_reader = csv.reader(csv_file, delimiter=',', quotechar='"')
+	for csv_row in csv_reader:
+		if (len(csv_row) >= 4):
+			csv_col = ast.literal_eval(csv_row[1])
+			test_data = search_graph(train_data, csv_col)
+
+			hit_pct = 0
+			hit_desc = ""
+			if len(test_data) > 0:
+				if test_data[0][0] > .5:
+					hit_pass += 1
+					hit_pct = test_data[0][0]
+					hit_desc = corpus[test_data[0][1]]
+					#print test_data[0][0], corpus[test_data[0][1]]
+				else:
+					hit_fail += 1
+			else:
+				hit_fail += 1
+			
+			print "go:", hit_pass, "ng:", hit_fail, "|", hit_pct, "|", csv_col, "|", hit_desc
+
+	print "pass:", hit_pass, ", fail:", hit_fail
+	print "Potential accuracy: {0:.0f}% ".format(float(hit_pass) / (hit_pass + hit_fail) * 100)
 
 
 def run_test(train_file, test_file):

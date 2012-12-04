@@ -17,8 +17,8 @@ def build_graph(train_file):
 		if (len(csv_row) >= 4):
 			csv_col = ast.literal_eval(csv_row[row_to_use])
 			#print csv_row[0], csv_row[3]
-			dict_probs[int(csv_row[0])] = csv_row[3]
-			dict_solns[int(csv_row[0])] = csv_row[4]
+			dict_probs[int(csv_row[0])] = csv_row[5]
+			dict_solns[int(csv_row[0])] = csv_row[6]
 			for sent in csv_col:
 				#dict_phrase = '-'.join(sent)
 				dict_phrase = sent

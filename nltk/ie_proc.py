@@ -105,12 +105,14 @@ def process_file():
 				# nlp for the problem solution
 				row_two_chunked = cfst(csv_row[3], text_stemmer, text_parser_a)
 				if len(row_two_chunked) > 0:
-					csv_new = ['', '', '', '', '']
+					csv_new = ['', '', '', '', '', '', '']
 					csv_new[0] = csv_row[0] 		# index number
-					csv_new[1] = row_one_chunked	# problem (nlp'd)
-					csv_new[2] = row_two_chunked	# solution (nlp'd)
-					csv_new[3] = csv_row[2]			# problem (original)
-					csv_new[4] = csv_row[3]			# solution (original)
+					csv_new[1] = csv_row[4]			# solved by (group)
+					csv_new[2] = csv_row[5]			# solved by (person)
+					csv_new[3] = row_one_chunked	# problem (nlp'd)
+					csv_new[4] = row_two_chunked	# solution (nlp'd)
+					csv_new[5] = csv_row[2]			# problem (original)
+					csv_new[6] = csv_row[3]			# solution (original)
 
 					# TODO: Maybe use the pickle function?
 					#print cPickle.dumps(csv_new)

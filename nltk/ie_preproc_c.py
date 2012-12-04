@@ -136,12 +136,14 @@ def remove_solution(user_info, solution):
 def process_file():
 	csv_reader = csv.reader(fileinput.input(), delimiter=',', quotechar='"')
 	for csv_row in csv_reader:
-		if (len(csv_row) >= 4):
-			csv_cleaned = ['', '', '', '']
+		if (len(csv_row) >= 6):
+			csv_cleaned = ['', '', '', '', '', '']
 			csv_cleaned[0] = csv_row[0]
 			csv_cleaned[1] = remove_cruft(csv_row[1])
 			csv_cleaned[2] = remove_cruft(csv_row[2])
 			csv_cleaned[3] = remove_cruft(csv_row[3])
+			csv_cleaned[4] = csv_row[4]
+			csv_cleaned[5] = csv_row[5]
 			
 			# remove incident description from user info column, if matched
 			csv_cleaned[1] = remove_description(csv_cleaned[1], csv_cleaned[2])
