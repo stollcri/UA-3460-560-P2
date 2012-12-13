@@ -1,171 +1,199 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <SearchIndexes Version="1.0">
     <Documents>
-        <Document ID="10">
-            <Title>About</Title>
-            <Text>CHICAGO STYLE ESSAY TEMPLATE
-
-About
-This template is designed to produce an essay in the Chicago Style format. However, you should check the exact guidelines of the institution to which you are submitting your essay, because formatting expectations can vary (such as whether there should be a separate title page, whether footnotes should appear at the end of each page or as endnotes, and so on). See “Adjusting This Template” (below) for information on how to tweak your project to meet your requirements.
-
-How To Use This Template
-	•	Edit the “Title Page” document so that it contains the title of your essay, your instructor’s name and so on.
-	•	Compose your essay in text documents inside the “Main Content” folder. Whether you use a single document or multiple text files to write your essay is entirely up to you - just make sure they are all inside the “Main Content” folder.
-	•	Indent block quotes or other special passages using the ruler settings you require in the finished document and enclose them in a “Preserve Formatting” block. To do this, select the text of the block quote and go to Format > Formatting > Preserve Formatting. (The quickest way of formatting a block quote is to click in the paragraph and select “Essay Block Quote (Preserved)” from the formatting presets, either using the “Presets…” control in the format bar, or by going to the Format  menu and choosing Formatting > Apply Preset - this will indent the text and apply the “Preserve Formatting” block for you.) All other text will have the default indentation assigned during the compile process.
-	•	This template includes an “Endnotes” document which will be used to hold any footnotes you have created in the main body of the text. If you have not created any footnotes, you should either delete this document or deselect its “Include in Compile” setting in the inspector or Compile sheet.
-	•	Edit the “Works Cited” file so that it contains your own bibliography, being careful to adhere to the Chicago style for the citations. Some notes on the style required for citations are provided in the Works Cited Format document. If you do not require a “Works Cited” page, either delete this document or deselect its “Include in Compile” setting in the inspector or Compile sheet.
-	•	Use File > Compile… to compile your essay for printing.
-
-Adjusting This Template
-	•	If you don’t require a separate title page but instead need the title and course information as the header of the first page, remove the “Title Page” document from the “Essay” folder and replace it with the “First Page Header” document, which you can find inside the “Miscellaneous” folder. Also be sure to deselect “Page Break Before” for the “Main Content” folder, either in the inspector or the “Contents” pane of the Compile sheet.
-	•	This template uses Times New Roman as the font. If you require a different font, such as Arial or Courier, select the text in the “Title Page” and “Works Cited” documents and change the font using the font panel or format bar. To change the font for the main body of the text, select the “Formatting” tab in the Compile sheet, click on the third row in the table (“Level 1+” with the icon of a single text document next to it), and then click into the text area. Finally click on the “A” button in the format bar above the text area to choose a different font. To change the header font, select your preferred font in the “Page Settings” pane of the Compile sheet.
-	•	If you require footnotes to appear at the end of each page instead of as endnotes, then you should compile to the RTF format. If you do this, be sure to deselect “Include in Compile” for the “Notes” document.
-
-Sample Document
-The “Example Essay” PDF file in the Research folder shows how the essay will look when compiled.
-
-Final Note
-Scrivener project templates are flexible and are not intended to restrict you to a particular workflow. You can change, delete or move the files and folders contained in the template and you can create your own templates by setting up a skeletal project with the files, folders and settings you would like to use for new projects and using File > Save As Template.</Text>
+        <Document ID="32">
+            <Title>Regular expresions</Title>
+            <Text>After the boilerplate text is removed from the raw data, regular expressions are used to remove a broader range of useless data. Dates and times found in the raw data are not useful for classifying and solving problems, so they are removed. If temporal information was desired it could be extracted from the database in a uniform format. During this step special characters are also removed and white spaces are compressed.</Text>
+            <Comments>In script ie_preproc_c.py</Comments>
         </Document>
-        <Document ID="15">
-            <Title>Notes</Title>
+        <Document ID="25">
+            <Title>Conclusions and Future Work</Title>
         </Document>
-        <Document ID="3">
-            <Title>Title Page</Title>
-            <Text>
-
-
-
-
-
-
-
-
-
-&lt;$projecttitle>
-
-
-
-
-
-
-
-
-
-
-
-&lt;$fullname>
-
-
-
-
-
-
-
-
-
-
-
-Course Title
-Instructor’s Name
-&lt;$longdate>
-</Text>
-            <Notes>The &lt;$projecttitle> and &lt;$fullname> tags get replaced with the information set in Project > Meta-Data Settings… > Project Properties. You can edit those settings or just replace this text altogether.</Notes>
+        <Document ID="40">
+            <Title>Machine Learning</Title>
         </Document>
-        <Document ID="11">
-            <Title>Works Cited Format</Title>
-            <Text>The Works Cited page is optional.
-
-Chicago Style citations should be formatted as follows:
-
-Book with one author
-Pollan, Michael. The Omnivore’s Dilemma: A Natural History of Four Meals. New York: Penguin, 2006.
-
-Book with two authors
-Ward, Geoffrey C., and Ken Burns. The War: An Intimate History, 1941–1945. New York: Knopf, 2007.
-
-Editor, translator, or compiler instead of author
-Lattimore, Richmond, trans. The Iliad of Homer. Chicago: University of Chicago Press, 1951.
-
-Book published electronically
-Kurland, Philip B., and Ralph Lerner, eds. The Founders’ Constitution. Chicago: University of Chicago Press, 1987. Accessed February 28, 2010. http://press-pubs.uchicago.edu/founders/
-
-Article in a print journal
-Weinstein, Joshua I. “The Market in Plato’s Republic.” Classical Philology 104 (2009): 439–58.
-
-Article in an online journal
-Kossinets, Gueorgi, and Duncan J. Watts. “Origins of Homophily in an Evolving Social Network.” American Journal of Sociology 115 (2009): 405–50. Accessed February 28, 2010. doi:10.1086/599247.
-
-Thesis or dissertation
-Choi, Mihwa. “Contesting Imaginaires in Death Rituals during the Northern Song Dynasty.” PhD diss., University of Chicago, 2008.
-
-Website
-Google. “Google Privacy Policy.” Last modified March 11, 2009. http://www.google.com/intl/en/privacypolicy.html.
-McDonald’s Corporation. “McDonald’s Happy Meal Toy Safety Facts.” Accessed July 19, 2008. http://www.mcdonalds.com/corp/about/factsheets.html.</Text>
+        <Document ID="33">
+            <Title>Statement</Title>
+            <Text>Most large corporations provide various information technologies to their workers. To support the provided hardware and software they often have a help desk or service desk which is made up of people and software. Service desk employees are often entry level and have little understanding of the business and its specific technical problems, so software is employed to route tickets to the appropriate staff and record the knowledge which is learned along the way. For improved efficiency it is important to be able to access the information that has been amassed in the service desk software, but simple text queries often fall short. The purpose of this experiment is to use natural language processing techniques to extract information from a series of service desk tickets, then structure the information in such a way that it can be retrieved with more precision than is provided by simple text queries.</Text>
         </Document>
-        <Document ID="16">
-            <Title>First Page Header</Title>
-            <Text>&lt;$template_fullName>
-Instructor name
-Course title
-&lt;$longdate>
-&lt;$template_projectName></Text>
+        <Document ID="26">
+            <Title>Remarks</Title>
         </Document>
-        <Document ID="5">
-            <Title>Essay Body</Title>
+        <Document ID="34">
+            <Title>NLP</Title>
+            <Text>With preprocessing complete, the next step is natural language processing. Natural language processing is in itself a multi-stage process. First, the text data from the corpus is broken into sentences, then the sentences are broken into words. Each word is tagged for its part of speech. Next, each word is stemmed using the Lancaster stemmer provided with the Natural Language Took Kit (NLTK). In the same block where stemming occurs the program discards sentence fragments; those sentences which have either no verbs or no nouns. Named entity recognition is next run against the text to identify proper nouns. Then, phrases are created using a few simple grammar rules. The combination of phrases extracted from each service desk problem is used to represent a summary of the problem.
+At this point the original problem statement of “—melenrdr - 04/11/2012 - 06:53 13-------------- _____________________________________________ From: Sevel, Evan NI/IBC-SIM Sent: Wednesday, April 11, 2012 12:13 AM To: IT-Support Schaeffler-Group North America Subject: 500 Internal Server Error When trying to access the Self Service to access my benefits and payment, I receive the error ‘500 Internal Server Error.’ Evan P. Sevel International Key Account Manager Schaeffler Group USA Inc. Mobile: 704-519-8474 E-mail: sevelean@schaeffler.com Catalog: http://medias.schaeffler.com/medias/en!hp/” would be converted into the following phrases: “server error when”, “tri”, “access the self servic”, “access, benefit and payment”, “receiv”, “the error intern server error”. These results are typical, and, on average, provide a good summary of the actual problem.</Text>
+            <Comments>In script ie_proc.py</Comments>
         </Document>
-        <Document ID="17">
-            <Title>Miscellaneous</Title>
-        </Document>
-        <Document ID="7">
-            <Title>Works Cited</Title>
-            <Text>Works Cited
-
-Works cited should go here (this page is optional). See the Works Cited Format document for information on formatting citations.</Text>
-        </Document>
-        <Document ID="18">
-            <Title>Example Essay</Title>
-            <Text>The Origins of the Meta-Essay: The Essay About the Essay
-Arthur Caddemick
-English Literature 101 Professor Jakespear 30 October 2010
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet posuere est, in consequat est imperdiet nec. Morbi vel orci mattis erat mattis vulputate vel nec eros. Sed at mauris tortor, nec ornare erat. Praesent felis velit, dapibus at pretium non, congue sed ligula. Nam ac gravida nunc. Nam sapien lectus, pellentesque pharetra semper eu, rutrum nec neque. Praesent purus orci, ornare et luctus quis, iaculis eu dolor. Proin ornare sodales semper. Sed aliquet, orci at volutpat tristique, justo mi condimentum velit, ac feugiat ipsum nulla eget leo. Integer purus sem, placerat nec lacinia vel, mollis vitae magna. In hac habitasse platea dictumst. Vivamus sed elit augue, a consequat dolor. Proin at elementum tellus. Donec sodales, turpis sit amet porta ornare, nisi diam fringilla erat, eget varius lorem lectus eget tortor. Etiam eros nisl, gravida eu eleifend eu, semper non nulla. Pellentesque semper laoreet volutpat. Nam ac malesuada metus. Nunc ut eros est, nec accumsan est.
-This is a block quote. Block quotes should be separated from the main text by a blank line and should be indented by half an inch. Use the “Essay Block Quote (Preserved)” formatting preset in Scrivener to format block quotes so that they will be formatted correctly upon Compile. Vivamus porta auctor arcu eu scelerisque. Donec fringilla blandit ligula at laoreet. Cras lobortis est velit, in cursus erat. Donec convallis fermentum tortor, ut interdum ligula facilisis at. Nam posuere felis nec libero lobortis vitae porta est vulputate. Proin massa metus, condimentum vitae venenatis vel, sodales eu dolor. Suspendisse potenti. Cras nec nulla sit amet massa commodo aliquam. Quisque euismod dapibus ante quis lacinia. Praesent tempus dolor a libero sollicitudin quis consectetur ipsum bibendum. Donec pretium tincidunt odio, eu aliquet leo varius eu. Praesent euismod enim accumsan dui aliquet commodo. Nulla posuere, velit lacinia venenatis semper, sapien lacus aliquet lorem, in laoreet dolor lacus in arcu.1
-Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec varius, sapien sit amet malesuada ultrices, dui sem tincidunt urna, at varius sapien libero sed ipsum. Suspendisse dolor mauris, auctor a volutpat feugiat, facilisis ac magna. Nullam metus nisl, ultricies sed laoreet nec, posuere vitae magna. Sed vitae mauris non dui scelerisque lobortis
-Caddemick 2
-ut sed risus. Aliquam erat volutpat. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut semper lacinia velit in ultricies. Mauris id quam enim, quis dapibus nisi. Fusce ipsum urna, lacinia sit amet euismod nec, mollis dapibus ligula. Fusce dolor nunc, auctor sit amet pharetra vel, porta et elit. Nam eget velit neque. Donec varius eros vitae quam viverra pulvinar.2
-Duis est elit, dictum nec vestibulum non, ultrices ut massa. Suspendisse egestas vehicula justo, tempus mattis ipsum scelerisque sed. Vestibulum interdum porta risus, nec tristique sem feugiat eget. Vivamus a venenatis risus. Quisque ligula augue, euismod ac convallis vel, sagittis dapibus leo. Donec eleifend urna vitae eros mollis nec venenatis purus commodo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin eu sapien vitae arcu euismod pharetra et id arcu.3 Sed lectus urna, mattis a gravida ut, sollicitudin id tortor. Maecenas et mi justo, eget dictum arcu. Praesent felis nunc, tempus egestas bibendum sit amet, dictum id eros. Integer purus velit, aliquam placerat vehicula at, sodales in erat. Vestibulum at neque vitae orci convallis consectetur a at sapien. Nulla id consequat elit. Suspendisse potenti. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut lorem ipsum, blandit nec eleifend cursus, pharetra ut elit. Proin semper porta diam, id rutrum orci facilisis ac. Morbi blandit erat augue, et vulputate metus.4
-Vestibulum non arcu felis, nec bibendum neque. Ut at odio velit. Aenean consectetur dapibus sollicitudin. Suspendisse potenti. Nam fermentum risus in odio sollicitudin interdum. Donec quam orci, commodo eget consectetur id, varius egestas magna. Morbi tincidunt fermentum orci ac imperdiet. Aliquam hendrerit lorem ac urna elementum fermentum. Aenean sollicitudin ipsum vitae arcu malesuada tempor. Phasellus feugiat dignissim erat non lobortis. Pellentesque at est at nisl fringilla posuere. Proin sagittis cursus nunc eget commodo. Nulla feugiat vehicula scelerisque. Nam quam neque, ornare sit amet tincidunt in, interdum sed nibh. Cras eget est sit amet diam adipiscing lacinia et at nisl. Nullam vulputate aliquam lorem at ultrices.
-Caddemick 3
-Notes
-1 Depending on your requirements, footnotes can either be placed at the end of each page or on a separate “Notes” page at the end of the essay, before the “Works Cited” page. 2 In Scrivener, if you want your footnotes to be placed at the end of each page instead of on a separate “Notes” page, you should deselect “Include in Compile” for the “Notes” document and export to RTF format.
-3 The “Works Cited” page is usually optional. 4 There are many variations of the Chicago essay format, so be sure to check your specific formatting requirements and amend this template as necessary.
-Caddemick 4
-Works Cited
-Choi, Mihwa. “Contesting Imaginaires in Death Rituals during the Northern Song Dynasty.” PhD diss., University of Chicago, 2008.
-Google. “Google Privacy Policy.” Last modified March 11, 2009. http://www.google.com/intl/ en/privacypolicy.html.
-Kossinets, Gueorgi, and Duncan J. Watts. “Origins of Homophily in an Evolving Social Network.” American Journal of Sociology 115 (2009): 405–50. Accessed February 28, 2010. doi:10.1086/599247.
-Kurland, Philip B., and Ralph Lerner, eds. The Founders’ Constitution. Chicago: University of Chicago Press, 1987. Accessed February 28, 2010. http://press-pubs.uchicago.edu/ founders/
-Lattimore, Richmond, trans. The Iliad of Homer. Chicago: University of Chicago Press, 1951. McDonald’s Corporation. “McDonald’s Happy Meal Toy Safety Facts.” Accessed July 19, 2008.
-http://www.mcdonalds.com/corp/about/factsheets.html.
-Pollan, Michael. The Omnivore’s Dilemma: A Natural History of Four Meals. New York: Penguin, 2006.
-Ward, Geoffrey C., and Ken Burns. The War: An Intimate History, 1941–1945. New York: Knopf, 2007.
-Weinstein, Joshua I. “The Market in Plato’s Republic.” Classical Philology 104 (2009): 439–58.
-Caddemick 5
-</Text>
+        <Document ID="27">
+            <Title>Information Extraction</Title>
         </Document>
         <Document ID="0">
             <Title>Essay</Title>
         </Document>
-        <Document ID="8">
-            <Title>Main Content</Title>
+        <Document ID="35">
+            <Title>Machine learning</Title>
+            <Text>After the natural language processing utilities generate the summarized data, a method needs to be used to query the data. It is assumed that the above described process would be ran on any new queries, so the query value would also be formatted as above. A database is created with all of the training data, and the index of this database are the distinct phrases generated by the natural language processing. A relation between each distinct phrase and each occurrence of the phrase in a problem is established. The phrase’s importance in the sentence is calculated along with the phrase’s importance in the corpus.
+When a query is performed a set is created of all the service desk problems with phrases that overlap the phrases from the query. A dynamic programming algorithm is then used to compare the the query to each of the problems in the set. (Note: the present dynamic programming algorithm is extremely simplistic; it does not use the probability of each phrase when generating a match score, it only uses ones and zeros.) If the number of matches between the two strings is greater than fifty percent of the longest string, then it is considered to be a match. This is an arbitrary number, but it seems to yield resonably precise results. More work could be done here to more scientifically balance precision and recall.</Text>
+            <Comments>See script ml_basic_b.py</Comments>
+        </Document>
+        <Document ID="36">
+            <Title>Remarks</Title>
+            <Text>The contributions of each of the team members can be seen by looking at the project source repository on Github. The master commit history can be found here: https://github.com/stollcri/UA-3460-560-P2/commits/master</Text>
+        </Document>
+        <Document ID="3">
+            <Title>Title Page</Title>
+            <Text>Trouble Ticket Solution Provider
+Using Natural Language Processing to Perform Information Extraction
+
+Christopher Stoll &amp; Patrick Lemmon
+Department of Computer Science
+The University of Akron
+Akron, Ohio, USA
+</Text>
+            <Notes>The &lt;$projecttitle> and &lt;$fullname> tags get replaced with the information set in Project > Meta-Data Settings… > Project Properties. You can edit those settings or just replace this text altogether.</Notes>
+        </Document>
+        <Document ID="21">
+            <Title>Problem Statement</Title>
+        </Document>
+        <Document ID="29">
+            <Title>Introduction</Title>
+            <Text>The process begins with information extraction. The approach selected for this task is that of the cascaded finite state transducer. A batch sequential architecture is used to deterministically transform raw service desk data into clean, useful information. Each step in the sequence is described below.</Text>
         </Document>
         <Document ID="14">
             <Title>Ideas</Title>
         </Document>
-        <Document ID="9">
+        <Document ID="37">
+            <Title>Design</Title>
+            <Text>Since this application was experimental and it could potentially take a lot of time to process an entire corpus, it was written as a set of independent Python scripts which can be run independently from the command line. Python was chosen because that is the native language of the Natural Language Toolkit (NLTK). No interactive query interface was designed as of yet, only the train and test portions were designed in order to analyze the performance of the application.</Text>
+        </Document>
+        <Document ID="22">
+            <Title>Approach</Title>
+        </Document>
+        <Document ID="15">
             <Title>Notes</Title>
-            <Text>Notes
-Any footnotes you created in your paper will get inserted here upon Compile (this purple bubble will be removed automatically). If you don’t have any footnotes, you can deselect “Include in Compile” for this document in the Inspector or Compile settings, or just delete it completely.</Text>
+        </Document>
+        <Document ID="5">
+            <Title>Paper directions</Title>
+            <Text>abstract, problem statement, approach, results, future work
+
+pass: 345 , fail: 363
+Potential accuracy: 49% 
+pass: 324 , fail: 354
+Potential accuracy: 48% 
+pass: 331 , fail: 409
+Potential accuracy: 45% 
+pass: 366 , fail: 366
+Potential accuracy: 50% 
+pass: 342 , fail: 413
+Potential accuracy: 45% 
+
+1.     Use Times Roman font size 12 with 1 ½ line spacing.
+2.     You may include figures, tables or charts.
+3.     Total number of pages is at least 4 pages, but no more than 10.
+4.     Sections to be included:  
+a.     Problem statement:  describe motivation and objectives of the project
+b.     Approach:  basic idea of methods or structures proposed to develop the project
+c.     Design and Implementation: what has been tried and implemented
+d.     Results: what has been accomplished
+e.     Conclusions and Future work:  what has been learned and what the next step is
+f.      Remarks:  team members and their contribution to the project</Text>
+        </Document>
+        <Document ID="38">
+            <Title>Results</Title>
+            <Text>The results of this system depend greatly upon the inputs. The data for this project was provided by a large international firm and showed considerable variation between data sets. The initial test data for the system consisted of 12,729 records from a few plants in the United States. After preprocessing 5,171 records remained. Below are the testing results.
+
+Training records
+Test
+records
+Test
+solved
+Test sovled %
+Group 1
+4134
+1037
+107
+10%
+Group 2
+4110
+1061
+100
+9%
+Group 3
+4137
+1034
+115
+11%
+Group 4
+4151
+1020
+115
+11%
+Group 5
+4105
+1066
+109
+10%
+The second data set for the system consisted of 10,666 records from any plant in the company’s global operations. Only 3,610 records made it through the preprocessing step, yet many of those left were still not user generated records; they were made by automated or semi-automated processes. It seems that the higher solution rate is most likely due to the high percentage of machine generated tickets.
+
+Training records
+Test
+records
+Test
+solved
+Test sovled %
+Group 1
+2902
+708
+345
+49%
+Group 2
+2932
+678
+324
+48%
+Group 3
+2870
+740
+331
+45%
+Group 4
+2878
+732
+366
+50%
+Group 5
+2855
+755
+342
+45%</Text>
+        </Document>
+        <Document ID="30">
+            <Title>Remove confidential</Title>
+            <Text>First, service desk tickets which are handled by strictly defined processes or potentially contain sensitive information are removed from the raw data. For example, if a user requests to have their password reset a rigid and well-known process is followed, so there is no need to provide a solution to this type of problem. Also, if the information extraction process works well, then it could be possible for people to mine confidential information, thus every attempt is made to remove records which may contain sensitive information.</Text>
+            <Comments>In script ie_preproc_a.py</Comments>
+        </Document>
+        <Document ID="23">
+            <Title>Design and Implementation</Title>
+        </Document>
+        <Document ID="39">
+            <Title>Conclusion</Title>
+            <Text>The approach taken here yields very poor results with the given corpus sizes. The number of correct solutions may improve with larger corpus sizes, but further work would need to be done to determine this. Improving the phrase matching algorithm may also help, but the biggest improvement would likely come from using a different approach.
+The data sets have also been processed using Weka to check for correlations between the service desk ticket problem and the solution category. Initial tests with the second data set seem to suggest that categorization rates of better than 85% are possible. However, categorization is just one step towards providing a solution. More work needs to be done in systematically verifing the categorization rates and then providing solutions in that even more limited domain.</Text>
+        </Document>
+        <Document ID="8">
+            <Title>Main Content</Title>
+        </Document>
+        <Document ID="24">
+            <Title>Results</Title>
+        </Document>
+        <Document ID="17">
+            <Title>Miscellaneous</Title>
+        </Document>
+        <Document ID="31">
+            <Title>Remove boilerplate</Title>
+            <Text>Next, boilerplate text is removed from the raw data. The people using the service desk software often write courteous notes to the users when their problems are resolved, this is good for informing the user, but it does little to help dedifferentiate individual problems. Also, email correspondences are recorded in the service desk, and these often contain the senders contact information along with the standard email header. This is also of little use in classifying the problems; if it was useful to have the user’s contact information, then it would be cleaner to pull it from a distinct field. This step also removes username information.</Text>
+            <Comments>In script ie_preproc_b.py</Comments>
         </Document>
     </Documents>
 </SearchIndexes>
