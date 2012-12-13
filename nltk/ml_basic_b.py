@@ -157,7 +157,7 @@ def test_graph(train_data, test_file):
 	csv_reader = csv.reader(csv_file, delimiter=',', quotechar='"')
 	for csv_row in csv_reader:
 		if (len(csv_row) >= 4):
-			csv_col = ast.literal_eval(csv_row[1])
+			csv_col = ast.literal_eval(csv_row[3])
 			test_data = search_graph(train_data, csv_col)
 
 			hit_pct = 0
@@ -168,12 +168,14 @@ def test_graph(train_data, test_file):
 					hit_pct = test_data[0][0]
 					hit_desc = corpus[test_data[0][1]]
 					#print test_data[0][0], corpus[test_data[0][1]]
+					#print "go:", hit_pass, "ng:", hit_fail, "|", hit_pct, "|", csv_col, "|", hit_desc
+					print "go:", hit_pass, "ng:", hit_fail
 				else:
 					hit_fail += 1
 			else:
 				hit_fail += 1
 			
-			print "go:", hit_pass, "ng:", hit_fail, "|", hit_pct, "|", csv_col, "|", hit_desc
+			#print "go:", hit_pass, "ng:", hit_fail, "|", hit_pct, "|", csv_col, "|", hit_desc
 
 	print "pass:", hit_pass, ", fail:", hit_fail
 	print "Potential accuracy: {0:.0f}% ".format(float(hit_pass) / (hit_pass + hit_fail) * 100)
@@ -186,3 +188,7 @@ def run_test(train_file, test_file):
 
 if __name__ == "__main__":
 	run_test("./test/i1_train.csv", "./test/i1_test.csv")
+	run_test("./test/i2_train.csv", "./test/i2_test.csv")
+	run_test("./test/i3_train.csv", "./test/i3_test.csv")
+	run_test("./test/i4_train.csv", "./test/i4_test.csv")
+	run_test("./test/i5_train.csv", "./test/i5_test.csv")

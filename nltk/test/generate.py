@@ -4,9 +4,9 @@
 import sys, csv, random
 
 def process_files(pass_no):
-	in_name_train = "../hddata_e.csv"
+	in_name_train = "../dataset1/hddata_e.csv"
 	out_name_train = "./i"+str(pass_no)+"_train.csv"
-	in_name_test = "../hddata_e.csv"
+	in_name_test = "../dataset1/hddata_e.csv"
 	out_name_test = "./i"+str(pass_no)+"_test.csv"
 
 	in_file_train = open(in_name_train, 'rb')

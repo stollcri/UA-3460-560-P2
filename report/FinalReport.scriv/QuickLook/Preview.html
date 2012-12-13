@@ -1,0 +1,188 @@
+<html>
+
+<head>
+<title>FinalReport</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+	body {background-color: #bac0c7}
+    p.binderItem {margin: 10.0px 0.0px 0.0px 05.0px; font-family:Cochin, Times, Courier, Arial, serif; font-size:14.0px;}
+    .page {border: 1px solid #727272; background: #fff}
+    hr {
+      border-top: 1px dashed #000;
+      border-bottom: 0px solid #fff;
+      color: #fff;
+      background-color: #fff;
+      height: 0px;
+  </style>
+</head>
+
+<body>
+
+<table border="0" width="100%" cellspacing="3">
+<tr>
+<td>
+
+<table class="page" width="100%" cellspacing="10" cellpadding="2">
+<tr>
+<td valign="top">
+
+<ul>
+<li>
+<p class="binderItem"><strong>Title Page</strong><br/>Trouble Ticket Solution Provider<br/>
+Using Natural Language Processing to Perform Information Extraction<br/>
+<br/>
+Christopher Stoll & Patrick Lemon<br/>
+Department of Computer Science<br/>
+The University of Akron<br/>
+Akron, Ohio, USA</p>
+</li>
+<li>
+<p class="binderItem"><strong>Main Content</strong></p>
+</li>
+<hr/>
+<ul>
+<li>
+<p class="binderItem"><strong>Paper directions</strong><br/>abstract, problem statement, approach, results, future work<br/>
+<br/>
+pass: 345 , fail: 363<br/>
+Potential accuracy: 49% <br/>
+pass: 324 , fail: 354<br/>
+Potential accuracy: 48% <br/>
+pass: 331 , fail: 409<br/>
+Potential accuracy: 45% <br/>
+pass: 366 , fail: 366<br/>
+Potential accuracy: 50% <br/>
+pass: 342 , fail: 413<br/>
+Potential accuracy: 45% <br/>
+<br/>
+1.     Use Times Roman font size 12 with 1 ½ line spacing.<br/>
+2.     You may include figures, tables or charts.<br/>
+3.     Total number of pages is at least 4 pages, but no more than 10.<br/>
+4.     Sections to be i...</p>
+</li>
+<li>
+<p class="binderItem"><strong>Problem Statement</strong></p>
+</li>
+<hr/>
+<ul>
+<li>
+<p class="binderItem"><strong>Statement</strong><br/>Most large corporations provide various information technologies to their workers. To support the provided hardware and software they often have a help desk or service desk which is made up of people and software. Service desk employees are often entry level and have little understanding of the business and its specific technical problems, so software is employed to route tickets to the appropriate staff and record the knowledge which is learned along the way. For improved efficiency it is impor...</p>
+</li>
+</ul>
+<hr/>
+<li>
+<p class="binderItem"><strong>Approach</strong></p>
+</li>
+<hr/>
+<ul>
+<li>
+<p class="binderItem"><strong>Information Extraction</strong></p>
+</li>
+<hr/>
+<ul>
+<li>
+<p class="binderItem"><strong>Introduction</strong><br/>The process begins with information extraction. The approach selected for this task is that of the cascaded finite state transducer. A batch sequential architecture is used to deterministically transform raw service desk data into clean, useful information. Each step in the sequence is described below.</p>
+</li>
+<li>
+<p class="binderItem"><strong>Remove confidential</strong><br/>First, service desk tickets which are handled by strictly defined processes or potentially contain sensitive information are removed from the raw data. For example, if a user requests to have their password reset a rigid and well-known process is followed, so there is no need to provide a solution to this type of problem. Also, if the information extraction process works well, then it could be possible for people to mine confidential information, thus every attempt is made to remove records whic...</p>
+</li>
+<li>
+<p class="binderItem"><strong>Remove boilerplate</strong><br/>Next, boilerplate text is removed from the raw data. The people using the service desk software often write courteous notes to the users when their problems are resolved, this is good for informing the user, but it does little to help dedifferentiate individual problems. Also, email correspondences are recorded in the service desk, and these often contain the senders contact information along with the standard email header. This is also of little use in classifying the problems; if it was useful...</p>
+</li>
+<li>
+<p class="binderItem"><strong>Regular expresions</strong><br/>After the boilerplate text is removed from the raw data, regular expressions are used to remove a broader range of useless data. Dates and times found in the raw data are not useful for classifying and solving problems, so they are removed. If temporal information was desired it could be extracted from the database in a uniform format. During this step special characters are also removed and white spaces are compressed.</p>
+</li>
+<li>
+<p class="binderItem"><strong>NLP</strong><br/>With preprocessing complete, the next step is natural language processing. Natural language processing is in itself a multi-stage process. First, the text data from the corpus is broken into sentences, then the sentences are broken into words. Each word is tagged for its part of speech. Next, each word is stemmed using the Lancaster stemmer provided with the Natural Language Took Kit (NLTK). In the same block where stemming occurs the program discards sentence fragments; those sentences which ha...</p>
+</li>
+</ul>
+<hr/>
+<li>
+<p class="binderItem"><strong>Machine Learning</strong></p>
+</li>
+<hr/>
+<ul>
+<li>
+<p class="binderItem"><strong>Machine learning</strong><br/>After the natural language processing utilities generate the summarized data, a method needs to be used to query the data. It is assumed that the above described process would be ran on any new queries, so the query value would also be formatted as above. A database is created with all of the training data, and the index of this database are the distinct phrases generated by the natural language processing. A relation between each distinct phrase and each occurrence of the phrase in a problem is...</p>
+</li>
+</ul>
+</ul>
+<hr/>
+<li>
+<p class="binderItem"><strong>Design and Implementation</strong></p>
+</li>
+<hr/>
+<ul>
+<li>
+<p class="binderItem"><strong>Design</strong><br/>Since this application was experimental and it could potentially take a lot of time to process an entire corpus, it was written as a set of independent Python scripts which can be run independently from the command line. Python was chosen because that is the native language of the Natural Language Toolkit (NLTK). No interactive query interface was designed as of yet, only the train and test portions were designed in order to analyze the performance of the application.</p>
+</li>
+</ul>
+<hr/>
+<li>
+<p class="binderItem"><strong>Results</strong></p>
+</li>
+<hr/>
+<ul>
+<li>
+<p class="binderItem"><strong>Results</strong><br/>The results of this system depend greatly upon the inputs. The data for this project was provided by a large international firm and showed considerable variation between data sets. The initial test data for the system consisted of 12,729 records from a few plants in the United States. After preprocessing 5,171 records remained. Below are the testing results.<br/>
+<br/>
+Training records<br/>
+Test<br/>
+records<br/>
+Test<br/>
+solved<br/>
+Test sovled %<br/>
+Group 1<br/>
+4134<br/>
+1037<br/>
+107<br/>
+10%<br/>
+Group 2<br/>
+4110<br/>
+1061<br/>
+100<br/>
+9%<br/>
+Group 3<br/>
+4137<br/>
+1034<br/>
+115<br/>
+11%<br/>
+Group...</p>
+</li>
+</ul>
+<hr/>
+<li>
+<p class="binderItem"><strong>Conclusions and Future Work</strong></p>
+</li>
+<hr/>
+<ul>
+<li>
+<p class="binderItem"><strong>Conclusion</strong><br/>The approach taken here yields very poor results with the given corpus sizes. The number of correct solutions may improve with larger corpus sizes, but further work would need to be done to determine this. Improving the phrase matching algorithm may also help, but the biggest improvement would likely come from using a different approach.<br/>
+The data sets have also been processed using Weka to check for correlations between the service desk ticket problem and the solution category. Initial tests wit...</p>
+</li>
+</ul>
+<hr/>
+<li>
+<p class="binderItem"><strong>Remarks</strong></p>
+</li>
+<hr/>
+<ul>
+<li>
+<p class="binderItem"><strong>Remarks</strong><br/>The contributions of each of the team members can be seen by looking at the project source repository on Github. The master commit history can be found here: https://github.com/stollcri/UA-3460-560-P2/commits/master</p>
+</li>
+</ul>
+</ul>
+</ul>
+
+</td>
+<td width="8">
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

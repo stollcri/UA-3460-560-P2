@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<TemplateSettings Version="1.0">
+    <Title>Essay (Chicago Style)</Title>
+    <Description>Provides the project structure and compile settings for producing an essay using Chicago style formatting.</Description>
+    <Category>NonFiction</Category>
+    <ImageName>TemplateAcademicWithIcon</ImageName>
+</TemplateSettings>
