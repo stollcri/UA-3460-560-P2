@@ -1,3 +1,0 @@
-:STOCKS
-:BONDS
-:CASH
